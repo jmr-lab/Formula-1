@@ -1,0 +1,109 @@
+---
+title: "Formula 1"
+subtitle: 'A Mathematical Analysis to Identify the Top Formula 1 Driver in History'
+author: "Jean-Marie Roy"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{hyperref}
+  - \usepackage{draftwatermark}
+  - \SetWatermarkText{DRAFT}
+  - \SetWatermarkScale{1}
+  - \SetWatermarkAngle{45}
+  - \SetWatermarkColor{gray!10}
+  - \usepackage{etoolbox}
+  - \AtBeginEnvironment{Shaded}{\small}
+urlcolor: blue
+linkcolor: black
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+# Load data from global environment :
+#load("fulldata.RData")
+
+# To increase the speed of the rendering, we only run the "Formula1" code separately,
+# and use the variables stored in the global environment.
+# This also allows to reduce the size of the Rmd file by moving as much code as possible to the R file.
+# To be able to access the variables, the markdown code should be run in the console :
+#
+# rmarkdown::render("Formula1.Rmd")
+#
+# The other option is to include the script in this file by removing the comment of the line below :
+#
+# source("Formula1.R")
+#
+```
+
+\begin{center}
+\vspace*{\fill}
+
+\includegraphics[width=0.2\textwidth]{images/flag.png}
+
+\vspace*{\fill}
+\end{center}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+# 1. Introduction
+
+When posed the question, "Who is or was the best Formula 1 driver of all time?" an AI agent will likely first mention **Lewis Hamilton**, followed by **Michael Schumacher**, based primarily on their respective world championship titles. If asked for a list of top drivers, it might also include **Juan Manuel Fangio**, **Alain Prost**, **Max Verstappen**, and **Sebastian Vettel**, arranged alphabetically. **Fangio** stands out with five championships, while the others each have four.
+
+Interestingly, many fans regard **Ayrton Senna**, with his three titles, as a superior driver compared to **Alain Prost**, despite the latter's four championships. This raises the question: how significant are titles in evaluating a driver’s greatness? Should we consider alternative criteria for determining who truly excels?
+
+If we delve deeper, **Juan Manuel Fangio** won five titles in the 1950s, during the formative years of the Formula 1 World Championship. His legacy is so profound that his name has become synonymous with exceptional driving. In French-speaking regions, the phrase "driving like Fangio" denotes flawless driving. A notable reference appears in *The Adventures of Tintin: The Calculus Affair*, where a character remarks, "This must be Fangio at the wheel" as a car skillfully avoids a net, reflecting Fangio's prowess during the height of his career. (In the English edition, it is translated as *"They must have a Jack Brabham at the wheel!"*)
+
+```{r, echo=FALSE, fig.cap="\\textit{\"This must be Fangio at the wheel!\"}", fig.align='center', out.width='70%'}
+knitr::include_graphics("images/tintin.png")
+```
+
+Complicating matters further, the rules of Formula 1 have evolved significantly over the years. The number of races has increased (from seven during Fangio's era to 22 today), and the points system has undergone various changes. For instance, the winner received 8 points until **1960**, then 9 points until **1990**, followed by 10 points until **2009**, and has been set at 25 points since **2010**. Additionally, until **1990**, only the best results counted towards the championship, which allowed Senna to secure the title in **1990** against Prost, despite the latter having more points overall; under modern rules, Prost would have been awarded the title instead.
+
+Ultimately, it is evident that even the most skilled drivers depend significantly on their cars' performance. Both Alain Prost in **1991** and Lewis Hamilton in **2025** encountered substantial difficulties while driving for Ferrari, so much so that Prost was dismissed from his team after comparing his car to a "truck." This raises an important question: to what extent is a world title attributable to the car, and how much is a reflection of the driver's ability?
+
+\newpage
+
+# 2. Dataset
+
+\newpage
+
+# 9. References
+
+[1] Hergé. 1956. "The Calculus Affair" https://www.tintin.com/en/albums/the-calculus-affair
+
+\vspace{10pt}
+
+[2] Jean-Luc. 2019. "Tintin – The Calculus Affair – The liberties of English translation" https://tintinomania.com/tintin-affaire-tournesol-anglais-brabham
+
+\vspace{10pt}
+
+[3] Rafael Irizarry. “Introduction to Data Science.” https://rafalab.dfci.harvard.edu/dsbook/
+
+\vspace{10pt}
+
+[6] Dataset copied to GitHub. Available at: https://github.com/jmr-lab/Formula-1 (Accessed: 2026).
+
+\vspace{10pt}
+
+[8] Cover image from SVG SILH
+https://svgsilh.com/c3c3c3/image/309862.html
+
+\vspace{10pt}
+
+[9] Icons from Font Awesome
+https://fontawesome.com/
+
+\vspace{10pt}
+
+[10] The text of this report was reviewed by DuckAI, an AI language model that also assisted in reviewing and correcting some of my code :
+https://duck.ai/
