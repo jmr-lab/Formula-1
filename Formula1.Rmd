@@ -75,17 +75,19 @@ Ultimately, it is evident that even the most skilled drivers depend significantl
 
 # 2. Dataset
 
-# 2.1 Source
+## 2.1 Source
 
 The Formula 1 data, including information on drivers, teams, qualifications, and results, is readily available online, such as on Wikipedia [2]. However, for research purposes, a well-maintained dataset may be more valuable. A suitable dataset can be found on Kaggle [3], although accessing it requires an account that some users may not possess. A publicly accessible version of this dataset is also available on GitHub Training Insights, but to guarantee its ongoing accessibility, I have uploaded a copy to my GitHub repository [4]. This redundancy will ensure that the dataset remains available even if the original site removes it.
 
-# 2.2 Files
+## 2.2 Files
 
-The dataset is organized as nineteen different files : 18 comma-separated value files and a json file. We will use only 8 files :
+The dataset is organized as nineteen different files : 18 comma-separated value files and a json file. We will only use the 9 files below :
 
 ```{r, echo=FALSE}
+library(kableExtra)
 dataset_files <- data.frame(
   icons = c(
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
     "\\includegraphics[width=0.5cm]{images/file-csv.png}",
     "\\includegraphics[width=0.5cm]{images/file-csv.png}",
     "\\includegraphics[width=0.5cm]{images/file-csv.png}",
@@ -103,7 +105,8 @@ dataset_files <- data.frame(
     "driver\\_standings.csv",
     "drivers.csv",
     "races.csv",
-    "results.csv"
+    "results.csv",
+    "status.csv"
   ),
   stringsAsFactors = FALSE
 )
@@ -112,9 +115,9 @@ kbl(dataset_files, format = "latex", booktabs = TRUE, linesep = "", escape = FAL
   kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
-# 2.3 Tables
+## 2.3 Tables
 
-## `circuits.csv`
+### 2.3.1 `circuits.csv`
 
 This file contains information about each circuit where a Formula 1 race has been held.
 
@@ -130,7 +133,7 @@ This file contains information about each circuit where a Formula 1 race has bee
 | `alt` | Altitude of the circuit in meters |
 | `url` | URL for the circuit's Wikipedia page |
 
-## `constructor_results.csv`
+### 2.3.2 `constructor_results.csv`
 
 This file contains the results for each constructor in each race.
 
@@ -142,7 +145,7 @@ This file contains the results for each constructor in each race.
 | `points` | Points scored by the constructor in the race |
 | `status` | Status of the constructor in the race |
 
-## `constructor_standings.csv`
+### 2.3.3 `constructor_standings.csv`
 
 This file contains the constructor standings after each race.
 
@@ -156,7 +159,7 @@ This file contains the constructor standings after each race.
 | `positionText` | Text representation of the constructor's position |
 | `wins` | Number of wins for the constructor in the season |
 
-## `constructors.csv`
+### 2.3.4 `constructors.csv`
 
 This file contains information about each constructor.
 
@@ -168,7 +171,7 @@ This file contains information about each constructor.
 | `nationality` | The nationality of the constructor |
 | `url` | URL for the constructor's Wikipedia page |
 
-## `driver_standings.csv`
+### 2.3.5 `driver_standings.csv`
 
 This file contains the driver standings after each race.
 
@@ -182,7 +185,7 @@ This file contains the driver standings after each race.
 | `positionText` | Text representation of the driver's position |
 | `wins` | Number of wins for the driver in the season |
 
-## `drivers.csv`
+### 2.3.6 `drivers.csv`
 
 This file contains information about each driver.
 
@@ -198,7 +201,7 @@ This file contains information about each driver.
 | `nationality` | The driver's nationality |
 | `url` | URL for the driver's Wikipedia page |
 
-## `races.csv`
+### 2.3.7 `races.csv`
 
 This file contains information about each race.
 
@@ -223,7 +226,7 @@ This file contains information about each race.
 | `sprint_date` | Date of Sprint Race |
 | `sprint_time` | Time of Sprint Race |
 
-## `results.csv`
+### 2.3.8 `results.csv`
 
 This file contains the results for each driver in each race.
 
@@ -247,6 +250,27 @@ This file contains the results for each driver in each race.
 | `fastestLapTime` | The driver's fastest lap time |
 | `fastestLapSpeed` | The speed of the driver's fastest lap |
 | `statusId` | Foreign key to `status.csv` |
+
+### 2.3.9 `status.csv`
+
+This file contains information about the finishing status of a driver in a race.
+
+| Column | Description |
+|---|---|
+| `statusId` | Unique identifier for each status |
+| `status` | A description of the finishing status |
+
+## 2.4 Entity Relationship Diagram Model
+
+```{r, echo=FALSE, message=FALSE, out.width='80%', fig.align="center", fig.cap = "Entity Relationship Diagram Model"}
+knitr::include_graphics("images/Entity Relationship Diagram Model.png")
+```
+
+\newpage
+
+# 3. Data Transformation
+
+This chapter is about the data transformation.
 
 \newpage
 
