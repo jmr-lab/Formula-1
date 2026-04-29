@@ -115,6 +115,42 @@ kbl(dataset_files, format = "latex", booktabs = TRUE, linesep = "", escape = FAL
   kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
+The other files listed below aren't relevant for this study :
+
+```{r, echo=FALSE}
+#library(kableExtra)
+dataset_file_others <- data.frame(
+  icons = c(
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}",
+    "\\includegraphics[width=0.5cm]{images/file-csv.png}"
+  ),
+  filename = c(
+    "fatal\\_accidents\\_drivers.csv",
+    "fatal\\_accidents\\_marshalls.csv",
+    "lap\\_times.csv",
+    "pit\\_stops.csv",
+    "qualifying.csv",
+    "red\\_flags.csv",
+    "safety\\_cars.csv",
+    "seasons.csv",
+    "sprint\\_results.csv",
+    "virtual\\_safety\\_car\\_estimates.json"
+  ),
+  stringsAsFactors = FALSE
+)
+
+kbl(dataset_file_others, format = "latex", booktabs = TRUE, linesep = "", escape = FALSE, col.names = c("", "Dataset Files")) %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
 ## 2.3 Tables
 
 ### 2.3.1 `circuits.csv`
@@ -159,6 +195,8 @@ This file contains the constructor standings after each race.
 | `positionText` | Text representation of the constructor's position |
 | `wins` | Number of wins for the constructor in the season |
 
+\newpage
+
 ### 2.3.4 `constructors.csv`
 
 This file contains information about each constructor.
@@ -200,6 +238,8 @@ This file contains information about each driver.
 | `dob` | The driver's date of birth |
 | `nationality` | The driver's nationality |
 | `url` | URL for the driver's Wikipedia page |
+
+\newpage
 
 ### 2.3.7 `races.csv`
 
@@ -251,6 +291,8 @@ This file contains the results for each driver in each race.
 | `fastestLapSpeed` | The speed of the driver's fastest lap |
 | `statusId` | Foreign key to `status.csv` |
 
+\newpage
+
 ### 2.3.9 `status.csv`
 
 This file contains information about the finishing status of a driver in a race.
@@ -268,9 +310,210 @@ knitr::include_graphics("images/Entity Relationship Diagram Model.png")
 
 \newpage
 
+## 2.5 Data Issues
+
+The following figure show that 14 rows in the **driver_standing** table have a position different to the positionText, with only one being "D" (which seems to be for Disqualified) :
+
+```{r, echo=FALSE}
+ds <- as_tibble(read.csv("data/driver_standings.csv")) %>% filter(position != positionText)
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+The raceId 223 and driverId 30 correspond to Michael Schumacher who was disqualified after the Grand Prix of Europe in 1997 :
+
+```{r, echo=FALSE}
+ds <- bind_cols(
+  races %>% filter(raceId == "223") %>% select(raceId, year, name),
+  drivers %>% filter(driverId == "30") %>% select(driverId, forename, surname))
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+However this wasn't the only disqualification from the history of Formula 1. The table below shows 5 rows from the results table containing 151 observations related to a disqualification (statusId of 2) :
+
+```{r, echo=FALSE}
+ds <- results %>%
+  filter(statusId == 2) %>%
+  select(-number, -time, -milliseconds, -fastestLap, -rank, -fastestLapTime, -fastestLapSpeed) %>%
+  head()
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+More interestingly, the raceId 223 and driverId 30 from the results dataset don't indicate a disqualification but a collision :
+
+```{r, echo=FALSE}
+ds <- status %>%
+  filter(statusId == results %>% filter(raceId == 223 & driverId == 30) %>% pull(statusId))
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+\newpage
+
+Now if we look at fatal accidents (statusId = 104), we can only find 3 results :
+
+```{r, echo=FALSE}
+df <- results %>%
+  filter(statusId == 104) %>%
+  left_join(races, by = "raceId") %>%
+  left_join(drivers, by = "driverId") %>%
+  left_join(status, by = "statusId") %>%
+  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
+
+kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+We know that more drivers died during a Formula 1 Grand Prix.
+
+For example Ayrton Senna's status in the 1994 San Marin GP was marked as accident (statusId = 3) :
+
+```{r, echo=FALSE}
+df <- results %>%
+  left_join(races, by = "raceId") %>%
+  left_join(drivers, by = "driverId") %>%
+  left_join(status, by = "statusId") %>%
+  filter(forename == "Ayrton" & surname == "Senna" & year == 1994 & name == "San Marino Grand Prix") %>%
+  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
+
+kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+Which can indicate that the fatal accidents only report drivers who died on-site during a race or qualifications.
+
+The following table shows a list of statuses, only the first 12 are displayed :
+
+```{r, echo=FALSE}
+ds <- head(status, 12)
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+We will only want to have the following statuses : "Finished", "Abandoned", "Lapsed" and "Disqualified". The "Lapsed" meaning the driver finished the race but with 1 or more laps behind the winner. The "Abandoned" includes all sort of mechanical problems and collisions, accidents... The "Disqualified" status is the same as "Abandoned" but the driver then didn't score any point.
+
+The only exception found is Stirling Moss during the 1959 French GP who scored one point (best lap). He was disqualified during the race and kept his only point for the best lap :
+
+```{r, echo=FALSE}
+ds <- results %>%
+  filter(points > 0) %>%
+  filter(statusId == 2) %>%
+  left_join(races, by = "raceId") %>%
+  left_join(drivers, by = "driverId") %>%
+  left_join(status, by = "statusId") %>%
+  select(resultId, points, year, name, forename, surname, status)
+
+kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+\newpage
+
 # 3. Data Transformation
 
-This chapter is about the data transformation.
+We will now preprocess the Formula 1 dataset, focusing on optimizing the data frames for analysis by removing unnecessary columns, joining relevant data, renaming columns for clarity, and calculating driver age.
+
+## 3.1 Removing Unnecessary Columns
+
+To streamline the dataset, unnecessary columns from various data frames are removed. The goal is to retain only relevant information that will contribute to the overall analysis.
+
+**Circuits:** The columns lat, lng, and url are omitted from the circuits data frame as they do not provide essential information for the analysis of race results.
+
+**Constructor Results & Standings:** In the constructor_results and constructor_standings data frames, the status and positionText columns are excluded, respectively, as they are not required for further analysis.
+
+**Drivers' Columns:** Columns related to drivers, such as number and url in the drivers data frame, are removed from driver_standings, simplifying the dataset.
+
+**Races Table:** The races data frame is streamlined to include only the columns raceId, year, round, circuitId, name, and date, ensuring relevant race information is retained while discarding less useful details.
+
+**Results' Columns:** A significant reduction in the results data frame is performed by dropping columns such as number, time, milliseconds, as well as fastest lap information (fastestLap, fastestLapTime, fastestLapSpeed), which may not be needed for the analysis of race outcomes.
+
+## 3.2 Modifying statuses
+
+As noted in the previous section, the status table includes various statuses that may not be relevant to this study. We will update these to reflect more accurate values.
+
+## 3.3 Joining Tables
+
+To create a comprehensive Formula 1 dataset, the results data frame is merged with several other data frames using left joins based on common identifiers.
+
+The results data frame is join together with races, drivers, constructors, and status, linking them through raceId, driverId, constructorId, and statusId, respectively. This process allows for the integration of race and participant information into a single dataset.
+
+## 3.4 Finalizing the Dataset
+
+After merging the data frames, additional columns that are no longer necessary (raceId, driverId, constructorId, circuitId) are excluded to reduce clutter in the dataset.
+
+## 3.5 Renaming Columns
+
+To enhance clarity and facilitate a better understanding of the dataset, several columns are renamed. The following renaming conventions are employed:
+
+**name.x** becomes **circuit**
+**name.y** becomes **constructorName**
+**nationality.x** becomes **driverNationality**
+**nationality.y** becomes **constructorNationality**
+
+These changes improve readability and usability of the dataset for analysis.
+
+## 3.6 Calculating Driver Age
+
+Driver age is computed by converting the date and dob columns into Date format. The age is calculated using the difference in weeks between the two dates. The result is then divided by 52.25 to convert weeks into years, and the floor() function is applied to round down to the nearest integer. This new column, driverAge, is added to the dataset.
+
+## 3.7 Concatening Driver Names
+
+The driver's full name is created by concatenating the forename and surname. The original two columns are then removed from the dataset.
+
+## 3.8 Cleaning Up Date Columns
+
+Finally, the date and dob columns are removed from the dataset, as they are no longer necessary after calculating driver age.
+
+Overall, these transformations enhance the dataset's efficiency and layout, preparing it for insightful analysis in subsequent sections of the report.
+
+## 3.9 Formula 1 Dataset
+
+The dataset displayed below is a snippet of the final transformed dataset, showcasing only 8 out of the 16 columns for enhanced clarity:
+
+```{r, echo=FALSE}
+df <- formula1 %>%
+  select(resultId, positionOrder, points, year, circuit, driverName, driverAge, constructorName) %>%
+  head()
+
+kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+\newpage
+
+The formula1 dataset contains the following columns :
+
+|Column|Description|
+|---|---|
+| `resultId` | Unique identifier for each result |
+| `grid` | The driver's starting grid position |
+| `positionOrder` | The driver's finishing position in order |
+| `points` | Points scored by the driver in the race |
+| `laps` | Number of laps completed by the driver |
+| `rank` | The rank of the driver's fastest lap |
+| `statusId` | Foreign key to `status.csv` |
+| `year` | The year of the race |
+| `round` | The round number of the race in the season |
+| `circuit` | The official name of the circuit |
+| `driverNationality` | The driver's nationality |
+| `constructorName` | The full name of the constructor |
+| `constructorNationality` | The nationality of the constructor |
+| `status` | A description of the finishing status |
+| `driverAge` | The driver's age at the time of the race |
+| `driverName` | The driver's full name |
+
+\newpage
+
+# 4. Exploratory Data Analysis
+
+This is the Exploratory Data Analysis section...
 
 \newpage
 
