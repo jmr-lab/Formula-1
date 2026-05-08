@@ -84,7 +84,6 @@ The Formula 1 data, including information on drivers, teams, qualifications, and
 The dataset is organized as nineteen different files : 18 comma-separated value files and a json file. We will only use the 9 files below :
 
 ```{r, echo=FALSE}
-library(kableExtra)
 dataset_files <- data.frame(
   icons = c(
     "\\includegraphics[width=0.5cm]{images/file-csv.png}",
@@ -513,7 +512,97 @@ The formula1 dataset contains the following columns :
 
 # 4. Exploratory Data Analysis
 
-This is the Exploratory Data Analysis section...
+## 4.1 Top Drivers
+
+### 4.1.1 Names
+
+If we define the leading drivers as those with the highest number of titles, and among those who are world champions with an equal number of titles, we can use the number of wins to differentiate them. This results in the following table displaying the 17 drivers who won at least 2 titles (as of 2025) :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- f1_summary %>%
+  filter(titles > 1) %>%
+  mutate(driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName) ) %>%
+  select(-driverCountry, -countryImage,
+         -title_first, -title_last,
+         -career_start, -career_end, -career_length,
+         -period_start,
+         winspc = ratio_wins, titlespc = ratio_titles)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+For each driver, we observe the number of titles, total races won, total races competed, the number of seasons or years they participated, the total points earned (only those that count toward the championship), the ratio of titles to seasons, and the ratio of wins to races.
+
+Although the number of titles and races won clearly shows that Michael Schumacher and Lewis Hamilton outshine other drivers, the same is not necessarily the case for points. When we rank drivers by points, both Verstappen and Vettel surpass Schumacher. Even Alonso who won 2 titles, compared with the 7 by Schumacher, has more points than the latter.
+
+To add another layer of complexity, if we look at the ratio of titles to seasons or the ratio of wins to races, Juan Manuel Fangio emerges as the top performer. Even Ascari, who appears at the bottom of the list, has the second best ratio win to races.
+
+Now if we look at the first 9 pilots, only 2 of them (Fangio and Stewart) were racing at the earliest days of Formula 1. On the opposite, if we look at the last 8 drivers, 4 of them were driving at the earliest days : Brabham, Clark, Hill and Ascari. We can also notice that most of these early drivers had a career under 10 years, when modern days drivers have a career that last more than 10 years if not 20. Only notable exception is Graham Hill who had a long career of 18 years from 1958 to 1975.
+
+We will now see the careers and titles of these 17 drivers across the years.
+
+\newpage
+
+### 4.1.2 Timeline
+
+The plot below illustrates the duration and timeline of careers without indicating any breaks; for instance, Alain Prost did not compete in 1992, and Schumacher was absent from the tracks from 2007 to 2009.
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Careers", fig.width = 6, fig.height = 3}
+career_segments
+```
+
+Some drivers enjoyed longer careers than others. For instance, Alonso, Schumacher, and Hamilton had the longest career spans, while Ascari, Clark, and Stewart had the shortest. The problem with this graph is that it does not effectively depict the dominance of any particular driver. For instance, Alonso secured his two titles in 2005 and 2006, and has continued racing since without winning any additional titles.
+
+Now, if we replace the career duration with titles, where each segment represents the years between a driver's first and last title, we obtain the following graph :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Titles", fig.width = 6, fig.height = 3}
+title_segments
+```
+
+We divided this timeline into three phases: the first phase, the early stage, extends from the beginning until the late 1960s. The second phase begins with Jackie Stewart's first title in 1969 and continues until Michael Schumacher's first title in 1994. The final phase, or modern era, starts in 1994 and continues to the present.
+
+In the plot above, each phase is marked with a vertical dashed grey line.
+
+Now, when we display the career lengths based on the year of the first title, we can observe a gradual increase over the years :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Career Start vs Career Length", fig.width = 6, fig.height = 3}
+career_lengths
+```
+
+We can notice that while Fangio was able to score 5 titles within 8 years in the 1950s, Schumacher and Hamilton scored their 7 titles in 19 and 20 years (with the latter still competing).
+
+\newpage
+
+Let's now focus on the number of wins and races per driver :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Wins vs Races", fig.width = 5.5, fig.height = 3.5}
+par(mar = c(0, 0, 0, 0))
+wins_vs_races
+```
+
+There is a noticeable upward trend in the plot, suggesting that drivers who participate in more races tend to achieve a higher number of wins. This correlation implies that experience and track time significantly contribute to success in the sport. Drivers from the 1994 to 2023 era, such as Hamilton and Vettel, are positioned in the top right quadrant, indicating both a high number of races and wins. The representation of this era in a distinct color underscores the advantages of modern technology and greater competitiveness, reflecting a notable shift in performance standards.
+
+The varying colors used to group drivers by era emphasize the differences in victory rates and opportunities for success across time. Historical drivers may have achieved fewer wins but did so in a context with fewer races and different competitive landscapes. For instance, earlier eras, represented in warmer colors, often had fewer wins despite high title counts, pointing to the unique challenges faced by those drivers. Additionally, Fernando Alonso stands out for having a considerable number of races with only two titles, highlighting that a lengthy career does not guarantee championship success. This suggests that various external factors, such as team dynamics and competitive context, play significant roles in determining outcomes.
+
+Overall, the plot illustrates that while participation in a greater number of races can lead to more wins, it does not exclusively dictate a driver's success. Factors like team performance, car technology, and the competitiveness of each era are crucial. The shifts in driver success across different decades indicate an evolution in Formula 1, influenced by changes in race formats and team strategies, as well as an expanding global audience. The color-coded groupings serve to highlight how drivers' experiences and achievements are shaped by the specific challenges and opportunities of their respective eras. This analysis provides a thorough understanding of the factors influencing driver success in Formula 1, as visualized through the plot, while also acknowledging the historical context that contributes to these differences.
+
+\newpage
+
+And now the number of titles and seasons per driver :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Titles vs Seasons", fig.width = 5.5, fig.height = 3.5}
+titles_vs_seasons
+```
+
+While the plot displays a trend where drivers with more seasons tend to win multiple titles, this is true for those who have achieved two or more titles. Notably, modern drivers such as Hamilton and Vettel, positioned in the top right quadrant, exemplify this trend, showcasing the advantage of extended careers combined with high performance. Their achievements in more recent years highlight the advancements in technology and team strategies that have influenced competitive outcomes.
+
+The color coding of the data points emphasizes differences in performance across historical eras. For instance, drivers from the 1950 to 1988 timeframe, such as Fangio and Clark, achieved multiple titles within fewer seasons, reflecting the unique challenges of their competitive environments, which often had fewer races and different dynamics compared to today. This juxtaposition illustrates how the number of titles can vary significantly based on the era in which the drivers competed.
+
+Additionally, the representation of drivers like Alonso showcases the relationship between seasons and titles, as he has spent a considerable number of seasons in the sport but has only two titles. This highlights that having a long career does not always correlate with championship victories, suggesting the impact of factors like team performance, adaptability, and the competitive landscape at any given time.
+
+Overall, the plot underscores that while participation in more seasons can lead to multiple titles, it does not guarantee success. Various factors, including team dynamics, technological advancements, and the competitive environment in different eras, play crucial roles in determining a driver's achievements. The shifts in performance across different decades indicate an evolution within Formula 1, influenced by changing race formats and an increasingly global audience. This analysis provides a comprehensive understanding of how the number of seasons impacts title success while also recognizing the historical context that shapes these outcomes.
 
 \newpage
 
@@ -536,6 +625,10 @@ This is the Exploratory Data Analysis section...
 \vspace{10pt}
 
 [4] Dataset copied to GitHub. Available at: https://github.com/jmr-lab/Formula-1 (Accessed: 2026).
+
+\vspace{10pt}
+
+[5] Flags from icons8 : https://icons8.com/icons/set/flags--style-color
 
 \vspace{10pt}
 

@@ -5,7 +5,12 @@
 #library(rsvg)
 #library(DiagrammeR)
 library(dplyr)
+library(tidyr)
 library(dm)
+library(ggplot2)
+library(ggrepel)
+library(RColorBrewer)
+library(kableExtra)
 
 # Read various data CSV files into data frames
 circuits <- as_tibble(read.csv("data/circuits.csv"))
@@ -17,6 +22,9 @@ drivers <- as_tibble(read.csv("data/drivers.csv"))
 races <- as_tibble(read.csv("data/races.csv"))
 results <- as_tibble(read.csv("data/results.csv"))
 status <- as_tibble(read.csv("data/status.csv"))
+
+# Read Countries CSV file
+countries <- as_tibble(read.csv("data/Countries.csv"))
 
 # Create a data model from the data frames
 dm_f <- dm(
@@ -144,8 +152,10 @@ constructor_results_df <- constructor_results %>% select(-status)
 constructor_standings_df <- constructor_standings %>% select(-positionText)
 constructors_df <- constructors %>% select(-url)
 
+# DriverStanding's columns
+driver_standings_df <- driver_standings %>% select(driverStandingsId, raceId, driverId, cumulPoints = points)
+
 # Driver's columns
-driver_standings_df <- driver_standings %>% select(-positionText)
 drivers_df <- drivers %>% select(-number, -url)
 
 # Not sure if the races table is really needed
@@ -173,7 +183,9 @@ formula1 <- results_df %>%
   left_join(races_df, by = "raceId") %>%
   left_join(drivers_df, by = "driverId") %>%
   left_join(constructors_df, by = "constructorId") %>%
-  left_join(status_df, by = "statusId")
+  left_join(status_df, by = "statusId") %>%
+  left_join(driver_standings_df, by = c("raceId", "driverId")) %>%
+  mutate(cumulPoints = replace_na(cumulPoints, 0))
 
 # Remove unneeded columns
 formula1 <- formula1 %>% select(-raceId, -driverId, -constructorId, -circuitId, -statusId, -driverRef, -code, -constructorRef)
@@ -203,53 +215,226 @@ formula1 <- formula1 %>%
   mutate(driverName = paste(forename, surname)) %>%
   select(-forename, -surname)
 
+# Replace demonyms or country adjectives by country names :
+formula1 <- formula1 %>%
+  mutate(driverNationality = trimws(driverNationality), 
+         constructorNationality = trimws(constructorNationality)) %>%
+  left_join(countries %>% rename(driverCountry = Country), by = c("driverNationality" = "Adjective")) %>%
+  select(-driverNationality) %>%
+  left_join(countries %>% rename(constructorCountry = Country), by = c("constructorNationality" = "Adjective")) %>%
+  select(-constructorNationality)
+
 # Print the resulting formula1 table
 print(formula1)
 formula1 %>%
-  select(resultId, grid, positionOrder, points, year, round, circuit, driverName, driverAge, constructorName) %>%
+  select(resultId, grid, positionOrder, cumulPoints, points, year, round, circuit, driverName, driverAge, constructorName) %>%
   head()
 
 #############################################################
 # 4. Exploratory Data Analysis                              #
 #############################################################
 
-formula1 %>% select(resultId, positionOrder, points, year, driverName, driverNationality, constructorName, constructorNationality)
+formula1 %>% select(resultId, positionOrder, cumulPoints, points, year, driverName, driverCountry, constructorName, constructorCountry)
 
-formula1 %>% select(points, positionOrder, year, constructorName, constructorNationality, driverName, driverNationality) %>%
-  group_by(year, driverName, driverNationality, constructorName, constructorNationality) %>%
-  summarize(total_points = sum(points, na.rm = TRUE), wins = sum(positionOrder == 1), .groups = 'drop')
+formula1 %>% select(cumulPoints, points, positionOrder, year, constructorName, constructorCountry, driverName, driverCountry) %>%
+  group_by(year, driverName, driverCountry, constructorName, constructorCountry) %>%
+  summarize(total_cumul_points = max(cumulPoints, na.rm = TRUE),
+            total_points = sum(points, na.rm = TRUE),
+            wins = sum(positionOrder == 1),
+            .groups = 'drop')
 
 # Calculate total points for each driver in winning years
 world_champions <- formula1 %>%
-  select(points, positionOrder, year, constructorName, driverName, driverNationality) %>%
-  group_by(year, driverName, driverNationality) %>%
-  summarize(total_points = sum(points, na.rm = TRUE), .groups = 'drop') %>%
+  select(cumulPoints, points, positionOrder, year, constructorName, driverName, driverCountry) %>%
+  group_by(year, driverName, driverCountry) %>%
+  summarize(total_cumul_points = max(cumulPoints, na.rm = TRUE),
+            .groups = 'drop') %>%
   group_by(year) %>%
-  filter(total_points == max(total_points)) %>%
+  filter(total_cumul_points == max(total_cumul_points) & year < 2026) %>%
   ungroup() %>%
-  select(-total_points)
+  select(-total_cumul_points)
+
+# Get the first and last year a driver won a title
+#first_year <- world_champions %>%
+#  group_by(driverName) %>%
+#  summarize(first_year = min(year), .groups = 'drop')
+#first_year
+titles_period <- world_champions %>%
+  group_by(driverName) %>%
+  summarize(title_first = min(year), title_last = max(year), .groups = 'drop')
+titles_period
 
 # Counting titles and total career points per driver
+#titles_count <- world_champions %>%
+#  group_by(driverCountry, driverName) %>%
+#  summarize(titles = n(), .groups = 'drop') %>%
+#  arrange(desc(titles))
 titles_count <- world_champions %>%
-  group_by(driverName, driverNationality) %>%
+  group_by(driverName) %>%
   summarize(titles = n(), .groups = 'drop') %>%
-  arrange(desc(titles))
+  arrange(desc(titles)) %>%
+  left_join(titles_period, by = "driverName")
 
 # Calculating total career points regardless of titles
 career <- formula1 %>%
-  group_by(driverName) %>%
+  group_by(driverCountry, driverName) %>%
   summarize(wins = sum(positionOrder == 1, na.rm = TRUE),
             races = n(),
             seasons = n_distinct(year),
             points = sum(points, na.rm = TRUE),
+            career_start = min(year),
+            career_end = max(year),
+            career_length = n_distinct(year),
             .groups = 'drop')
+
+# Replace country name by link to image
+career <- career %>%
+  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"))
 
 # Joining titles and career points data frames
 f1_summary <- titles_count %>%
-  left_join(career, by = "driverName")
+  right_join(career, by = "driverName") %>%
+  arrange(desc(titles), desc(wins)) %>%
+  mutate(titles = replace_na(titles, 0))
+
+# Add win and title ratios
+f1_summary <- f1_summary %>%
+  mutate(ratio_titles = round(titles / seasons, 3),
+         ratio_wins = round(wins / races, 3))
+
+# Rearrange columns: move driverCountry to the first position and countryImage to the last
+f1_summary <- f1_summary %>%
+  select(driverCountry, everything(), countryImage)
+
+# Round the ratio_wins column to 3 decimal places
+#f1_summary <- f1_summary %>%
+#  mutate(ratio_titles = round(ratio_titles, 3),
+#         ratio_wins = round(ratio_wins, 3))
+
+# Categorize into decades
+#f1_summary <- f1_summary %>%
+#  mutate(period_start = paste0(floor(title_first / 10) * 10, "s"))
+f1_summary <- f1_summary %>%
+  mutate(period_start = case_when(
+    title_first >= 1950 & title_first <= 1968 ~ "1950-1968",
+    title_first >= 1969 & title_first <= 1993 ~ "1969-1993",
+    title_first >= 1994 & title_first <= 2025 ~ "1994-2025",
+    TRUE ~ NA_character_
+  ))
 
 # Display the final result with titles and total career points
 print(f1_summary)
+
+# Filter f1_summary to keep drivers with 2 or more titles
+# and convert to factor :
+filtered_drivers <- f1_summary %>% 
+  filter(titles > 1) %>% 
+  arrange(career_start) %>%  # Order by first_year
+  mutate(driverName = factor(driverName, levels = driverName))
+
+# Careers
+career_segments <- ggplot(filtered_drivers, aes(y = driverName)) +
+  geom_segment(aes(x = career_start, xend = career_end, yend = driverName), 
+               size = 2, color = "royalblue") +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5), name = "Years") +
+  labs(y = "Driver Name") +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+# Display the plot
+print(career_segments)
+
+# Titles
+title_segments <- ggplot(filtered_drivers, aes(y = driverName)) +
+  geom_segment(aes(x = title_first, xend = title_last, yend = driverName), 
+               size = 2, color = "seagreen") +
+  geom_vline(xintercept = c(1968, 1993), linetype = "dashed", color = "darkgrey") +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5), name = "Years") +
+  labs(y = "Driver Name") +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+# Display the plot
+print(title_segments)
+
+# Career length
+career_data <- f1_summary %>%
+  filter(titles > 1) %>%
+  arrange(title_first) %>%  # Order by first_year
+  mutate(driverName = factor(driverName, levels = driverName)) %>%
+  select(driverName, titles, title_first, career_length)
+
+# Get the blues palette with 7 colours
+blues_palette <- brewer.pal(7, "Blues")
+
+# Define custom colours based on blues_palette
+custom_colours <- c(
+  "2" = blues_palette[3],
+  "3" = blues_palette[4],
+  "4" = blues_palette[5],
+  "5" = blues_palette[6],
+  "7" = blues_palette[7]
+)
+
+career_lengths <- ggplot(career_data, aes(x = title_first, y = career_length, color = as.factor(titles))) +
+  geom_point(size = 2) +
+  geom_vline(xintercept = c(1968, 1993), linetype = "dashed", color = "darkgrey") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linetype = "dashed", color = "darkgrey") +
+  scale_color_manual(values = custom_colours, name = "Titles") +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5), name = "Career Start") +
+  scale_y_continuous(breaks = seq(0, max(career_data$career_length, na.rm = TRUE), by = 5), 
+                     limits = c(0, NA), 
+                     name = "Career Length") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "left")
+
+# Display the plot
+print(career_lengths)
+
+# Calculate the baseline ratios wins / races and titles / seasons
+# I will use Ayrton Senna data as a baseline :
+ratio_wins_baseline <- f1_summary %>% filter(driverName == "Ayrton Senna") %>% pull(ratio_wins)
+ratio_titles_baseline <- f1_summary %>% filter(driverName == "Ayrton Senna") %>% pull(ratio_titles)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Define custom colours
+custom_colours <- c(
+  "1950-1968" = "tomato",
+  "1969-1993" = "wheat3",
+  "1994-2025" = "steelblue"
+)
+
+# Wins vs Races plot
+wins_vs_races <- f1_summary %>%
+  filter(titles > 1) %>%
+  ggplot(aes(x = races, y = wins, label = driverName)) +
+  geom_point(aes(color = period_start), size = 2) +
+  scale_color_manual(values = custom_colours, name = "Titles") +
+  geom_text_repel(size = 2) +
+  labs(x = "Races", y = "Wins") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "left") +
+  xlim(0, max(f1_summary$races, na.rm = TRUE)) +
+  ylim(0, max(f1_summary$wins, na.rm = TRUE)) +
+  geom_abline(slope = ratio_wins_baseline, intercept = 0, linetype = "dashed", color = "darkgrey")
+wins_vs_races
+
+# Titles vs Seasons plot
+titles_vs_seasons <- f1_summary %>%
+  filter(titles > 1) %>%
+  ggplot(aes(x = seasons, y = titles, label = driverName)) +
+  geom_point(aes(color = period_start), size = 2) +
+  scale_color_manual(values = custom_colours, name = "Titles") +
+  geom_text_repel(size = 2) +
+  labs(x = "Seasons", y = "Titles") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "left") +
+  xlim(0, max(f1_summary$seasons, na.rm = TRUE)) +
+  ylim(0, max(f1_summary$titles, na.rm = TRUE)) +
+  geom_abline(slope = ratio_titles_baseline, intercept = 0, linetype = "dashed", color = "darkgrey")
+titles_vs_seasons
 
 # Stop execution
 stop("Exiting the script")
@@ -266,6 +451,245 @@ stop("Exiting the script")
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+
+df <- formula1 %>% filter(driverName == "Graham Hill") %>% pull(year)
+max(df)
+#
+
+
+#
+
+
+# Categorize into decades
+f1_summary <- f1_summary %>%
+  mutate(period_start = case_when(
+    first_year >= 1950 & first_year < 1975 ~ "1950-1975",
+    first_year >= 1975 & first_year < 1994 ~ "1975-1994",
+    first_year >= 1994 & first_year < 2008 ~ "1994-2008",
+    first_year >= 2008 & first_year <= 2025 ~ "2008-2025",
+    TRUE ~ NA_character_
+  ))
+
+
+
+world_champions
+top_names <- head(f1_summary, 20) %>% select(driverName)
+
+filtered_champions <- world_champions %>% semi_join(top_names, by = "driverName")
+#
+
+
+f1_summary %>%
+  filter(titles > 1) %>%
+  mutate(driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName) ) %>%
+  select(-driverCountry, -countryImage,
+         -title_first, -title_last,
+         -career_start, -career_end,
+         winspc = ratio_wins, titlespc = ratio_titles)
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+f1_summary$driverCountry
+
+df <-formula1 %>% filter(is.na(formula1$driverCountry))
+df$driverCountry
+df$driverName
+
+drivers %>% filter(forename == "Charles" & surname == "Leclerc") %>% pull(nationality)
+drivers %>% filter(forename == "Liam" & surname == "Lawson") %>% pull(nationality)
+drivers %>% filter(forename == "Franco" & surname == "Colapinto") %>% pull(nationality)
+drivers %>% filter(forename == "Pastor" & surname == "Maldonado") %>% pull(nationality)
+drivers %>% filter(forename == "Juan" & surname == "Fangio") %>% pull(nationality)
+
+drivers %>% filter(forename == "Eliseo" & surname == "Salazar") %>% pull(nationality)
+drivers %>% filter(forename == "Rikky" & surname == "von Opel") %>% pull(nationality)
+drivers %>% filter(forename == "John" & surname == "Love") %>% pull(nationality)
+
+drivers %>% filter(forename == "Alfonso" & surname == "Thiele") %>% pull(nationality)
+drivers %>% filter(forename == "Alessandro" & surname == "de Tomaso") %>% pull(nationality)
+drivers %>% filter(forename == "Rudolf" & surname == "Krause") %>% pull(nationality)
+drivers %>% filter(forename == "Ernst" & surname == "Klodwig") %>% pull(nationality)
+drivers %>% filter(forename == "Theo" & surname == "Fitzau") %>% pull(nationality)
+
+drivers$nationality
+# Get distinct nationalities and sort them alphabetically
+distinct_nationalities <- sort(unique(drivers$nationality))
+
+# Display the result
+print(distinct_nationalities)
+
+drivers %>% filter(nationality == "American-Italian")
+drivers %>% filter(nationality == "Argentine-Italian")
+#
+
+countries <- as_tibble(read.csv("data/Countries.csv"))
+countries
+f1_summary <- f1_summary %>%
+  left_join(countries, by = "driverName")
+
+formula1$driverCountry
+sort(unique(formula1$driverCountry))
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+library(countrycode)
+# Vector of nationalities
+nationalities <- c("German", "American", "Canadian", "French")
+
+# Convert to country names
+countries <- countrycode(nationalities, "country.name", "country.name", custom_match = TRUE)
+
+# Display the results
+print(countries)
+
+
+demonym <- countryname("United States", destination = "demonym")
+print(demonym)  # Output: "American"
+
+
+
+countries <- c("United States", "Canada", "France")
+demonyms <- countryname(countries, destination = "demonym")
+print(demonyms)
+
+
+
+cldr_examples
+driver_standings
+
+drivers %>% filter(forename == "Alain" & surname == "Prost")
+drivers %>% filter(forename == "Ayrton" & surname == "Senna")
+
+driver_standings %>% filter(driverId == 117)
+
+raceListIds <- races %>% filter(year == 1989) %>% pull(raceId)
+driver_standings %>% filter(driverId == 117 & raceId%in%raceListIds)
+
+raceListIds <- races %>% filter(year == 1988) %>% pull(raceId)
+driver_standings %>% filter(driverId == 117 & raceId%in%raceListIds)
+driver_standings %>% filter(driverId == 102 & raceId%in%raceListIds)
+
+results %>% filter(driverId == 117 & raceId%in%raceListIds)
+
+results
+driver_standings
+races
+# Get the latest record per year and driverId
+latest_standing <- driver_standings %>%
+  group_by(year, driverId) %>%
+  slice_max(driverStandingsId, with_ties = FALSE) %>%  # Use driverStandingsId or raceId here
+  ungroup()
+
+# Display the result
+print(latest_standing)
+#
 
 
 
