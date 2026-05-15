@@ -224,6 +224,11 @@ formula1 <- formula1 %>%
   left_join(countries %>% rename(constructorCountry = Country), by = c("constructorNationality" = "Adjective")) %>%
   select(-constructorNationality)
 
+# Only keep data for the previous years :
+current_year <- as.numeric(format(Sys.Date(), "%Y"))
+formula1 <- formula1 %>%
+  filter(year < current_year)
+
 # Print the resulting formula1 table
 print(formula1)
 formula1 %>%
@@ -247,12 +252,12 @@ formula1 %>% select(cumulPoints, points, positionOrder, year, constructorName, c
 world_champions <- formula1 %>%
   select(cumulPoints, points, positionOrder, year, constructorName, driverName, driverCountry) %>%
   group_by(year, driverName, driverCountry) %>%
-  summarize(total_cumul_points = max(cumulPoints, na.rm = TRUE),
+  summarize(total_points = sum(points, na.rm = TRUE),
+            total_cumul_points = max(cumulPoints, na.rm = TRUE),
             .groups = 'drop') %>%
   group_by(year) %>%
   filter(total_cumul_points == max(total_cumul_points) & year < 2026) %>%
-  ungroup() %>%
-  select(-total_cumul_points)
+  ungroup()
 
 # Get the first and last year a driver won a title
 #first_year <- world_champions %>%
@@ -381,7 +386,7 @@ career_lengths <- ggplot(career_data, aes(x = title_first, y = career_length, co
   geom_vline(xintercept = c(1968, 1993), linetype = "dashed", color = "darkgrey") +
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linetype = "dashed", color = "darkgrey") +
   scale_color_manual(values = custom_colours, name = "Titles") +
-  scale_x_continuous(breaks = seq(1950, 2025, by = 5), name = "Career Start") +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5), name = "First Title") +
   scale_y_continuous(breaks = seq(0, max(career_data$career_length, na.rm = TRUE), by = 5), 
                      limits = c(0, NA), 
                      name = "Career Length") +
@@ -415,7 +420,7 @@ wins_vs_races <- f1_summary %>%
   geom_text_repel(size = 2) +
   labs(x = "Races", y = "Wins") +
   theme_minimal() +
-  theme(text = element_text(size = 9), legend.position = "left") +
+  theme(text = element_text(size = 9), legend.position = "top") +
   xlim(0, max(f1_summary$races, na.rm = TRUE)) +
   ylim(0, max(f1_summary$wins, na.rm = TRUE)) +
   geom_abline(slope = ratio_wins_baseline, intercept = 0, linetype = "dashed", color = "darkgrey")
@@ -430,11 +435,188 @@ titles_vs_seasons <- f1_summary %>%
   geom_text_repel(size = 2) +
   labs(x = "Seasons", y = "Titles") +
   theme_minimal() +
-  theme(text = element_text(size = 9), legend.position = "left") +
+  theme(text = element_text(size = 9), legend.position = "top") +
   xlim(0, max(f1_summary$seasons, na.rm = TRUE)) +
   ylim(0, max(f1_summary$titles, na.rm = TRUE)) +
   geom_abline(slope = ratio_titles_baseline, intercept = 0, linetype = "dashed", color = "darkgrey")
 titles_vs_seasons
+
+# Number of points compared to number of total points (per driver)
+
+# Number of points per race given to the winner, second, third
+# Total number of points per race
+plot_points_per_race <- formula1 %>%
+  group_by(round, year) %>%
+  summarize(total_points = sum(points, na.rm = TRUE), .groups = 'drop') %>%
+  ggplot(aes(x = interaction(round, year), y = total_points)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Round and Year",
+       y = "Total Points") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  theme_minimal()
+plot_points_per_race
+
+# Points per year
+points_per_year <- formula1 %>%
+  group_by(year, positionOrder) %>%
+  summarize(points = as.numeric(names(which.max(table(points)))), .groups = 'drop') %>%
+  mutate(points = case_when(
+    year <= 1959 & positionOrder == 1 ~ 8,
+    year <= 1959 & positionOrder == 2 ~ 6,
+    year <= 1959 & points == 1 ~ 0,
+    TRUE ~ points
+  )) %>%
+  filter(points > 0)
+plot_points_per_year <- points_per_year %>%
+  ggplot(aes(x = year, y = points, color = as.factor(positionOrder), group = positionOrder)) +
+  geom_line() +
+  geom_point(size = 1) +
+  labs(x = "Year", y = "Points", color = "Position Order") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top")
+plot_points_per_year
+
+# Ratio winner / second, second / third overtime
+percentage_diff <- points_per_year %>%
+  group_by(year) %>%
+  summarise(
+    `1-2` = (points[positionOrder == 1] - points[positionOrder == 2]) / points[positionOrder == 2] * 100,
+    `2-3` = (points[positionOrder == 2] - points[positionOrder == 3]) / points[positionOrder == 3] * 100,
+    `3-4` = (points[positionOrder == 3] - points[positionOrder == 4]) / points[positionOrder == 4] * 100,
+    `4-5` = (points[positionOrder == 4] - points[positionOrder == 5]) / points[positionOrder == 5] * 100
+  ) %>%
+  pivot_longer(
+    cols = `1-2`:`4-5`,  # Specify the columns to pivot
+    names_to = "Position_Difference", 
+    values_to = "Percentage_Difference"
+  )
+
+# Display the result
+plot_percentage_diff <- percentage_diff %>%
+  filter(Position_Difference%in%c("1-2", "2-3", "3-4")) %>%
+  ggplot(aes(x = year, y = Percentage_Difference, color = as.factor(Position_Difference), group = Position_Difference)) +
+  geom_line() +
+  geom_point(size = 1) +
+  labs(x = "Year", y = "Percentage Difference", color = "Position Difference") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top")
+plot_percentage_diff
+
+# Total number of points per year
+plot_total_points_per_year <- formula1 %>%
+  group_by(year) %>%
+  summarize(total_points = sum(points, na.rm = TRUE), .groups = 'drop') %>%
+  ggplot(aes(x = year, y = total_points)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Year", y = "Total Points") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top")
+plot_total_points_per_year
+
+# Difference between world champion
+# and driver who scored the max points :
+#head(world_champions)
+wc_revised <- formula1 %>%
+  select(cumulPoints, points, positionOrder, year, constructorName, driverName, driverCountry) %>%
+  group_by(year, driverName, driverCountry) %>%
+  summarize(total_points = sum(points, na.rm = TRUE),
+            total_cumul_points = max(cumulPoints, na.rm = TRUE),
+            .groups = 'drop') %>%
+  group_by(year) %>%
+  filter(total_points == max(total_points) & year < 2026) %>%
+  ungroup()
+
+# Merge dfA and dfB based on year
+merged_data <- world_champions %>%
+  inner_join(wc_revised, by = "year", suffix = c("_Champion", "_Best"))
+
+# Filter for rows where driverName or driverCountry differ
+differences <- merged_data %>%
+  filter(driverName_Champion != driverName_Best | driverCountry_Champion != driverCountry_Best) %>%
+  mutate(points_Champion = paste(total_points_Champion, "(", total_cumul_points_Champion, ")", sep = ""),
+         points_Best = paste(total_points_Best, "(", total_cumul_points_Best, ")", sep = ""),
+         countryImage_Champion = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry_Champion)), "-50.png"),
+         countryImage_Best = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry_Best)), "-50.png")) %>%
+  select(year,
+         countryImage_Champion,
+         driverName_Champion,
+         points_Champion,
+         countryImage_Best,
+         driverName_Best,
+         points_Best)
+
+# Display the resulting table
+differences
+
+# Calculate points, cumulPoints, and additional performance metrics 
+performance_stats <- formula1 %>%
+  #  filter(year < 1991) %>%
+  group_by(year, driverName, driverCountry) %>%
+  summarise(
+    totalPoints = sum(points, na.rm = TRUE),
+    cumulPoints = max(cumulPoints, na.rm = TRUE),
+    total_races = n(),  # Total races the driver participated in
+    wins = sum(positionOrder == 1),  # Wins
+    podiums = sum(positionOrder <= 3),  # Podiums
+    points_count = sum(points > 0)  # Points earned
+  ) %>%
+  # Retain only the world champion for each year
+  group_by(year) %>%
+  filter(cumulPoints == max(cumulPoints)) %>%
+  ungroup() %>%
+  mutate(
+    percentage_wins = (wins / total_races) * 100,
+    percentage_podiums = (podiums / total_races) * 100,
+    percentage_points = (points_count / total_races) * 100
+  )
+
+# View the result
+print(performance_stats)
+
+# Variation of percentage win over the years
+plot_percentage_wins <- ggplot(performance_stats, aes(x = year, y = percentage_wins)) +
+  geom_line(color = "grey", size = 0.7) +
+  geom_point(color = "darkgrey", size = 2) +
+  geom_smooth(method = "loess", span = 0.4, formula = y ~ x, se = TRUE, linetype = "dashed", color = "royalblue", fill = "lightgrey") +
+  geom_vline(xintercept = c(1961, 1991, 2003, 2010), linetype = "dashed", color = "black") +
+  labs(x = "Year", y = "Percentage Wins") +
+  scale_x_continuous(breaks = seq(min(performance_stats$year), 
+                                  max(performance_stats$year), 
+                                  by = 10)) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(0, 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+plot_percentage_wins
+
+# Variation of percentage podium over the years
+plot_percentage_podiums <- ggplot(performance_stats, aes(x = year, y = percentage_podiums)) +
+  geom_line(color = "grey", size = 0.7) +
+  geom_point(color = "darkgrey", size = 2) +
+  geom_smooth(method = "loess", span = 0.4, formula = y ~ x, se = TRUE, linetype = "dashed", color = "seagreen", fill = "lightgrey") +
+  geom_vline(xintercept = c(1961, 1991, 2003, 2010), linetype = "dashed", color = "black") +
+  labs(x = "Year", y = "Percentage Podiums") +
+  scale_x_continuous(breaks = seq(min(performance_stats$year), 
+                                  max(performance_stats$year), 
+                                  by = 10)) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(0, 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+plot_percentage_podiums
+
+# Variation of percentage points over the years
+plot_percentage_points <- ggplot(performance_stats, aes(x = year, y = percentage_points)) +
+  geom_line(color = "grey", size = 0.7) +
+  geom_point(color = "darkgrey", size = 2) +
+  geom_smooth(method = "loess", span = 0.4, formula = y ~ x, se = TRUE, linetype = "dashed", color = "brown", fill = "lightgrey") +
+  geom_vline(xintercept = c(1961, 1991, 2003, 2010), linetype = "dashed", color = "black") +
+  labs(x = "Year", y = "Percentage Points") +
+  scale_x_continuous(breaks = seq(min(performance_stats$year), 
+                                  max(performance_stats$year), 
+                                  by = 10)) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(0, 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+plot_percentage_points
 
 # Stop execution
 stop("Exiting the script")
@@ -445,21 +627,46 @@ stop("Exiting the script")
 
 
 
+formula1 %>%
+#  filter(year == 1964) %>%
+  filter(year == 1954) %>%
+  group_by(driverName, driverCountry) %>%
+  summarise(points = sum(points),
+            cumulPoints = max(cumulPoints)) %>%
+  arrange(-points)
+
+df <- formula1 %>%
+  filter(year < 1991) %>%
+  group_by(year, driverName, driverCountry) %>%
+  summarise(points = sum(points),
+            cumulPoints = max(cumulPoints)) %>%
+  filter(points != cumulPoints) %>%
+  arrange(-year)
+
+formula1 %>%
+  filter(year < 1991) %>%
+  group_by(year, driverName, driverCountry) %>%
+  summarise(points = sum(points),
+            cumulPoints = max(cumulPoints))
 
 
+#
 
-
-
-
-
-
-
-
-
-
-
-
-
+performance_stats %>%
+  select(year, percentage_wins, percentage_podiums) %>%
+  pivot_longer(cols = c(percentage_wins, percentage_podiums), 
+               names_to = "Metric", 
+               values_to = "Percentage") %>%
+  ggplot(aes(x = year, y = Percentage, color = Metric)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(title = "Driver Performance Metrics Over the Years",
+       x = "Year",
+       y = "Percentage",
+       color = "Metric") +
+  theme_minimal() +
+  theme(legend.position = "right")
+#
 
 
 

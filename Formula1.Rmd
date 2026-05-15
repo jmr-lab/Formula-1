@@ -571,13 +571,21 @@ Now, when we display the career lengths based on the year of the first title, we
 career_lengths
 ```
 
-We can notice that while Fangio was able to score 5 titles within 8 years in the 1950s, Schumacher and Hamilton scored their 7 titles in 19 and 20 years (with the latter still competing).
+A clear upward trend emerges, suggesting that drivers who started their careers in more recent decades tend to have longer careers. This may be attributed to various factors, including advancements in safety, improvements in car technology, and changes in race formats that allow for prolonged competition. Notable drivers in the modern era, such as Hamilton, benefit from these advancements, resulting in extended careers compared to drivers from earlier periods.
+
+We can notice that while Juan Manuel Fangio was able to secure 5 titles within 8 years in the 1950s, Michael Schumacher and Lewis Hamilton achieved their 7 titles in 19 and 20 years respectively, with Hamilton still actively competing. This illustrates how the demands and dynamics of racing have shifted over time. The differentiation of data points by title count adds another layer of insight. Drivers with more titles, represented by larger and darker-colored points, typically have career lengths that align with the observed trend. The correlation suggests that those who excel and secure multiple championships also tend to enjoy longer careers, potentially due to their consistent performance, adaptability, and resilience in the competitive environment.
+
+Conversely, while some historical drivers achieved significant success in fewer years, many of them faced different challenges, such as fewer races per season and a more hazardous racing environment. This context helps explain why earlier drivers, despite their talent, often have shorter career lengths represented in the plot.
+
+The dashed line in the graph indicates the overall trend, reinforcing the notion that career length has increased over time for Formula 1 drivers. This trend not only reflects the effects of improved safety and technology but may also point to changes in how drivers manage their careers, including fitness and approach to racing.
 
 \newpage
 
-Let's now focus on the number of wins and races per driver :
+### 4.1.3 Comparison
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Wins vs Races", fig.width = 5.5, fig.height = 3.5}
+Now, let’s compare the top drivers based on their wins and the number of races they have participated in :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Wins vs Races", fig.width = 6, fig.height = 4}
 par(mar = c(0, 0, 0, 0))
 wins_vs_races
 ```
@@ -592,7 +600,7 @@ Overall, the plot illustrates that while participation in a greater number of ra
 
 And now the number of titles and seasons per driver :
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Titles vs Seasons", fig.width = 5.5, fig.height = 3.5}
+```{r, echo=FALSE, fig.align="center", fig.cap = "Titles vs Seasons", fig.width = 6, fig.height = 4}
 titles_vs_seasons
 ```
 
@@ -603,6 +611,117 @@ The color coding of the data points emphasizes differences in performance across
 Additionally, the representation of drivers like Alonso showcases the relationship between seasons and titles, as he has spent a considerable number of seasons in the sport but has only two titles. This highlights that having a long career does not always correlate with championship victories, suggesting the impact of factors like team performance, adaptability, and the competitive landscape at any given time.
 
 Overall, the plot underscores that while participation in more seasons can lead to multiple titles, it does not guarantee success. Various factors, including team dynamics, technological advancements, and the competitive environment in different eras, play crucial roles in determining a driver's achievements. The shifts in performance across different decades indicate an evolution within Formula 1, influenced by changing race formats and an increasingly global audience. This analysis provides a comprehensive understanding of how the number of seasons impacts title success while also recognizing the historical context that shapes these outcomes.
+
+\newpage
+
+### 4.1.4 Summary
+
+[We saw that recent drivers achieved better results with time, we also saw that some drivers were able to achieve better or same results in a shorter timeframe.
+
+But this is not enough to determine if these drivers were really better than others. Would Fangio have achieved 10 titles have he run 16 seasons? What about the variation of number of races, points and rules over the seasons? And what about the car itself?]
+
+We observed that recent drivers have generally achieved better results over time, indicating a trend of improved performance in modern Formula 1. This improvement can be attributed to a variety of factors, including advancements in technology, enhanced training practices, and improved team dynamics. However, it is equally noteworthy that some drivers from earlier eras managed to achieve comparable results within a significantly shorter timeframe. This raises an important question regarding the true measure of a driver’s ability and whether career longevity directly equates to skill or success on the race track.
+
+To determine if these recent drivers are genuinely better than their predecessors, we must consider multiple dimensions of comparison. For instance, would Juan Manuel Fangio have achieved 10 titles if he had raced for 16 seasons, similar to modern drivers? Fangio, who secured his five titles in just eight years during the 1950s, faced vastly different competitive landscapes and challenges than those in contemporary racing. His remarkable success in such a brief period prompts an investigation into context: how much of his success was due to his skill versus the circumstances and limitations of his era?
+
+Additionally, the evolution of the sport itself complicates these comparisons. Over the years, Formula 1 has undergone significant changes in terms of race formats, scoring systems, and regulations. The number of races in a season has fluctuated, impacting a driver's opportunity to accumulate wins and points. In some seasons, drivers competed in fewer races, which naturally limits their chances for high totals, making it essential to contextualize statistics within the framework of their respective eras.
+
+Points systems have also varied dramatically, altering how achievements are measured. Modern scoring rewards consistency and resilience across more races, which can skew comparisons against drivers from the past, who may have excelled under a different set of rules. For instance, Fangio's era awarded fewer points for victories, but achieving those wins was often subject to harsher competition and racing conditions. 
+
+Moreover, the cars themselves represent a crucial aspect of this discussion. The technology and engineering behind F1 cars have advanced exponentially over the decades, with modern vehicles benefiting from aerodynamics, data analysis, and materials that were not available in the past. This raises another question: how much of a driver’s success is attributable to their talent and how much is due to the superior performance of the car? A skilled driver in a less competitive car might struggle when compared to a current driver operating one of today’s high-tech machines, even if the former has a proven track record of wins.
+
+Ultimately, comparing drivers across different eras poses a complex challenge. While it is tempting to label recent drivers as superior based on their successes, such determinations require a nuanced approach that considers a multitude of factors: career length, the evolution of racing rules, the technological trajectory of car design, and the competitive environment of their respective times. By acknowledging these dimensions, we gain a richer understanding of what it truly means to be "better" in the context of Formula 1, transcending mere statistics to appreciate the intricate tapestry of racing history and driver performance.
+
+\newpage
+
+## 4.2 Championship
+
+### 4.2.1 Points and Rules
+
+The evolution of points systems and rules in Formula 1 has undergone significant changes over the years, reflecting the sport's adaptability to enhance competition and viewer engagement. Understanding these modifications is crucial for properly interpreting statistics and achievements across different eras of racing.
+
+One of the most notable changes in the points system involves the method of calculating scores based on race results. In earlier years, drivers earned points for finishing in the top positions, but not all results were counted towards the championship. For instance, the introduction of the “**8 best results**” system allowed drivers to select their top performances to be counted toward their final tally. This change meant that a driver could have an off day in a few races but still remain competitive based on their standout performances. The revised approach promotes consistency and allows for some leeway, encouraging drivers to focus on achieving high results in selected races rather than simply accumulating points in every competition.
+
+In recent years, the integration of new formats such as **sprint races** has further influenced the dynamics of scoring. Sprint events, which typically take place on weekends with traditional Grand Prix races, offer additional points opportunities. This development adds an exciting layer to the race weekend, allowing drivers to earn points not just through their main races but also by performing well in shorter sprints. The introduction of these sprints has reshaped strategies, pushing teams to adapt their approaches to maximize potential points across various race formats.
+
+Another element that has gained attention is the inclusion of points awarded for the **fastest lap** during a race, further enriching the competitive landscape. By recognizing drivers who secure the fastest lap, this rule incentivizes aggressive racing strategies, compelling drivers to push their limits even when their overall position may not warrant it. This addition exemplifies how changes in rules can elevate the excitement and intensity of each race.
+
+As we compare drivers and their results over time, it is important to note that we will not consider sprint races or fastest laps in our study. Our analysis will focus solely on race results, and we will take into account all points awarded across each driver’s career. This approach allows us to maintain a more consistent basis for comparison, ensuring that our findings reflect the fundamental aspects of performance in Formula 1.
+
+The implications of these transformed points systems extend beyond mere statistics. They affect team and driver strategies, influencing how races are approached. Teams may prioritize specific races or adopt riskier tactics, knowing that achieving the fastest lap or excelling in a sprint can contribute critically to their overall standings. This fosters a more vibrant competitive environment where drivers constantly seek opportunities to maximize their returns, complicating the notion of what it means to be successful in Formula 1.
+
+Moreover, when comparing drivers across different eras, it becomes essential to contextualize their accomplishments within the frameworks established by the rules at the time. Historical figures like Juan Manuel Fangio, for example, achieved remarkable titles under a vastly different scoring system, contrasting sharply with the multifaceted approach seen today. Understanding these differences in rules and points systems allows fans and analysts to appreciate the evolution of the sport while acknowledging the unique challenges faced by drivers across generations.
+
+\newpage
+
+The plot below shows the number of points given according to the race final position :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Points per Year", fig.width = 5, fig.height = 3}
+plot_points_per_year
+```
+
+Until 1959, the scoring system for races awarded the winner 8 points, with an additional point granted for the fastest lap achieved during the race. However, in 1960, the point for the fastest lap was eliminated, and instead, the driver finishing in 6th position would receive one point. The following year, in 1961, the points awarded to the winner increased to 9, further evolving the scoring structure. By 1991, winners would receive 10 points, while other position points remained unchanged. The scoring system underwent a significant revision in 2003, when drivers other than the winner began to receive an additional 2 points. Additionally, drivers finishing in 7th and 8th positions would earn 2 points and 1 point, respectively. By 2010, the rules changed again, increasing the winner's points to 25 and extending points to the top 10 finishers.
+
+Although not depicted in this analysis, it's worth noting that in 2019, a point for the fastest lap was reintroduced. Furthermore, between 1950 and 1990, only certain race results contributed towards the championship standings, indicating fluctuations in how scoring impacted overall competitive success during that period.
+
+\newpage
+
+The plot below shows the percentage difference :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Percentage Difference", fig.width = 5, fig.height = 3}
+plot_percentage_diff
+```
+
+From 1950 until 1959, the winner received 33% more points than the second-place driver, who was awarded 50% more points than the driver finishing in third, while the third place earned 33% more points than the fourth. However, in 1960, the rules shifted so that the winner received 50% more points than the second-place driver, and this percentage increased to 66% in 1991. Starting in 2003, this difference in points began to decrease significantly, with a slight increase in 2010, resulting in the winner obtaining approximately 40% more points than the second-place finisher, who in turn received 20% more than the third, while the third place earned 25% more than the fourth.
+
+This plot illustrates how the importance of finishing position has diminished since 2003, suggesting that the risks associated with overtaking another driver may no longer justify the potential rewards. As drivers weigh the dangers of overtaking, the incentive structure of points allocation reflects a changing competitive landscape, where maintaining position may become a more strategic choice.
+
+\newpage
+
+The table below displays championships in which the driver who earned the highest total points did not win the title. This occurred because only a portion of these points were counted, allowing the second-place driver to secure the championship with a greater proportion of their retained points :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- differences %>%
+  mutate(driverName_Champion = paste0("\\includegraphics[width=0.25cm]{", countryImage_Champion, "}", " ", driverName_Champion),
+         driverName_Best = paste0("\\includegraphics[width=0.25cm]{", countryImage_Best, "}", " ", driverName_Best)) %>%
+  select(year, driverNameChampion = driverName_Champion, pointsChampion = points_Champion,
+         driverNameBest = driverName_Best, pointsBest = points_Best)
+
+# Convert the year column to character format
+df$year <- as.character(df$year)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+In the world of Formula 1 racing, championship titles are not solely determined by the total points a driver accumulates over the season. This nuance became particularly evident in dramatic cases such as those of John Surtees in 1964 and Ayrton Senna in 1988.
+
+In 1964, John Surtees clinched the World Championship with a total of 40 points, and importantly, all of these points were eligible for inclusion in the championship standings. Surtees faced stiff competition from his rival, Graham Hill, who ended the season with 41 points—just a single point ahead. However, not all of Hill's points were counted towards the championship, as only 39 points were eligible, thus causing him to lose the title to Surtees. This incident serves as a poignant reminder of the impact of point retention rules in determining the final standings, which can overshadow pure performance metrics.
+
+Fast forward to 1988, when the same theme of point retention played out yet again in a fierce rivalry between Ayrton Senna and Alain Prost. Senna finished the season with an impressive 94 points, out of which 90 points were counted towards his championship total. Conversely, Alain Prost amassed a remarkable 105 points but faced a significant setback as only 87 of these points were deemed eligible for the championship classification. This discrepancy ultimately placed Prost in second position, despite his overall higher point total.
+
+\newpage
+
+The plot below shows the total number of points given per year :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Total Points per Year", fig.width = 5, fig.height = 3}
+plot_total_points_per_year
+```
+
+In conclusion, the changes in points and rules over time significantly impact how success and performance are measured in Formula 1. The transition from early systems to contemporary practices reflects the sport's commitment to enhancing competitiveness and excitement. Analyzing these developments provides crucial context for assessing driver achievements and understanding the strategic decisions made by teams and drivers alike. The interplay between points systems, race formats, and performance metrics illustrates the complexity of the sport and highlights how Formula 1 continually evolves to captivate its audience.
+
+\newpage
+
+### 4.2.2 Races
+
+Number of races over time
+
+\newpage
+
+## 4.3 Constructors
+
+Constructor's results over time
 
 \newpage
 
