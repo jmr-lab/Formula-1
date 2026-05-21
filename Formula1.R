@@ -4,6 +4,7 @@
 
 #library(rsvg)
 #library(DiagrammeR)
+library(cowplot)
 library(dplyr)
 library(tidyr)
 library(dm)
@@ -337,6 +338,94 @@ filtered_drivers <- f1_summary %>%
   arrange(career_start) %>%  # Order by first_year
   mutate(driverName = factor(driverName, levels = driverName))
 
+# Summary table
+summary_table <- tibble(
+  # Number of seasons
+  Number_of_Seasons = formula1 %>% select(year) %>% distinct() %>% nrow(),
+  # Number of races
+  Number_of_Races = formula1 %>% select(year, round) %>% distinct() %>% nrow(),
+  # Number of drivers
+  Number_of_Drivers = formula1 %>% select(driverName) %>% distinct() %>% nrow(),
+  # Number of winners
+  Number_of_Winners = formula1 %>% filter(positionOrder == 1) %>% select(driverName) %>% distinct() %>% nrow(),
+  # Number of world champions
+  Number_of_Champions = formula1 %>%
+    group_by(year, driverName) %>%
+    summarize(points = max(cumulPoints, na.rm = TRUE), .groups = 'drop') %>%
+    group_by(year) %>%
+    filter(points == max(points)) %>%
+    ungroup() %>%
+    select(driverName) %>% distinct() %>% nrow()
+)
+
+# Modify column names to have spaces instead of underscores
+colnames(summary_table) <- gsub("_", " ", colnames(summary_table))
+
+# View the summary table
+summary_table
+
+# Create a complete list of drivers
+all_drivers <- formula1 %>%
+  distinct(driverName)
+
+# Create the list of drivers and their title counts
+driver_titles <- formula1 %>%
+  group_by(year) %>%
+  slice(which.max(cumulPoints)) %>%
+  ungroup() %>%
+  count(driverName) %>%
+  rename(titles = n)
+
+# Perform a left join to include all drivers
+driver_titles <- all_drivers %>%
+  left_join(driver_titles, by = "driverName") %>%
+  replace_na(list(titles = 0))
+driver_titles
+
+# Probability of winning another title
+summary_titles <- driver_titles %>%
+  group_by(titles) %>%
+  summarize(number_of_drivers = n(), .groups = 'drop') %>%
+  complete(titles = 1:max(titles), fill = list(number_of_drivers = 0)) %>%
+  arrange(desc(titles)) %>%
+  mutate(cumul_number_of_drivers = cumsum(number_of_drivers),
+         prob_winning = lag(cumul_number_of_drivers) / cumul_number_of_drivers)
+
+plot_titles <- ggplot(summary_titles, aes(x = titles, y = number_of_drivers)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Titles", y = "Number of Drivers") +
+  scale_x_continuous(breaks = summary_titles$titles) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+plot_titles_oneplus <- summary_titles %>%
+  filter(titles > 0) %>%
+  ggplot(aes(x = titles, y = number_of_drivers)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Titles", y = "Number of Drivers") +
+  scale_x_continuous(breaks = summary_titles$titles) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+# Plotting probability of winning a new title
+plot_prob_winning <- summary_titles %>%
+  filter(!is.na(prob_winning)) %>%
+  ggplot(aes(x = titles, y = prob_winning)) +
+  geom_line(color = "orange", size = 1) +
+  geom_point(color = "orange", size = 2) +
+  labs(x = "Titles", y = "Probability of Winning") +
+  scale_x_continuous(breaks = summary_titles$titles) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+# Plot the 3 graphs :
+plot_grid(
+  plot_titles,
+  plot_titles_oneplus,
+  plot_prob_winning,
+  ncol = 3, align = 'hv'
+)
+
 # Careers
 career_segments <- ggplot(filtered_drivers, aes(y = driverName)) +
   geom_segment(aes(x = career_start, xend = career_end, yend = driverName), 
@@ -432,7 +521,7 @@ titles_vs_seasons <- f1_summary %>%
   ggplot(aes(x = seasons, y = titles, label = driverName)) +
   geom_point(aes(color = period_start), size = 2) +
   scale_color_manual(values = custom_colours, name = "Titles") +
-  geom_text_repel(size = 2) +
+  geom_text_repel(size = 2, max.overlaps = Inf) +
   labs(x = "Seasons", y = "Titles") +
   theme_minimal() +
   theme(text = element_text(size = 9), legend.position = "top") +
@@ -455,6 +544,22 @@ plot_points_per_race <- formula1 %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   theme_minimal()
 plot_points_per_race
+
+# Races per year
+races_per_year <- formula1 %>%
+  group_by(year) %>%
+  summarize(nbraces = max(round), .groups = 'drop')
+plot_races_per_year <- races_per_year %>%
+  ggplot(aes(x = year, y = nbraces)) +
+  geom_line(color = "gray30") +
+  geom_point(color = "gray50", size = 1) +
+  geom_smooth(method = "loess", span = 0.3, formula = y ~ x, se = TRUE, color = "royalblue") +
+  labs(x = "Year", y = "Races") +
+  scale_x_continuous(breaks = seq(min(races_per_year$year), max(races_per_year$year), by = 10)) +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top")
+plot_races_per_year
 
 # Points per year
 points_per_year <- formula1 %>%
@@ -572,7 +677,7 @@ performance_stats <- formula1 %>%
 
 # View the result
 print(performance_stats)
-
+performance_stats %>% filter(year == 2025)
 # Variation of percentage win over the years
 plot_percentage_wins <- ggplot(performance_stats, aes(x = year, y = percentage_wins)) +
   geom_line(color = "grey", size = 0.7) +
@@ -587,6 +692,19 @@ plot_percentage_wins <- ggplot(performance_stats, aes(x = year, y = percentage_w
   theme_minimal() +
   theme(text = element_text(size = 9))
 plot_percentage_wins
+
+performance_stats %>%
+  arrange(-percentage_wins) %>%
+  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"),
+         driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName),
+         percentage_wins = round(percentage_wins, 1)) %>%
+  select(year,
+         driverName,
+         nbraces = total_races,
+         wins,
+         winspc = percentage_wins) %>%
+  head(20)
+
 
 # Variation of percentage podium over the years
 plot_percentage_podiums <- ggplot(performance_stats, aes(x = year, y = percentage_podiums)) +
@@ -625,7 +743,76 @@ rmarkdown::render("Formula1.Rmd")
 
 stop("Exiting the script")
 
+# Number of seasons
+formula1 %>% select(year) %>% distinct() %>% nrow()
 
+# Number of races
+formula1 %>% select(year, round) %>% distinct() %>% nrow()
+
+# Number of drivers
+formula1 %>% select(driverName) %>% distinct() %>% nrow()
+
+# Number of winners
+formula1 %>% filter(positionOrder == 1) %>% select(driverName) %>% distinct() %>% nrow()
+
+formula1 %>%
+  group_by(year, driverName) %>%
+  summarize(points = max(cumulPoints, na.rm = TRUE), .groups = 'drop') %>%
+  group_by(year) %>%
+  filter(points == max(points)) %>%
+  ungroup() %>%
+  select(driverName) %>% distinct() %>% nrow()
+
+
+# All winners
+all_winners <- formula1 %>%
+  filter(positionOrder == 1) %>%
+  select(resultId, year, grid, laps, rank, circuit, driverName, driverCountry) %>%
+  group_by(year, driverName) %>%
+  summarise(wins = n())
+all_winners
+
+# 2025 winners :
+all_winners %>%
+  filter(year == 2025)
+
+# Number of winners per year
+all_winners %>%
+  group_by(year) %>%
+  summarise(nbwinners_1 = sum(wins == 1),
+            nbwinners_2 = sum(wins == 2),
+            nbwinners_3 = sum(wins >= 3)) %>%
+  pivot_longer(cols = starts_with("nbwinners"),
+               names_to = "winner_category",
+               values_to = "count") %>%
+  mutate(winner_category = factor(winner_category, 
+                                  levels = c("nbwinners_3", "nbwinners_2", "nbwinners_1"))) %>%
+  ggplot(aes(x = year, y = count, fill = winner_category)) +
+#  geom_line() +
+#  geom_point() +
+  geom_bar(stat = "identity") +
+  labs(x = "Year", y = "Number of Winners", title = "Number of Winners Over Years by Category") +
+  theme_minimal() +
+  theme(text = element_text(size = 10), legend.position = "top")
+
+all_winners %>%
+  group_by(year) %>%
+  summarise(nbwinners = n()) %>%
+  ggplot(aes(x = year, y = nbwinners)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Year", y = "Number of Winners", title = "Number of Winners Over Years by Category") +
+  theme_minimal() +
+  theme(text = element_text(size = 10), legend.position = "top")
+
+all_winners %>%
+  group_by(year) %>%
+  summarise(nbwinners = sum(wins >= 2)) %>%
+  ggplot(aes(x = year, y = nbwinners)) +
+  geom_bar(stat = "identity", fill = "royalblue") +
+  labs(x = "Year", y = "Number of Winners") +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
 
 formula1 %>%
 #  filter(year == 1964) %>%
