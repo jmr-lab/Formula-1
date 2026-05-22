@@ -393,8 +393,9 @@ summary_titles <- driver_titles %>%
 
 plot_titles <- ggplot(summary_titles, aes(x = titles, y = number_of_drivers)) +
   geom_bar(stat = "identity", fill = "steelblue") +
-  labs(x = "Titles", y = "Number of Drivers") +
+  labs(x = "Titles", y = "Drivers") +
   scale_x_continuous(breaks = summary_titles$titles) +
+  scale_y_continuous(limits = c(0, 850), breaks = seq(0, 900, by = 100)) +
   theme_minimal() +
   theme(text = element_text(size = 9))
 
@@ -402,10 +403,98 @@ plot_titles_oneplus <- summary_titles %>%
   filter(titles > 0) %>%
   ggplot(aes(x = titles, y = number_of_drivers)) +
   geom_bar(stat = "identity", fill = "steelblue") +
-  labs(x = "Titles", y = "Number of Drivers") +
+  labs(x = "Titles", y = "Drivers") +
   scale_x_continuous(breaks = summary_titles$titles) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 10)) +
   theme_minimal() +
   theme(text = element_text(size = 9))
+
+# Create the list of drivers and their win counts
+driver_wins <- formula1 %>%
+  filter(positionOrder == 1) %>%
+  count(driverName) %>%
+  rename(wins = n)
+
+# Perform a left join to include all drivers
+driver_wins <- all_drivers %>%
+  left_join(driver_wins, by = "driverName") %>%
+  replace_na(list(wins = 0))
+driver_wins
+
+# Create a dataframe for win categories
+win_categories <- c("0+", "1+", "11+", "21+", "31+", "41+", "51+", 
+                    "61+", "71+", "81+", "91+", "101+")
+# Expand the dataset based on wins
+expanded_driver_wins <- driver_wins %>%
+  rowwise() %>%
+  mutate(win_category = list(win_categories[wins >= as.numeric(sub("\\+", "", win_categories))])) %>%
+  unnest(win_category) %>%
+  group_by(driverName, wins, win_category) %>%
+  summarise(driver_count = n(), .groups = 'drop')
+
+# Group by win_category and count the number of drivers in each category
+win_counts <- expanded_driver_wins %>%
+  group_by(win_category) %>%
+  summarise(driver_count = n()) %>%
+  arrange(factor(win_category, 
+                 levels = c("0+", "1+", "11+", "21+", "31+", "41+", 
+                            "51+", "61+", "71+", "81+", "91+", "101+")))
+
+# Display the result
+print(win_counts)
+
+# Create the bar plot using ggplot2
+ggplot(win_counts, aes(x = win_category, y = driver_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Wins", y = "Drivers") +
+  scale_x_discrete(limits = win_counts$win_category) +
+  scale_y_continuous(limits = c(0, 900), breaks = seq(0, 900, by = 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+driver_wins %>%
+  # Count drivers in each category
+  group_by(win_category) %>%
+  summarise(driver_count = n()) %>%
+  # Define levels for win_category ensuring it goes from 0 to Over 100 cumulatively
+  arrange(factor(win_category, levels = c("Over 100", "31-40", "21-30", "11-20", "1-10", "0"))) %>%
+  # Calculate cumulative count
+  mutate(cumulative_count = cumsum(driver_count))
+
+# Create a new column for win categories
+driver_wins <- driver_wins %>%
+  mutate(win_category = cut(wins,
+                            breaks = c(-1, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110),
+                            labels = c("0", "1-10", "11-20", "21-30",
+                                       "31-40", "41-50", "51-60",
+                                       "61-70", "71-80", "81-90",
+                                       "91-100", "Over 100"),
+                            include.lowest = TRUE))
+
+# Create a histogram with the wins categories
+plot_wins <- driver_wins %>%
+  ggplot(aes(x = win_category)) +
+  geom_bar(fill = "steelblue") +
+  labs(x = "Wins", y = "Drivers") +
+  scale_y_continuous(limits = c(0, 850), breaks = seq(0, 900, by = 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+plot_wins
+
+# Same histogram without the drivers who didn't win a race
+plot_wins_oneplus <- driver_wins %>%
+  filter(wins > 0) %>%
+  ggplot(aes(x = win_category)) +
+  geom_bar(fill = "steelblue") +
+  labs(x = "Wins", y = "Drivers") +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 10)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+plot_wins_oneplus
+
 
 # Plotting probability of winning a new title
 plot_prob_winning <- summary_titles %>%
@@ -418,12 +507,25 @@ plot_prob_winning <- summary_titles %>%
   theme_minimal() +
   theme(text = element_text(size = 9))
 
-# Plot the 3 graphs :
+# Plot the 2 graphs :
 plot_grid(
   plot_titles,
+  plot_wins,
+  ncol = 2, align = 'hv'
+)
+
+# Plot the 2 graphs :
+plot_grid(
   plot_titles_oneplus,
+  plot_wins_oneplus,
+  ncol = 2, align = 'hv'
+)
+
+# Plot the 2 graphs (probs) :
+plot_grid(
   plot_prob_winning,
-  ncol = 3, align = 'hv'
+  plot_prob_winning,
+  ncol = 2, align = 'hv'
 )
 
 # Careers

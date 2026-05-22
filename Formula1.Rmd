@@ -522,12 +522,24 @@ kbl(summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = 
   column_spec(1:ncol(summary_table), width = "2cm")
 ```
 
-Out of the `r summary_titles %>% filter(titles == 1) %>% pull(cumul_number_of_drivers)` world champions, `r summary_titles %>% filter(titles == 2) %>% pull(cumul_number_of_drivers)` of them won the title several times.
+Out of the `r summary_titles %>% filter(titles == 1) %>% pull(cumul_number_of_drivers)` world champions, `r summary_titles %>% filter(titles == 2) %>% pull(cumul_number_of_drivers)` of them won the title several times. The plots below show the number of drivers per title or win category :
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Number of Titles per Driver", fig.width=6, fig.height=2}
+```{r, echo=FALSE, fig.align="center", fig.cap = "Number of Titles or Wins per Driver", fig.width=6, fig.height=3}
 plot_grid(
   plot_titles,
+  plot_wins,
+  ncol = 2, align = 'hv'
+)
+```
+
+\newpage
+
+If we remove the drivers who didn't win any title or Grand Prix, we can see the distinction in the plots below :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Number of Titles or Wins per Driver (who won at least one race or title)", fig.width=6, fig.height=3}
+plot_grid(
   plot_titles_oneplus,
+  plot_wins_oneplus,
   ncol = 2, align = 'hv'
 )
 ```
