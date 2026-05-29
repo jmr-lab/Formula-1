@@ -546,15 +546,77 @@ plot_grid(
 
 The plots above show that most drivers didn't win any title. For those who won at least one, half won only one title while the other won 2 or more titles.
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Probability of Winning", fig.width=6, fig.height=2}
+Very few drivers were able to become world champion while winning less than 11 Grand prix in their whole career, and with no surprise they were all competing in the early years, the most recent title being won by Keke Rosberg in 1982, Rosberg who won 5 Grand Prix in his whole career :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- wc_low_wins %>%
+  mutate(driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName)) %>%
+  select(driverName, titles, wins, year)
+
+# Convert the year column to character format
+df$year <- as.character(df$year)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+On the other side, we also have drivers who, while winning many races (more than 10), didn't win any title. The list below shows that, unlike for the low-wins world champions, some of them were competing in the early years of the F1. Notably, Carlos Reutemann and above all, Stirling Moss won 16 Grand Prix over a career of 11 years starting in 1951 and ending in 1961. As a comparison the champion Fangio won 24 races and 5 titles at the same period (1950-1958) :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- wc_high_wins %>%
+  mutate(driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName)) %>%
+  select(driverName, wins, careerstart, careerend, careerlength)
+
+# Convert the careerstart and careerend columns to character format
+df$careerstart <- as.character(df$careerstart)
+df$careerend <- as.character(df$careerend)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+## 4.0 Winning Probability
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Probability of Winning", fig.width=6, fig.height=3}
 plot_grid(
-  plot_prob_winning,
-  plot_prob_winning,
+  plot_prob_titles,
+  plot_prob_wins,
   ncol = 2, align = 'hv'
 )
 ```
 
 The ploys above show that the probability of winning is very low for drivers who didn't win a title, and stays about 50% for the other ones. So each time a driver wins a title, he has 50% of chances to win another one. The 100% probability at 6 titles is not very accurate given the low number of drivers who won more than 5 titles (only 3 including Fangio).
+
+\newpage
+
+## 4.0 Constructors
+
+The table below shows the number of constructors involved in the championship over the years ;
+
+```{r, echo=FALSE}
+kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
+  column_spec(1:ncol(constructor_summary_table), width = "2cm")
+```
+
+And this is a list of the constructors who won the championship at least once :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- constructorSummary %>%
+  mutate(constructorName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", constructorName)) %>%
+  select(constructorName, titles, wins, points, start, end, seasons) %>%
+  filter(titles > 0)
+
+# Convert the careerstart and careerend columns to character format
+df$start <- as.character(df$start)
+df$end <- as.character(df$end)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
 
 \newpage
 

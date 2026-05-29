@@ -131,6 +131,11 @@ results %>%
   left_join(status, by = "statusId") %>%
   select(resultId, grid, positionOrder, laps, statusId, points, year, name, forename, surname, status)
 
+# Not sure why, but Alfa Romeo is marked as Swiss,
+# it should be Italian. The confusion may be due to the association
+# with the Swiss team Sauber :
+constructors %>% filter(name == "Alfa Romeo")
+
 #############################################################
 # 3. Data Transformation                                    #
 #############################################################
@@ -152,6 +157,10 @@ circuits_df <- circuits %>% select(-lat, -lng, -url)
 constructor_results_df <- constructor_results %>% select(-status)
 constructor_standings_df <- constructor_standings %>% select(-positionText)
 constructors_df <- constructors %>% select(-url)
+
+# Make Alfa Romeo an Italian constructor :
+constructors_df <- constructors_df %>%
+  mutate(nationality = ifelse(name == "Alfa Romeo", "Italian", nationality))
 
 # DriverStanding's columns
 driver_standings_df <- driver_standings %>% select(driverStandingsId, raceId, driverId, cumulPoints = points)
@@ -258,6 +267,9 @@ world_champions <- formula1 %>%
             .groups = 'drop') %>%
   group_by(year) %>%
   filter(total_cumul_points == max(total_cumul_points) & year < 2026) %>%
+  ungroup() %>%
+  group_by(driverName) %>%
+  mutate(previous_titles = row_number() - 1) %>%
   ungroup()
 
 # Get the first and last year a driver won a title
@@ -421,19 +433,44 @@ driver_wins <- all_drivers %>%
   replace_na(list(wins = 0))
 driver_wins
 
-# Create a dataframe for win categories
-win_categories <- c("0+", "1+", "11+", "21+", "31+", "41+", "51+", 
-                    "61+", "71+", "81+", "91+", "101+")
-# Expand the dataset based on wins
-expanded_driver_wins <- driver_wins %>%
+# Probability of winning another race
+summary_wins <- driver_wins %>%
+  group_by(wins) %>%
+  summarize(number_of_drivers = n(), .groups = 'drop') %>%
+  complete(wins = 1:max(wins), fill = list(number_of_drivers = 0)) %>%
+  arrange(desc(wins)) %>%
+  mutate(cumul_number_of_drivers = cumsum(number_of_drivers),
+         prob_winning = lag(cumul_number_of_drivers) / cumul_number_of_drivers)
+summary_wins
+
+# Create dataframes for title & win categories
+title_categories_oneplus <- paste0(seq(1, 7, by = 1), "+")
+title_categories <- c("0+", title_categories_oneplus)
+win_categories_oneplus <- paste0(seq(1, 101, by = 10), "+")
+win_categories <- c("0+", win_categories_oneplus)
+
+# Group by win_category and count the number of drivers in each category
+title_counts <- driver_titles %>%
+  rowwise() %>%
+  mutate(title_category = list(title_categories[titles >= as.numeric(sub("\\+", "", title_categories))])) %>%
+  unnest(title_category) %>%
+  group_by(driverName, titles, title_category) %>%
+  summarise(driver_count = n(), .groups = 'drop') %>%
+  group_by(title_category) %>%
+  summarise(driver_count = n()) %>%
+  arrange(factor(title_category, 
+                 levels = title_categories))
+
+# Display the result
+print(title_counts)
+
+# Group by win_category and count the number of drivers in each category
+win_counts <- driver_wins %>%
   rowwise() %>%
   mutate(win_category = list(win_categories[wins >= as.numeric(sub("\\+", "", win_categories))])) %>%
   unnest(win_category) %>%
   group_by(driverName, wins, win_category) %>%
-  summarise(driver_count = n(), .groups = 'drop')
-
-# Group by win_category and count the number of drivers in each category
-win_counts <- expanded_driver_wins %>%
+  summarise(driver_count = n(), .groups = 'drop') %>%
   group_by(win_category) %>%
   summarise(driver_count = n()) %>%
   arrange(factor(win_category, 
@@ -444,66 +481,76 @@ win_counts <- expanded_driver_wins %>%
 print(win_counts)
 
 # Create the bar plot using ggplot2
-ggplot(win_counts, aes(x = win_category, y = driver_count)) +
+plot_titles <- title_counts %>%
+  ggplot(aes(x = title_category, y = driver_count)) +
   geom_bar(stat = "identity", fill = "steelblue") +
-  labs(x = "Wins", y = "Drivers") +
-  scale_x_discrete(limits = win_counts$win_category) +
+  labs(x = "Titles", y = "Drivers") +
+  scale_x_discrete(limits = title_categories) +
   scale_y_continuous(limits = c(0, 900), breaks = seq(0, 900, by = 100)) +
   theme_minimal() +
   theme(text = element_text(size = 9),
         axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
-driver_wins %>%
-  # Count drivers in each category
-  group_by(win_category) %>%
-  summarise(driver_count = n()) %>%
-  # Define levels for win_category ensuring it goes from 0 to Over 100 cumulatively
-  arrange(factor(win_category, levels = c("Over 100", "31-40", "21-30", "11-20", "1-10", "0"))) %>%
-  # Calculate cumulative count
-  mutate(cumulative_count = cumsum(driver_count))
-
-# Create a new column for win categories
-driver_wins <- driver_wins %>%
-  mutate(win_category = cut(wins,
-                            breaks = c(-1, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110),
-                            labels = c("0", "1-10", "11-20", "21-30",
-                                       "31-40", "41-50", "51-60",
-                                       "61-70", "71-80", "81-90",
-                                       "91-100", "Over 100"),
-                            include.lowest = TRUE))
-
-# Create a histogram with the wins categories
-plot_wins <- driver_wins %>%
-  ggplot(aes(x = win_category)) +
-  geom_bar(fill = "steelblue") +
-  labs(x = "Wins", y = "Drivers") +
-  scale_y_continuous(limits = c(0, 850), breaks = seq(0, 900, by = 100)) +
+# Same histogram without the drivers who didn't win a race
+plot_titles_oneplus <- title_counts %>%
+  filter(title_category != "0+") %>%
+  ggplot(aes(x = title_category, y = driver_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Titles", y = "Drivers") +
+  scale_x_discrete(limits = title_categories_oneplus) +
+  scale_y_continuous(limits = c(0, 120), breaks = seq(0, 120, by = 10)) +
   theme_minimal() +
   theme(text = element_text(size = 9),
         axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-plot_wins
+
+# Create the bar plot using ggplot2
+plot_wins <- win_counts %>%
+  ggplot(aes(x = win_category, y = driver_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Wins", y = "Drivers") +
+  scale_x_discrete(limits = win_categories) +
+  scale_y_continuous(limits = c(0, 900), breaks = seq(0, 900, by = 100)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
 # Same histogram without the drivers who didn't win a race
-plot_wins_oneplus <- driver_wins %>%
-  filter(wins > 0) %>%
-  ggplot(aes(x = win_category)) +
-  geom_bar(fill = "steelblue") +
+plot_wins_oneplus <- win_counts %>%
+  filter(win_category != "0+") %>%
+  ggplot(aes(x = win_category, y = driver_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
   labs(x = "Wins", y = "Drivers") +
-  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 10)) +
+  scale_x_discrete(limits = win_categories_oneplus) +
+  scale_y_continuous(limits = c(0, 120), breaks = seq(0, 120, by = 10)) +
   theme_minimal() +
   theme(text = element_text(size = 9),
         axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-plot_wins_oneplus
-
 
 # Plotting probability of winning a new title
-plot_prob_winning <- summary_titles %>%
-  filter(!is.na(prob_winning)) %>%
+plot_prob_titles <- summary_titles %>%
+  filter(!is.na(prob_winning) & titles < 6) %>%
   ggplot(aes(x = titles, y = prob_winning)) +
   geom_line(color = "orange", size = 1) +
   geom_point(color = "orange", size = 2) +
   labs(x = "Titles", y = "Probability of Winning") +
   scale_x_continuous(breaks = summary_titles$titles) +
+  scale_y_continuous(labels = scales::percent, 
+                     breaks = seq(0, 1, by = 0.1), 
+                     limits = c(0, 1)) +
+  theme_minimal() +
+  theme(text = element_text(size = 9))
+
+# Plotting probability of winning a new race
+plot_prob_wins <- summary_wins %>%
+  filter(!is.na(prob_winning) & wins < 15) %>%
+  ggplot(aes(x = wins, y = prob_winning)) +
+  geom_line(color = "orange", size = 1) +
+  geom_point(color = "orange", size = 2) +
+  labs(x = "Wins", y = "Probability of Winning") +
+  scale_x_continuous(breaks = summary_wins$wins) +
+  scale_y_continuous(labels = scales::percent, 
+                     breaks = seq(0, 1, by = 0.1), 
+                     limits = c(0, 1)) +
   theme_minimal() +
   theme(text = element_text(size = 9))
 
@@ -523,10 +570,39 @@ plot_grid(
 
 # Plot the 2 graphs (probs) :
 plot_grid(
-  plot_prob_winning,
-  plot_prob_winning,
+  plot_prob_titles,
+  plot_prob_wins,
   ncol = 2, align = 'hv'
 )
+
+# Drivers who were able to become world champion at least once and won less than 11 GP :
+wc_low_wins <- driver_titles %>%
+  filter(titles > 0) %>%
+  inner_join(driver_wins %>% filter(wins < 11), by = "driverName") %>%
+  left_join(world_champions, by = "driverName") %>%
+  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
+  select(countryImage, driverName, titles, wins, year) %>%
+  arrange(year)
+wc_low_wins
+
+ggplot(wc_low_wins, aes(x = year, y = wins, group = driverName)) +
+  geom_point(color = "steelblue", size = 3) +
+  labs(x = "Year", y = "Number of Wins") +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 10), limits = c(1950, 2025)) +
+  scale_y_continuous(breaks = seq(0, 100, by = 5), limits = c(0, 100)) +
+  theme_minimal()
+
+# Drivers who were never able to become world champion but won at least 11 GP :
+wc_high_wins <- driver_titles %>%
+  filter(titles == 0) %>%
+  inner_join(driver_wins %>% filter(wins > 10), by = "driverName") %>%
+  left_join(f1_summary, by = "driverName") %>%
+  select(countryImage, driverName, wins = wins.x, career_start, career_end, career_length)
+
+# Remove underscores from the column names
+wc_high_wins <- wc_high_wins %>%
+  rename_with(.fn = ~ gsub("_", "", .), .cols = everything())
+wc_high_wins
 
 # Careers
 career_segments <- ggplot(filtered_drivers, aes(y = driverName)) +
@@ -807,7 +883,6 @@ performance_stats %>%
          winspc = percentage_wins) %>%
   head(20)
 
-
 # Variation of percentage podium over the years
 plot_percentage_podiums <- ggplot(performance_stats, aes(x = year, y = percentage_podiums)) +
   geom_line(color = "grey", size = 0.7) +
@@ -838,12 +913,87 @@ plot_percentage_points <- ggplot(performance_stats, aes(x = year, y = percentage
   theme(text = element_text(size = 9))
 plot_percentage_points
 
+# Constructors
+constructorResults <- formula1 %>%
+  group_by(year, constructorCountry, constructorName) %>%
+  summarise(wins = sum(positionOrder == 1, na.rm = TRUE),
+            points = sum(points),
+            .groups = 'drop') %>%
+  group_by(year) %>%
+  arrange(desc(points)) %>%
+  mutate(positionOrder = row_number(),
+         countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(constructorCountry)), "-50.png")) %>%
+  ungroup() %>%
+  arrange(year, -points)
+constructorResults
+
+constructorSummary <- constructorResults %>%
+  group_by(constructorCountry, countryImage, constructorName) %>%
+  summarise(titles = sum(positionOrder == 1, na.rm = TRUE),
+            wins = sum(wins),
+            points = sum(points),
+            start = min(year),
+            end = max(year),
+            seasons = n_distinct(year),
+            .groups = 'drop') %>%
+  arrange(-titles, -wins, -points, -seasons)
+constructorSummary
+
+constructorResults %>% filter(constructorName == "Mercedes")
+
+# Constructor Summary table
+constructor_summary_table <- tibble(
+  # Number of constructors
+  Number_of_Constructors = nrow(constructorSummary),
+  # Number of constructors who won points (at least one)
+  Number_of_Points = nrow(constructorSummary %>% filter(points > 0)),
+  # Number of constructors who won races (at least one)
+  Number_of_Wins = nrow(constructorSummary %>% filter(wins > 0)),
+  # Number of world champions
+  Number_of_Titles = nrow(constructorSummary %>% filter(titles > 0)),
+)
+
+# Modify column names to have spaces instead of underscores
+colnames(constructor_summary_table) <- gsub("_", " ", colnames(constructor_summary_table))
+
+# View the constructor summary table
+constructor_summary_table
+
+# Plot the constructorResults :
+
+
+# Probabilities of winning a race or title :
+world_champions
+
 # Stop execution
 stop("Exiting the script")
 
 rmarkdown::render("Formula1.Rmd")
 
 stop("Exiting the script")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Number of seasons
 formula1 %>% select(year) %>% distinct() %>% nrow()
