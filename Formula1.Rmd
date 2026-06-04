@@ -601,6 +601,8 @@ kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE
   column_spec(1:ncol(constructor_summary_table), width = "2cm")
 ```
 
+As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
+
 And this is a list of the constructors who won the championship at least once :
 
 ```{r, echo=FALSE}
@@ -616,6 +618,22 @@ df$end <- as.character(df$end)
 
 kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
   kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades.
+
+\newpage
+
+Now the constructors results over time. Comparison between constructors who won most points from first to second :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
+plotConstructorResults
+```
+
+And the driver results as a comparison :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
+plotDriverResults
 ```
 
 \newpage

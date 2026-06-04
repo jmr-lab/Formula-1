@@ -946,11 +946,11 @@ constructor_summary_table <- tibble(
   # Number of constructors
   Number_of_Constructors = nrow(constructorSummary),
   # Number of constructors who won points (at least one)
-  Number_of_Points = nrow(constructorSummary %>% filter(points > 0)),
+  Points = nrow(constructorSummary %>% filter(points > 0)),
   # Number of constructors who won races (at least one)
-  Number_of_Wins = nrow(constructorSummary %>% filter(wins > 0)),
+  Wins = nrow(constructorSummary %>% filter(wins > 0)),
   # Number of world champions
-  Number_of_Titles = nrow(constructorSummary %>% filter(titles > 0)),
+  Titles = nrow(constructorSummary %>% filter(titles > 0)),
 )
 
 # Modify column names to have spaces instead of underscores
@@ -960,7 +960,50 @@ colnames(constructor_summary_table) <- gsub("_", " ", colnames(constructor_summa
 constructor_summary_table
 
 # Plot the constructorResults :
+plotConstructorResults <- constructorResults %>%
+  filter(positionOrder <= 2) %>%
+  ggplot(aes(x = year, y = wins, color = factor(positionOrder))) +
+  geom_line(size = 0.5) +
+  geom_point(size = 1) +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5)) +
+  labs(x = "Year", y = "Wins") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top") +
+  scale_color_discrete(name = "Position")
+plotConstructorResults
 
+# Drivers
+driverResults <- formula1 %>%
+  group_by(year, driverCountry, driverName) %>%
+  summarise(wins = sum(positionOrder == 1, na.rm = TRUE),
+            points = sum(points),
+            .groups = 'drop') %>%
+  group_by(year) %>%
+  arrange(desc(points)) %>%
+  mutate(positionOrder = row_number(),
+         countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
+  ungroup() %>%
+  arrange(year, -points)
+driverResults
+
+# Plot the driverResults :
+plotDriverResults <- driverResults %>%
+  filter(positionOrder <= 2) %>%
+  ggplot(aes(x = year, y = wins, color = factor(positionOrder))) +
+  geom_line(size = 0.5) +
+  geom_point(size = 1) +
+  scale_x_continuous(breaks = seq(1950, 2025, by = 5)) +
+  labs(x = "Year", y = "Wins") +
+  theme_minimal() +
+  theme(text = element_text(size = 9), legend.position = "top") +
+  scale_color_discrete(name = "Position")
+plotDriverResults
+
+plot_grid(
+  plotConstructorResults,
+  plotDriverResults,
+  nrow = 2, align = 'hv'
+)
 
 # Probabilities of winning a race or title :
 world_champions
@@ -971,10 +1014,6 @@ stop("Exiting the script")
 rmarkdown::render("Formula1.Rmd")
 
 stop("Exiting the script")
-
-
-
-
 
 
 
