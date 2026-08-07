@@ -512,7 +512,9 @@ The formula1 dataset contains the following columns :
 
 # 4. Exploratory Data Analysis
 
-## 4.0 Grands Prix
+## 4.1 Drivers
+
+### 4.1.1 Grand Prix
 
 The formula 1 world championship started in 1950, and has been held since then with no interruption. As of `r current_year`, `r summary_table$"Number of Seasons"` seasons has been held, with `r format(summary_table$"Number of Races", big.mark = ",")` races where `r summary_table$"Number of Drivers"` drivers were involved. Only `r summary_table$"Number of Winners"` won a race, and `r summary_table$"Number of Champions"` won the world champion title :
 
@@ -577,7 +579,7 @@ kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.
   kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
-## 4.0 Winning Probability
+## 4.1.2 Winning Probability
 
 ```{r, echo=FALSE, fig.align="center", fig.cap = "Probability of Winning", fig.width=6, fig.height=3}
 plot_grid(
@@ -589,58 +591,7 @@ plot_grid(
 
 The ploys above show that the probability of winning is very low for drivers who didn't win a title, and stays about 50% for the other ones. So each time a driver wins a title, he has 50% of chances to win another one. The 100% probability at 6 titles is not very accurate given the low number of drivers who won more than 5 titles (only 3 including Fangio).
 
-\newpage
-
-## 4.0 Constructors
-
-The table below shows the number of constructors involved in the championship over the years ;
-
-```{r, echo=FALSE}
-kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
-  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
-  column_spec(1:ncol(constructor_summary_table), width = "2cm")
-```
-
-As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
-
-And this is a list of the constructors who won the championship at least once :
-
-```{r, echo=FALSE}
-# Format the country images for LaTeX
-df <- constructorSummary %>%
-  mutate(constructorName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", constructorName)) %>%
-  select(constructorName, titles, wins, points, start, end, seasons) %>%
-  filter(titles > 0)
-
-# Convert the careerstart and careerend columns to character format
-df$start <- as.character(df$start)
-df$end <- as.character(df$end)
-
-kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
-```
-
-Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades.
-
-\newpage
-
-Now the constructors results over time. Comparison between constructors who won most points from first to second :
-
-```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
-plotConstructorResults
-```
-
-And the driver results as a comparison :
-
-```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
-plotDriverResults
-```
-
-\newpage
-
-## 4.1 Top Drivers
-
-### 4.1.1 Names
+### 4.1.3 Top Drivers
 
 If we define the leading drivers as those with the highest number of titles, and among those who are world champions with an equal number of titles, we can use the number of wins to differentiate them. This results in the following table displaying the 17 drivers who won at least 2 titles (as of 2025) :
 
@@ -671,7 +622,7 @@ We will now see the careers and titles of these 17 drivers across the years.
 
 \newpage
 
-### 4.1.2 Timeline
+### 4.1.4 Timeline
 
 The plot below illustrates the duration and timeline of careers without indicating any breaks; for instance, Alain Prost did not compete in 1992, and Schumacher was absent from the tracks from 2007 to 2009.
 
@@ -707,7 +658,7 @@ The dashed line in the graph indicates the overall trend, reinforcing the notion
 
 \newpage
 
-### 4.1.3 Comparison
+### 4.1.5 Comparison
 
 Now, let’s compare the top drivers based on their wins and the number of races they have participated in :
 
@@ -740,7 +691,7 @@ Overall, the plot underscores that while participation in more seasons can lead 
 
 \newpage
 
-### 4.1.4 Summary
+### 4.1.6 Summary
 
 [We saw that recent drivers achieved better results with time, we also saw that some drivers were able to achieve better or same results in a shorter timeframe.
 
@@ -921,7 +872,48 @@ In conclusion, the changes in points and rules over time significantly impact ho
 
 ## 4.3 Constructors
 
-Constructor's results over time
+The table below shows the number of constructors involved in the championship over the years ;
+
+```{r, echo=FALSE}
+kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
+  column_spec(1:ncol(constructor_summary_table), width = "2cm")
+```
+
+As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
+
+And this is a list of the constructors who won the championship at least once :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- constructorSummary %>%
+  mutate(constructorName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", constructorName)) %>%
+  select(constructorName, titles, wins, points, start, end, seasons) %>%
+  filter(titles > 0)
+
+# Convert the careerstart and careerend columns to character format
+df$start <- as.character(df$start)
+df$end <- as.character(df$end)
+
+kbl(df, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades.
+
+\newpage
+
+Now the constructors results over time. Comparison between constructors who won most points from first to second :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
+plotConstructorResults
+```
+
+And the driver results as a comparison :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
+plotDriverResults
+```
 
 \newpage
 
