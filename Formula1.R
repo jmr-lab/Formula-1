@@ -1019,12 +1019,42 @@ stop("Exiting the script")
 
 
 
+world_champions %>%
+  select(driverName, driverCountry, year) %>%
+  arrange(driverName, year) %>%
+  group_by(driverName, driverCountry) %>%
+  mutate(
+    new_block = is.na(lag(year)) | (year != lag(year) + 1),
+    block_id = cumsum(new_block)
+  ) %>%
+  group_by(driverName, driverCountry, block_id) %>%
+  summarise(
+    nb_consecutive_titles = n(),
+    years = paste(year, collapse = ","),
+    .groups = "drop"
+  ) %>%
+  select(-block_id) %>%
+  filter(nb_consecutive_titles >= 2) %>%
+  arrange(desc(nb_consecutive_titles), driverName)
 
-
-
-
-
-
+constructorResults %>%
+  filter(positionOrder == 1) %>%
+  select(constructorName, constructorCountry, year) %>%
+  arrange(constructorName, year) %>%
+  group_by(constructorName, constructorCountry) %>%
+  mutate(
+    new_block = is.na(lag(year)) | (year != lag(year) + 1),
+    block_id = cumsum(new_block)
+  ) %>%
+  group_by(constructorName, constructorCountry, block_id) %>%
+  summarise(
+    nb_consecutive_titles = n(),
+    years = paste(year, collapse = ","),
+    .groups = "drop"
+  ) %>%
+  select(-block_id) %>%
+  filter(nb_consecutive_titles >= 2) %>%
+  arrange(desc(nb_consecutive_titles), constructorName)
 
 
 
