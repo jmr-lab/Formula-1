@@ -1019,7 +1019,7 @@ stop("Exiting the script")
 
 
 
-world_champions %>%
+consecutive_streaks <- world_champions %>%
   select(driverName, driverCountry, year) %>%
   arrange(driverName, year) %>%
   group_by(driverName, driverCountry) %>%
@@ -1031,11 +1031,28 @@ world_champions %>%
   summarise(
     nb_consecutive_titles = n(),
     years = paste(year, collapse = ","),
+    first_year = min(year),
     .groups = "drop"
   ) %>%
   select(-block_id) %>%
   filter(nb_consecutive_titles >= 2) %>%
   arrange(desc(nb_consecutive_titles), driverName)
+
+ggplot(consecutive_streaks, aes(x = first_year, y = nb_consecutive_titles, color = driverName)) +
+  geom_point(show.legend = FALSE, size = 3) +
+  geom_text_repel(aes(label = driverName), size = 3, show.legend = FALSE) +
+  scale_x_continuous(
+    limits = c(1950, 2025),      # Start at 1950, extend to 2025
+    breaks = seq(1950, 2025, by = 10)  # Every 10 years: 1950, 1960, 1970, ...
+  ) +
+  expand_limits(y = 0) +
+  guides(color = "none") +
+  labs(
+    title = "Consecutive World Championship Streaks",
+    x = "First year of streak",
+    y = "Number of consecutive titles"
+  ) +
+  theme_minimal()
 
 constructorResults %>%
   filter(positionOrder == 1) %>%
