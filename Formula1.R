@@ -1008,18 +1008,8 @@ plot_grid(
 # Probabilities of winning a race or title :
 world_champions
 
-# Stop execution
-stop("Exiting the script")
-
-rmarkdown::render("Formula1.Rmd")
-
-stop("Exiting the script")
-
-
-
-
-
-consecutive_streaks <- world_champions %>%
+# Consecutive streaks (drivers):
+consecutive_streaks_drivers <- world_champions %>%
   select(driverName, driverCountry, year) %>%
   arrange(driverName, year) %>%
   group_by(driverName, driverCountry) %>%
@@ -1038,7 +1028,7 @@ consecutive_streaks <- world_champions %>%
   filter(nb_consecutive_titles >= 2) %>%
   arrange(desc(nb_consecutive_titles), driverName)
 
-ggplot(consecutive_streaks, aes(x = first_year, y = nb_consecutive_titles, color = driverName)) +
+ggplot(consecutive_streaks_drivers, aes(x = first_year, y = nb_consecutive_titles, color = driverName)) +
   geom_point(show.legend = FALSE, size = 3) +
   geom_text_repel(aes(label = driverName), size = 3, show.legend = FALSE) +
   scale_x_continuous(
@@ -1048,13 +1038,14 @@ ggplot(consecutive_streaks, aes(x = first_year, y = nb_consecutive_titles, color
   expand_limits(y = 0) +
   guides(color = "none") +
   labs(
-    title = "Consecutive World Championship Streaks",
+    title = "Consecutive World Championship Streaks (Drivers)",
     x = "First year of streak",
     y = "Number of consecutive titles"
   ) +
   theme_minimal()
 
-constructorResults %>%
+# Consecutive streaks (constructors):
+consecutive_streaks_constructors <- constructorResults %>%
   filter(positionOrder == 1) %>%
   select(constructorName, constructorCountry, year) %>%
   arrange(constructorName, year) %>%
@@ -1067,11 +1058,40 @@ constructorResults %>%
   summarise(
     nb_consecutive_titles = n(),
     years = paste(year, collapse = ","),
+    first_year = min(year),
     .groups = "drop"
   ) %>%
   select(-block_id) %>%
   filter(nb_consecutive_titles >= 2) %>%
   arrange(desc(nb_consecutive_titles), constructorName)
+
+ggplot(consecutive_streaks_constructors, aes(x = first_year, y = nb_consecutive_titles, color = constructorName)) +
+  geom_point(show.legend = FALSE, size = 3) +
+  geom_text_repel(aes(label = constructorName), size = 3, show.legend = FALSE) +
+  scale_x_continuous(
+    limits = c(1950, 2025),      # Start at 1950, extend to 2025
+    breaks = seq(1950, 2025, by = 10)  # Every 10 years: 1950, 1960, 1970, ...
+  ) +
+  expand_limits(y = 0) +
+  guides(color = "none") +
+  labs(
+    title = "Consecutive World Championship Streaks (Constructors)",
+    x = "First year of streak",
+    y = "Number of consecutive titles"
+  ) +
+  theme_minimal()
+
+# Stop execution
+stop("Exiting the script")
+
+rmarkdown::render("Formula1.Rmd")
+
+stop("Exiting the script")
+
+
+
+
+
 
 
 
