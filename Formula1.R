@@ -1666,3 +1666,41 @@ results %>%
   select(resultId, positionText, positionOrder, points, year, name, forename, surname, status)
 
 
+##############################################################################
+# install.packages(c("DBI", "RMariaDB"))
+##############################################################################
+
+library(DBI)
+library(RMariaDB)
+
+con <- dbConnect(
+  RMariaDB::MariaDB(),
+  host = "relational.fel.cvut.cz",
+  port = 3306,
+  user = "guest",
+  password = "ctu-relational"
+)
+
+# Confirm the connection
+dbGetInfo(con)
+
+# List available databases and tables
+tables <- dbGetQuery(
+  con,
+  "
+  SELECT TABLE_SCHEMA, TABLE_NAME
+  FROM information_schema.TABLES
+  WHERE TABLE_SCHEMA NOT IN (
+    'information_schema',
+    'performance_schema',
+    'mysql',
+    'sys'
+  )
+  ORDER BY TABLE_SCHEMA, TABLE_NAME
+  "
+)
+
+print(tables)
+
+# Close the connection when finished
+dbDisconnect(con)
