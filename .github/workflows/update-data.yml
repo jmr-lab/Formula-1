@@ -1,8 +1,8 @@
-# .github/workflows/update-data.yml in EDA repo
+# .github/workflows/update-data.yml
 name: Update Data from ETL Pipeline
 on:
   schedule:
-    - cron: '3 0 * * 3'  # Wed 3 AM UTC
+    - cron: '3 0 * * 3'  # Wed 3 AM UTC (3 hours after ETL)
   workflow_dispatch:
 
 jobs:
@@ -15,17 +15,30 @@ jobs:
         uses: robinraju/release-downloader@v1
         with:
           repository: 'jmr-lab/f1-etl-pipeline'
-          tag: 'data-latest'            # ← Fixed tag
-          fileName: '*.db,*.csv'
+          tag: 'data-latest'
           out-file-path: 'data/raw'
       
-      - name: Move to Data Folders
+      - name: List Downloaded Files
+        run: ls -la data/raw/
+      
+      - name: Move Data Files to Correct Folders
         run: |
-          mv data/raw/*.db data/
+          mkdir -p data/processed
+          # Only move the 3 data files we care about
+          mv data/raw/f1summary.db data/
+          mv data/raw/formula1.db data/
           mv data/raw/f1summary.csv data/processed/
+          # Leave behind Source code zip/tar.gz
+      
+      - name: Verify Files
+        run: |
+          echo "=== Checking data/ ==="
+          ls -la data/
+          echo "=== Checking data/processed/ ==="
+          ls -la data/processed/
       
       - name: Commit Updated Data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'Update F1 data from ETL pipeline (${GITHUB_SHA:0:7})'
-          file_pattern: 'data/*.db data/processed/*.csv'
+          file_pattern: 'data/*.db data/processed/f1summary.csv'
