@@ -19,14 +19,12 @@ jobs:
         run: |
           echo "=== sql/ ==="
           ls -la etl-cache/sql/
-          
           echo ""
           echo "=== data/processed/ ==="
           ls -la etl-cache/data/processed/
       
       - name: Create Output Directories
-        run: |
-          mkdir -p data/processed
+        run: mkdir -p data/processed
       
       - name: Copy DB Files
         run: |
@@ -41,6 +39,7 @@ jobs:
         run: |
           echo "=== data/ ==="
           ls -la data/
+          echo ""
           echo "=== data/processed/ ==="
           ls -la data/processed/
       
