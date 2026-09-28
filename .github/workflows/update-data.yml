@@ -14,7 +14,7 @@ jobs:
       - name: Download Latest Release Assets
         uses: robinraju/release-downloader@v1
         with:
-          repository: 'your-username/f1-etl-pipeline'
+          repository: 'jmr-lab/f1-etl-pipeline'
           tag: 'data-latest'            # ← Fixed tag
           fileName: '*.db,*.csv'
           out-file-path: 'data/raw'
