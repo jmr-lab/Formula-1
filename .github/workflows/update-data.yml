@@ -14,27 +14,42 @@ jobs:
       - name: Download Latest Release Assets
         uses: robinraju/release-downloader@v1
         with:
-          repository: 'jmr-lab/f1-etl-pipeline'
+          repository: 'your-username/f1-etl-pipeline'
           tag: 'data-latest'
-          out-file-path: 'data/raw'
+          out-file-path: 'downloads'           # ← Changed from 'data/raw'
       
-      - name: List Downloaded Files
-        run: ls -la data/raw/
+      - name: DEBUG - Show All Downloaded Files
+        run: |
+          echo "=== Top-level contents ==="
+          ls -la downloads/
+          
+          echo ""
+          echo "=== All .db and .csv files recursively ==="
+          find downloads -type f \( -name "*.db" -o -name "*.csv" \)
+          
+          echo ""
+          echo "=== Full directory tree ==="
+          find downloads -type f | head -30
       
-      - name: Move Data Files to Correct Folders
+      - name: Create Output Directories
         run: |
           mkdir -p data/processed
-          # Only move the 3 data files we care about
-          mv data/raw/f1summary.db data/
-          mv data/raw/formula1.db data/
-          mv data/raw/f1summary.csv data/processed/
-          # Leave behind Source code zip/tar.gz
       
-      - name: Verify Files
+      - name: Copy Data Files (Flexible Discovery)
         run: |
-          echo "=== Checking data/ ==="
+          # Copy all .db files wherever they are
+          find downloads -name "*.db" -exec cp {} data/ \;
+          
+          # Copy f1summary.csv specifically
+          find downloads -name "f1summary.csv" -exec cp {} data/processed/ \;
+      
+      - name: Verify Downloaded Files
+        run: |
+          echo "=== data/ ==="
           ls -la data/
-          echo "=== Checking data/processed/ ==="
+          
+          echo ""
+          echo "=== data/processed/ ==="
           ls -la data/processed/
       
       - name: Commit Updated Data
