@@ -2,53 +2,45 @@
 name: Update Data from ETL Pipeline
 on:
   schedule:
-    - cron: '3 0 * * 3'  # Wed 3 AM UTC (3 hours after ETL)
+    - cron: '3 0 * * 3'  # Wed 3 AM UTC
   workflow_dispatch:
 
 jobs:
-  download-and-commit:
+  clone-and-process:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Download Latest Release Assets
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: 'jmr-lab/f1-etl-pipeline'
-          tag: 'data-latest'
-          out-file-path: 'downloads'           # ← Changed from 'data/raw'
-      
-      - name: DEBUG - Show All Downloaded Files
+      - name: Clone ETL Repo (Read-Only)
         run: |
-          echo "=== Top-level contents ==="
-          ls -la downloads/
+          git clone https://github.com/YOUR-USERNAME/f1-etl-pipeline.git --depth 1 --branch main etl-cache
+      
+      - name: DEBUG - Show Cloned Files
+        run: |
+          echo "=== sql/ ==="
+          ls -la etl-cache/sql/
           
           echo ""
-          echo "=== All .db and .csv files recursively ==="
-          find downloads -type f \( -name "*.db" -o -name "*.csv" \)
-          
-          echo ""
-          echo "=== Full directory tree ==="
-          find downloads -type f | head -30
+          echo "=== data/processed/ ==="
+          ls -la etl-cache/data/processed/
       
       - name: Create Output Directories
         run: |
           mkdir -p data/processed
       
-      - name: Copy Data Files (Flexible Discovery)
+      - name: Copy DB Files
         run: |
-          # Copy all .db files wherever they are
-          find downloads -name "*.db" -exec cp {} data/ \;
-          
-          # Copy f1summary.csv specifically
-          find downloads -name "f1summary.csv" -exec cp {} data/processed/ \;
+          cp etl-cache/sql/f1summary.db data/
+          cp etl-cache/sql/formula1.db data/
+      
+      - name: Copy CSV File
+        run: |
+          cp etl-cache/data/processed/f1summary.csv data/processed/
       
       - name: Verify Downloaded Files
         run: |
           echo "=== data/ ==="
           ls -la data/
-          
-          echo ""
           echo "=== data/processed/ ==="
           ls -la data/processed/
       
