@@ -13,7 +13,7 @@ jobs:
       
       - name: Clone ETL Repo (Read-Only)
         run: |
-          git clone https://github.com/YOUR-USERNAME/f1-etl-pipeline.git --depth 1 --branch main etl-cache
+          git clone https://github.com/jmr-lab/f1-etl-pipeline.git --depth 1 --branch main etl-cache
       
       - name: DEBUG - Show Cloned Files
         run: |
