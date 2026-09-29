@@ -38,7 +38,7 @@ The raw data originates from [Jolpica](https://jolpica.com/f1/), a community-mai
 | `status.csv` | Finishing status codes | Status categories |
 
 **Key Statistics (as of 2026):**
-- 76 seasons analyzed
+- 76 seasons analysed
 - 1,149 total races
 - 864 drivers participated
 - 115 race winners
@@ -57,7 +57,7 @@ The raw data originates from [Jolpica](https://jolpica.com/f1/), a community-mai
 | Juan Manuel Fangio | 5 | 24 | 58 | 8 | **0.414** |
 | Max Verstappen | 4 | 71 | 233 | 11 | 0.305 |
 | Sebastian Vettel | 4 | 53 | 300 | 16 | 0.177 |
-| **Alain Prost** | **4** | **51** | **202** | **13** | **0.252** |
+| Alain Prost | 4 | 51 | 202 | 13 | 0.252 |
 | Ayrton Senna | 3 | 41 | 162 | 11 | 0.253 |
 | Jackie Stewart | 3 | 27 | 100 | 9 | 0.270 |
 | Niki Lauda | 3 | 25 | 174 | 13 | 0.144 |
@@ -91,3 +91,105 @@ The raw data originates from [Jolpica](https://jolpica.com/f1/), a community-mai
 ---
 
 ## 🛠️ Methods & Pipeline
+
+Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering → EDA → ML Models
+
+### Current Stage: Exploratory Data Analysis
+- ✅ Data acquisition via ETL pipeline
+- ✅ Initial data cleaning and transformation
+- ✅ Statistical summaries by era
+- ✅ Career timeline visualizations
+- ⏳ Dataset validation and correction (in progress)
+- ⏳ Normalization across different scoring systems
+- ⏳ Machine learning models for driver evaluation
+- ⏳ Car performance adjustment factors
+
+### Tools Used
+- **R** (tidyverse, ggplot2, dplyr, tidyr)
+- **RStudio** for development and analysis
+- **Vega-Lite** for interactive visualisations
+
+*Note: The companion ETL project ([f1-etl-pipeline](https://github.com/jmr-lab/f1-etl-pipeline)) uses Python for data ingestion and transformation.*
+
+---
+
+## 📁 Repository Structure
+
+├── data/
+│
+└── raw/             # Downloaded dataset from ETL pipeline
+├── notebooks/       # Quarto (.qmd) analysis notebooks
+├── src/             # R utility functions
+├── reports/
+│
+└── f1_eda_draft.pdf # Detailed PDF report (WIP)
+└── README.md
+
+*Repository structure is currently being reorganized. Check back for updates.*
+
+---
+
+## 🗺️ Roadmap
+
+| Phase | Goal | Status |
+|-------|------|--------|
+| 1 | Data collection via ETL pipeline | ✅ Complete |
+| 2 | Data validation and correction | 🔄 In Progress |
+| 3 | Exploratory analysis | 🔄 In Progress |
+| 4 | Driver normalization model | ⏳ Planned |
+| 5 | Car performance estimation | ⏳ Planned |
+| 6 | ML-based GOAT ranking | ⏳ Planned |
+
+---
+
+## 🧪 Running the Analysis
+
+```r
+# Install required packages
+install.packages(c("tidyverse", "ggplot2", "janitor", "here"))
+
+# Load the project
+setwd("formula1-eda")
+
+# Import cleaned dataset
+data <- read_csv("data/raw/formula1_processed.csv")
+
+## 📝 Notes
+
+- **⚠️ Data Disclaimer**: The dataset currently in this repo has known issues and is being corrected. The canonical source is the [ETL pipeline](https://github.com/jmr-lab/f1-etl-pipeline).
+- **Not Final Conclusions**: This analysis aims to spark discussion rather than declare definitive rankings
+- **Context Matters**: Different eras had fundamentally different challenges (safety, competition depth, car reliability)
+- **Ongoing Work**: The PDF report (reports/f1_eda_draft.pdf) contains detailed methodology and extended analysis
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! Particularly interested in:
+- Alternative normalization methodologies
+- Additional statistical approaches
+- Peer review of the ML modeling pipeline
+- Data validation feedback (open an issue if you spot inconsistencies)
+
+---
+
+## 📚 References
+
+- [Jolpica F1 Database](https://jolpica.com/f1/)
+- [F1 ETL Pipeline (Companion Repo)](https://github.com/jmr-lab/f1-etl-pipeline)
+- [Formula 1 Stats Database](https://www.formula1.com/en/results.html)
+- Hergé, *The Calculus Affair* (1956) - Cultural reference to Fangio's legacy
+
+---
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+---
+
+> "Driving like Fangio" - A timeless standard of excellence in motorsport
+
+---
+
+*Last updated: September 2026*
