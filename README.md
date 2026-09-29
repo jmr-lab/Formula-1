@@ -118,14 +118,21 @@ Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering 
 ├── data/
 │
 └── raw/             # Downloaded dataset from ETL pipeline
-├── notebooks/       # Quarto (.qmd) analysis notebooks
 ├── src/             # R utility functions
-├── reports/
-│
-└── f1_eda_draft.pdf # Detailed PDF report (WIP)
+└── Formula1.pdf     # Detailed PDF report (WIP)
 └── README.md
 
-*Repository structure is currently being reorganized. Check back for updates.*
+├── data/
+│
+└── raw/ # Downloaded dataset from ETL pipeline
+├── src/ # R utility functions
+├── reports/
+│
+└── Formula1.pdf # Detailed PDF report (WIP)
+├── README.md
+└── requirements.txt # ETL dependencies (Python only)
+
+*Repository structure is currently being reorganised. Check back for updates.*
 
 ---
 
