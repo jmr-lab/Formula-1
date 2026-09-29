@@ -98,9 +98,9 @@ Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering 
 - ✅ Data acquisition via ETL pipeline
 - ✅ Initial data cleaning and transformation
 - ✅ Statistical summaries by era
-- ✅ Career timeline visualizations
+- ✅ Career timeline visualisations
 - ⏳ Dataset validation and correction (in progress)
-- ⏳ Normalization across different scoring systems
+- ⏳ Normalisation across different scoring systems
 - ⏳ Machine learning models for driver evaluation
 - ⏳ Car performance adjustment factors
 
@@ -136,7 +136,7 @@ Formula-1/
 | 1 | Data collection via ETL pipeline | ✅ Complete |
 | 2 | Data validation and correction | 🔄 In Progress |
 | 3 | Exploratory analysis | 🔄 In Progress |
-| 4 | Driver normalization model | ⏳ Planned |
+| 4 | Driver normalisation model | ⏳ Planned |
 | 5 | Car performance estimation | ⏳ Planned |
 | 6 | ML-based GOAT ranking | ⏳ Planned |
 
