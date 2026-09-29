@@ -115,22 +115,15 @@ Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering 
 
 ## 📁 Repository Structure
 
+```
+Formula-1/
 ├── data/
 │
 └── raw/             # Downloaded dataset from ETL pipeline
 ├── src/             # R utility functions
 └── Formula1.pdf     # Detailed PDF report (WIP)
 └── README.md
-
-├── data/
-│
-└── raw/ # Downloaded dataset from ETL pipeline
-├── src/ # R utility functions
-├── reports/
-│
-└── Formula1.pdf # Detailed PDF report (WIP)
-├── README.md
-└── requirements.txt # ETL dependencies (Python only)
+```
 
 *Repository structure is currently being reorganised. Check back for updates.*
 
