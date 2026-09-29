@@ -155,6 +155,27 @@ setwd("formula1-eda")
 data <- read_csv("data/raw/formula1_processed.csv")
 ```
 
+## 📜 Notable Findings & Historical Context
+
+During the EDA process, several unexpected findings emerged:
+
+### 🏆 Shared Wins
+I initially assumed there was exactly one winner per race throughout F1 history. However, the data reveals **3 races where 2 drivers shared a win**, resulting in joint records for that Grand Prix.
+
+### ⚖️ Disqualification Exception
+Common wisdom suggests disqualified drivers forfeit all points earned. Yet **Stirling Moss** defied this convention: during the 1959 French GP, he was disqualified but retained his **1 point for fastest lap**—making him one of the rare drivers to score points despite a DQ status.
+
+### 🥇 Lowest Win-to-Title Ratio
+Who won the championship with the fewest race victories? **Keke Rosberg** took the 1982 title after winning just **1 out of 15 races**. That's a **6.7% win ratio** while still securing the world championship. Interestingly, his lone victory came at the **1982 Swiss GP**, held at the **Dijon-Prenois circuit in France**.
+
+### 🇨🇭 Why Was the Swiss GP Held in France?
+Following the catastrophic **1955 Le Mans disaster** (83 fatalities), Switzerland imposed a ban on circuit racing that persists to this day. As a result, the **Swiss Grand Prix was hosted in France** (at Dijon-Prenois). This explains why Rosberg's "Swiss" victory was actually on French soil.
+
+### 🏎️ Mercedes' F1 Absence & Return
+Mercedes also withdrew from racing after the **1955 Le Mans disaster**, pulling out of the sport entirely until their **2010 return** as a works team. This creates a curious 56-year gap in their constructor record, yet they still rank among the most successful teams (9 titles as of 2025).
+
+---
+
 ## 📝 Notes
 
 - **⚠️ Data Disclaimer**: The dataset currently in this repo has known issues and is being corrected. The canonical source is the [ETL pipeline](https://github.com/jmr-lab/f1-etl-pipeline).
