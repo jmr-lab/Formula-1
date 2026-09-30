@@ -40,6 +40,9 @@ This project takes a mathematical approach to evaluate driver performance across
 
 **⚠️ Note: The current dataset contains known issues and is actively being fixed.** Please refer to the companion ETL project for the latest version.
 
+> [!WARNING]
+> The current dataset contains known issues and is actively being fixed. Please refer to the companion [ETL project](https://github.com/jmr-lab/f1-etl-pipeline) for the latest version.
+
 ### Data Source
 
 The raw data originates from [Jolpica](https://jolpica.com/f1/), a community-maintained F1 database. To ensure data quality and reproducibility, I've created a dedicated ETL pipeline in a companion repository:
