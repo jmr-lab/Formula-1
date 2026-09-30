@@ -120,10 +120,10 @@ Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering 
 - [x] Initial data cleaning and transformation
 - [x] Statistical summaries by era
 - [x] Career timeline visualisations
-- [~] Dataset validation and correction (in progress)
-- [-] Normalisation across different scoring systems
-- [-] Machine learning models for driver evaluation
-- [-] Car performance adjustment factors
+- [ ] Dataset validation and correction (in progress)
+- [ ] Normalisation across different scoring systems
+- [ ] Machine learning models for driver evaluation
+- [ ] Car performance adjustment factors
 
 ### Tools Used
 - **R** (tidyverse, ggplot2, dplyr, tidyr)
