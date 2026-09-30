@@ -38,8 +38,6 @@ This project takes a mathematical approach to evaluate driver performance across
 
 ## Dataset
 
-**⚠️ Note: The current dataset contains known issues and is actively being fixed.** Please refer to the companion ETL project for the latest version.
-
 > [!WARNING]
 > The current dataset contains known issues and is actively being fixed. Please refer to the companion [ETL project](https://github.com/jmr-lab/f1-etl-pipeline) for the latest version.
 
@@ -202,11 +200,12 @@ Mercedes also withdrew from racing after the **1955 Le Mans disaster**, pulling 
 
 ## Notes
 
-- **⚠️ Data Disclaimer**: The dataset currently in this repo has known issues and is being corrected. The canonical source is the [ETL pipeline](https://github.com/jmr-lab/f1-etl-pipeline).
-- **Not Final Conclusions**: This analysis aims to spark discussion rather than declare definitive rankings
-- **Context Matters**: Different eras had fundamentally different challenges (safety, competition depth, car reliability)
-- **Ongoing Work**: The PDF report (reports/Formula1.pdf) contains detailed methodology and extended analysis
-
+> [!NOTE]
+> **Preliminary conclusions** — This analysis aims to spark discussion rather than declare definitive rankings.
+>
+> **Context matters** — Different eras had fundamentally different challenges (safety, competition depth, car reliability).
+>
+> **Ongoing work** — The PDF report ([reports/Formula1.pdf](reports/Formula1.pdf)) contains detailed methodology and extended analysis.
 ---
 
 ## Contributing
