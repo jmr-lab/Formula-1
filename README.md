@@ -198,16 +198,6 @@ Mercedes also withdrew from racing after the **1955 Le Mans disaster**, pulling 
 
 ---
 
-## Notes
-
-> [!NOTE]
-> **Preliminary conclusions** — This analysis aims to spark discussion rather than declare definitive rankings.
->
-> **Context matters** — Different eras had fundamentally different challenges (safety, competition depth, car reliability).
->
-> **Ongoing work** — The PDF report ([reports/Formula1.pdf](reports/Formula1.pdf)) contains detailed methodology and extended analysis.
----
-
 ## Contributing
 
 Contributions welcome! Particularly interested in:
@@ -218,12 +208,15 @@ Contributions welcome! Particularly interested in:
 
 ---
 
-## References
+## References & Context
 
 - [Jolpica F1 Database](https://jolpica.com/f1/)
 - [F1 ETL Pipeline (Companion Repo)](https://github.com/jmr-lab/f1-etl-pipeline)
 - [Formula 1 Stats Database](https://www.formula1.com/en/results.html)
 - Hergé, *The Calculus Affair* (1956) - Cultural reference to Fangio's legacy
+
+> [!NOTE]
+> This analysis aims to spark discussion rather than declare definitive rankings. Different eras had fundamentally different challenges (safety, competition depth, car reliability). See the PDF report ([reports/Formula1.pdf](reports/Formula1.pdf)) for full methodology.
 
 ---
 
