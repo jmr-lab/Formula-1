@@ -4,6 +4,27 @@
 [![Language](https://img.shields.io/badge/language-R-red.svg)](https://www.r-project.org/)
 [![Status](https://img.shields.io/badge/status-work%20in%20progress-orange.svg)]()
 
+## Highlights
+
+- End-to-end data workflow: ingestion via a dedicated
+  [ETL pipeline](https://github.com/jmr-lab/f1-etl-pipeline) (Python),
+  analysis and modelling in **R** (tidyverse)
+- Data quality auditing: identification and correction of inconsistencies in
+  the source dataset (shared wins, disqualification edge cases, fatal-accident
+  classification)
+- Cross-era normalisation: handling 75+ years of rule changes (points systems,
+  race counts, dropped-score rules) to enable fair driver comparisons
+- Clear separation of concerns: reproducible data pipeline, documented
+  methodology, and an analytical PDF report
+
+## Sample Visualization
+
+Wins vs. races participated (top multi-champions), colour-coded by era:
+
+![F1 Wins vs Races](docs/f1_wins_vs_races.png)
+
+---
+
 ## Project Overview
 
 This repository contains an ongoing exploratory data analysis (EDA) of Formula 1 World Championship data from 1950 to present, with the ultimate goal of identifying the greatest driver of all time (GOAT) using statistical methods and machine learning.
@@ -95,14 +116,14 @@ The raw data originates from [Jolpica](https://jolpica.com/f1/), a community-mai
 Raw Data (Jolpica) → ETL Pipeline → Cleaned Dataset → Feature Engineering → EDA → ML Models
 
 ### Current Stage: Exploratory Data Analysis
-- ✅ Data acquisition via ETL pipeline
-- ✅ Initial data cleaning and transformation
-- ✅ Statistical summaries by era
-- ✅ Career timeline visualisations
-- ⏳ Dataset validation and correction (in progress)
-- ⏳ Normalisation across different scoring systems
-- ⏳ Machine learning models for driver evaluation
-- ⏳ Car performance adjustment factors
+- [x] Data acquisition via ETL pipeline
+- [x] Initial data cleaning and transformation
+- [x] Statistical summaries by era
+- [x] Career timeline visualisations
+- [~] Dataset validation and correction (in progress)
+- [-] Normalisation across different scoring systems
+- [-] Machine learning models for driver evaluation
+- [-] Car performance adjustment factors
 
 ### Tools Used
 - **R** (tidyverse, ggplot2, dplyr, tidyr)
@@ -133,12 +154,12 @@ Formula-1/
 
 | Phase | Goal | Status |
 |-------|------|--------|
-| 1 | Data collection via ETL pipeline | ✅ Complete |
-| 2 | Data validation and correction | 🔄 In Progress |
-| 3 | Exploratory analysis | 🔄 In Progress |
-| 4 | Driver normalisation model | ⏳ Planned |
-| 5 | Car performance estimation | ⏳ Planned |
-| 6 | ML-based GOAT ranking | ⏳ Planned |
+| 1 | Data collection via ETL pipeline | Complete |
+| 2 | Data validation and correction | In Progress |
+| 3 | Exploratory analysis | In Progress |
+| 4 | Driver normalisation model | Planned |
+| 5 | Car performance estimation | Planned |
+| 6 | ML-based GOAT ranking | Planned |
 
 ---
 
