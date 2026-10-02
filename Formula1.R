@@ -683,7 +683,7 @@ wins_vs_races <- f1_summary %>%
   filter(titles > 1) %>%
   ggplot(aes(x = races, y = wins, label = driverName)) +
   geom_point(aes(color = period_start), size = 2) +
-  scale_color_manual(values = custom_colours, name = "Titles") +
+  scale_color_manual(values = custom_colours, name = "Era") +
   geom_text_repel(size = 2) +
   labs(x = "Races", y = "Wins") +
   theme_minimal() +
