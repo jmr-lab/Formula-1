@@ -314,43 +314,43 @@ knitr::include_graphics("images/Entity Relationship Diagram Model.png")
 The following figure show that 14 rows in the **driver_standing** table have a position different to the positionText, with only one being "D" (which seems to be for Disqualified) :
 
 ```{r, echo=FALSE}
-ds <- as_tibble(read.csv("data/driver_standings.csv")) %>% filter(position != positionText)
+#ds <- as_tibble(read.csv("data/driver_standings.csv")) %>% filter(position != positionText)
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 The raceId 223 and driverId 30 correspond to Michael Schumacher who was disqualified after the Grand Prix of Europe in 1997 :
 
 ```{r, echo=FALSE}
-ds <- bind_cols(
-  races %>% filter(raceId == "223") %>% select(raceId, year, name),
-  drivers %>% filter(driverId == "30") %>% select(driverId, forename, surname))
+#ds <- bind_cols(
+#  races %>% filter(raceId == "223") %>% select(raceId, year, name),
+#  drivers %>% filter(driverId == "30") %>% select(driverId, forename, surname))
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 However this wasn't the only disqualification from the history of Formula 1. The table below shows 5 rows from the results table containing 151 observations related to a disqualification (statusId of 2) :
 
 ```{r, echo=FALSE}
-ds <- results %>%
-  filter(statusId == 2) %>%
-  select(-number, -time, -milliseconds, -fastestLap, -rank, -fastestLapTime, -fastestLapSpeed) %>%
-  head()
+#ds <- results %>%
+#  filter(statusId == 2) %>%
+#  select(-number, -time, -milliseconds, -fastestLap, -rank, -fastestLapTime, -fastestLapSpeed) %>%
+#  head()
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 More interestingly, the raceId 223 and driverId 30 from the results dataset don't indicate a disqualification but a collision :
 
 ```{r, echo=FALSE}
-ds <- status %>%
-  filter(statusId == results %>% filter(raceId == 223 & driverId == 30) %>% pull(statusId))
+#ds <- status %>%
+#  filter(statusId == results %>% filter(raceId == 223 & driverId == 30) %>% pull(statusId))
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 \newpage
@@ -358,15 +358,15 @@ kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
 Now if we look at fatal accidents (statusId = 104), we can only find 3 results :
 
 ```{r, echo=FALSE}
-df <- results %>%
-  filter(statusId == 104) %>%
-  left_join(races, by = "raceId") %>%
-  left_join(drivers, by = "driverId") %>%
-  left_join(status, by = "statusId") %>%
-  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
+#df <- results %>%
+#  filter(statusId == 104) %>%
+#  left_join(races, by = "raceId") %>%
+#  left_join(drivers, by = "driverId") %>%
+#  left_join(status, by = "statusId") %>%
+#  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
 
-kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 We know that more drivers died during a Formula 1 Grand Prix.
@@ -374,15 +374,15 @@ We know that more drivers died during a Formula 1 Grand Prix.
 For example Ayrton Senna's status in the 1994 San Marin GP was marked as accident (statusId = 3) :
 
 ```{r, echo=FALSE}
-df <- results %>%
-  left_join(races, by = "raceId") %>%
-  left_join(drivers, by = "driverId") %>%
-  left_join(status, by = "statusId") %>%
-  filter(forename == "Ayrton" & surname == "Senna" & year == 1994 & name == "San Marino Grand Prix") %>%
-  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
+#df <- results %>%
+#  left_join(races, by = "raceId") %>%
+#  left_join(drivers, by = "driverId") %>%
+#  left_join(status, by = "statusId") %>%
+#  filter(forename == "Ayrton" & surname == "Senna" & year == 1994 & name == "San Marino Grand Prix") %>%
+#  select(resultId, grid, positionOrder, laps, statusId, year, name, forename, surname, status)
 
-kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(df, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 Which can indicate that the fatal accidents only report drivers who died on-site during a race or qualifications.
@@ -390,10 +390,10 @@ Which can indicate that the fatal accidents only report drivers who died on-site
 The following table shows a list of statuses, only the first 12 are displayed :
 
 ```{r, echo=FALSE}
-ds <- head(status, 12)
+#ds <- head(status, 12)
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 We will only want to have the following statuses : "Finished", "Abandoned", "Lapsed" and "Disqualified". The "Lapsed" meaning the driver finished the race but with 1 or more laps behind the winner. The "Abandoned" includes all sort of mechanical problems and collisions, accidents... The "Disqualified" status is the same as "Abandoned" but the driver then didn't score any point.
@@ -401,16 +401,16 @@ We will only want to have the following statuses : "Finished", "Abandoned", "Lap
 The only exception found is Stirling Moss during the 1959 French GP who scored one point (best lap). He was disqualified during the race and kept his only point for the best lap :
 
 ```{r, echo=FALSE}
-ds <- results %>%
-  filter(points > 0) %>%
-  filter(statusId == 2) %>%
-  left_join(races, by = "raceId") %>%
-  left_join(drivers, by = "driverId") %>%
-  left_join(status, by = "statusId") %>%
-  select(resultId, points, year, name, forename, surname, status)
+#ds <- results %>%
+#  filter(points > 0) %>%
+#  filter(statusId == 2) %>%
+#  left_join(races, by = "raceId") %>%
+#  left_join(drivers, by = "driverId") %>%
+#  left_join(status, by = "statusId") %>%
+#  select(resultId, points, year, name, forename, surname, status)
 
-kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
+#kbl(ds, format = "latex", booktabs = TRUE, linesep = "") %>%
+#  kable_styling(font_size = 9, latex_options = c("hold_position"))
 ```
 
 \newpage
