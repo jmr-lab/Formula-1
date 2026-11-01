@@ -46,6 +46,110 @@ jobs:
           commit_message: "Update F1 data from ELT pipeline"
           file_pattern: 'data/*.db'
 
+  get_dashboard:
+    name: Get Dashboard
+    needs: [refresh-data]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Trigger Databricks dashboard job and export HTML
+        env:
+          DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          JOB_ID: ${{ secrets.DATABRICKS_DASHBOARD_JOB_ID }}
+        run: |
+          set -euo pipefail
+
+          HOST="${DATABRICKS_SERVER_HOSTNAME#https://}"
+          HOST="${HOST%/}"
+          DATABRICKS_HOST="https://${HOST}"
+
+          if [[ -z "${HOST}" ]]; then
+            echo "DATABRICKS_SERVER_HOSTNAME is missing."
+            exit 1
+          fi
+
+          if [[ -z "${DATABRICKS_TOKEN:-}" ]]; then
+            echo "DATABRICKS_TOKEN is missing."
+            exit 1
+          fi
+
+          if [[ -z "${JOB_ID:-}" || ! "$JOB_ID" =~ ^[0-9]+$ ]]; then
+            echo "JOB_ID is missing or is not numeric."
+            exit 1
+          fi
+
+          echo "Triggering Databricks dashboard job..."
+          payload=$(jq -n --argjson job_id "$JOB_ID" '{job_id: $job_id}')
+
+          response=$(curl --silent --show-error --fail-with-body \
+            -X POST "$DATABRICKS_HOST/api/2.2/jobs/run-now" \
+            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$payload")
+
+          run_id=$(echo "$response" | jq -er '.run_id')
+          echo "Started dashboard job run: $run_id"
+
+          # Wait up to 30 minutes for the Databricks job to finish.
+          for attempt in $(seq 1 120); do
+            run=$(curl --fail --silent --show-error --get \
+              "$DATABRICKS_HOST/api/2.2/jobs/runs/get" \
+              -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+              --data-urlencode "run_id=$run_id")
+
+            life_cycle=$(echo "$run" | jq -r '.state.life_cycle_state')
+            result=$(echo "$run" | jq -r '.state.result_state // ""')
+
+            echo "Run state: $life_cycle $result"
+
+            if [ "$life_cycle" = "TERMINATED" ]; then
+              if [ "$result" != "SUCCESS" ]; then
+                echo "Dashboard job failed."
+                echo "$run" | jq '.state'
+                exit 1
+              fi
+              break
+            fi
+
+            if [ "$life_cycle" = "INTERNAL_ERROR" ] || [ "$life_cycle" = "SKIPPED" ]; then
+              echo "Dashboard job ended in state: $life_cycle"
+              exit 1
+            fi
+
+            if [ "$attempt" -eq 120 ]; then
+              echo "Timed out waiting for the Databricks job."
+              exit 1
+            fi
+
+            sleep 15
+          done
+
+          curl --fail --silent --show-error --get \
+            "$DATABRICKS_HOST/api/2.0/jobs/runs/export" \
+            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+            --data-urlencode "run_id=$run_id" \
+            --data-urlencode "views_to_export=DASHBOARDS" \
+            -o dashboard-export.json
+
+          mkdir -p site
+          jq -er '.views[] | select(.type == "DASHBOARD") | .content' \
+            dashboard-export.json > site/index.html
+
+          test -s site/index.html
+          echo "Dashboard HTML exported to site/index.html"
+
+      - name: Upload dashboard HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-html
+          path: site/
+          if-no-files-found: error
+          retention-days: 7
+
   deploy-pages:
     runs-on: ubuntu-latest
     needs: refresh-data
@@ -72,6 +176,12 @@ jobs:
           if [ -f "pages/favicon.png" ]; then
             cp pages/favicon.png site/favicon.png
           fi
+
+      - name: Download dashboard HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: dashboard-html
+          path: site/dashboard
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
