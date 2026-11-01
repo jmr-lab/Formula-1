@@ -19,8 +19,8 @@ jobs:
       
       - name: DEBUG - Show Cloned Files
         run: |
-          echo "=== sql/ ==="
-          ls -la elt-cache/sql/
+          echo "=== dist/ ==="
+          ls -la elt-cache/dist/
           echo ""
           echo "=== data/processed/ ==="
           ls -la elt-cache/data/processed/
@@ -30,8 +30,8 @@ jobs:
       
       - name: Copy DB Files
         run: |
-          cp elt-cache/sql/jolpica.db data/
-          cp elt-cache/sql/formula1.db data/
+          cp elt-cache/dist/jolpica.db data/
+          cp elt-cache/dist/formula1.db data/
       
       - name: Verify Downloaded Files
         run: |
