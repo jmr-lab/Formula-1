@@ -1,5 +1,6 @@
 # .github/workflows/update-data.yml
 name: Refresh Pipeline
+
 on:
   schedule:
     # Daily at 16:00 UTC = 02:00 AEST / 03:00 AEDT
@@ -12,34 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Clone ELT Repo (Read-Only)
         run: |
           git clone https://github.com/jmr-lab/f1-elt-pipeline.git --depth 1 --branch main elt-cache
-      
+
       - name: DEBUG - Show Cloned Files
         run: |
-          echo "=== dist/ ==="
-          ls -la elt-cache/dist/
+          echo "=== elt-cache/ ==="
+          ls -la elt-cache/
           echo ""
-          echo "=== data/processed/ ==="
-          ls -la elt-cache/data/processed/
-      
-      - name: Create Output Directories
-        run: mkdir -p data/processed
-      
+          echo "=== elt-cache/dist/ ==="
+          ls -la elt-cache/dist/
+
       - name: Copy DB Files
         run: |
+          mkdir -p data
           cp elt-cache/dist/jolpica.db data/
           cp elt-cache/dist/formula1.db data/
-      
+
       - name: Verify Downloaded Files
         run: |
           echo "=== data/ ==="
           ls -la data/
-      
+          echo ""
+          echo "jolpica.db tables: $(sqlite3 data/jolpica.db "SELECT COUNT(*) FROM sqlite_master WHERE type='table';")"
+          echo "formula1.db tables: $(sqlite3 data/formula1.db "SELECT COUNT(*) FROM sqlite_master WHERE type='table';")"
+
       - name: Commit Updated Data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'Update F1 data from ELT pipeline (${GITHUB_SHA:0:7})'
+          commit_message: "Update F1 data from ELT pipeline"
           file_pattern: 'data/*.db'
