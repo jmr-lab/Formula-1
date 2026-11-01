@@ -1,39 +1,37 @@
 # .github/workflows/update-data.yml
-name: Update Data from ETL Pipeline
+name: Refresh Pipeline
 on:
   schedule:
-    - cron: '3 0 * * 3'  # Wed 3 AM UTC
+    # Daily at 16:00 UTC = 02:00 AEST / 03:00 AEDT
+    - cron: '0 16 * * *'
+
   workflow_dispatch:
 
 jobs:
-  clone-and-process:
+  refresh-data:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Clone ETL Repo (Read-Only)
+      - name: Clone ELT Repo (Read-Only)
         run: |
-          git clone https://github.com/jmr-lab/f1-etl-pipeline.git --depth 1 --branch main etl-cache
+          git clone https://github.com/jmr-lab/f1-elt-pipeline.git --depth 1 --branch main elt-cache
       
       - name: DEBUG - Show Cloned Files
         run: |
           echo "=== sql/ ==="
-          ls -la etl-cache/sql/
+          ls -la elt-cache/sql/
           echo ""
           echo "=== data/processed/ ==="
-          ls -la etl-cache/data/processed/
+          ls -la elt-cache/data/processed/
       
       - name: Create Output Directories
         run: mkdir -p data/processed
       
       - name: Copy DB Files
         run: |
-          cp etl-cache/sql/f1summary.db data/
-          cp etl-cache/sql/formula1.db data/
-      
-      - name: Copy CSV File
-        run: |
-          cp etl-cache/data/processed/f1summary.csv data/
+          cp elt-cache/sql/jolpica.db data/
+          cp elt-cache/sql/formula1.db data/
       
       - name: Verify Downloaded Files
         run: |
@@ -43,5 +41,5 @@ jobs:
       - name: Commit Updated Data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'Update F1 data from ETL pipeline (${GITHUB_SHA:0:7})'
-          file_pattern: 'data/*.db data/f1summary.csv'
+          commit_message: 'Update F1 data from ELT pipeline (${GITHUB_SHA:0:7})'
+          file_pattern: 'data/*.db'
