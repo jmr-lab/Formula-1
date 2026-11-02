@@ -10,6 +10,7 @@ on:
 
 jobs:
   refresh-data:
+    name: Refresh Data
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -151,6 +152,7 @@ jobs:
           retention-days: 7
 
   deploy-pages:
+    name: Deploy Pages
     runs-on: ubuntu-latest
     needs: get_dashboard
     permissions:
