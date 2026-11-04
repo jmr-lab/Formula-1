@@ -216,7 +216,7 @@ Contributions welcome! Particularly interested in:
 - Hergé, *The Calculus Affair* (1956) - Cultural reference to Fangio's legacy
 
 > [!NOTE]
-> This analysis aims to spark discussion rather than declare definitive rankings. Different eras had fundamentally different challenges (safety, competition depth, car reliability). See the PDF report ([reports/Formula1.pdf](reports/Formula1.pdf)) for full methodology.
+> This analysis aims to spark discussion rather than declare definitive rankings. Different eras had fundamentally different challenges (safety, competition depth, car reliability). See the PDF report ([reports/Formula1.pdf](report/Formula1.pdf)) for full methodology.
 
 ---
 
