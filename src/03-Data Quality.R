@@ -139,14 +139,50 @@ monaco_1956
 
 
 
+results %>% filter(year <= 1959 & !is.na(fastest_lap_rank))
+head(results)
 
 
+results %>%
+  group_by(year, circuit) %>%
+  summarise(all_ranks_na = all(is.na(fastest_lap_rank)), .groups = "drop") %>%
+  filter(all_ranks_na) %>%
+  select(year, circuit) %>%
+  filter(year <= 1959)
+results %>%
+  filter(fastest_lap_rank == 1) %>%
+  distinct(year, circuit) %>%
+  filter(year <= 1959)
 
 
+results %>%
+  filter(year >= 1950, year <= 1957, fastest_lap_rank == 1) %>%
+  select(year, circuit, forename, surname) %>%
+  arrange(year, circuit)
 
+library(rvest)
+library(dplyr)
+library(purrr)
 
+years <- 1950:2025
 
+fastest_laps <- map_dfr(years, function(y) {
+  url <- sprintf(
+    "https://gpracingstats.com/seasons/%d-world-championship/fastest-laps/",
+    y
+  )
+  
+  page <- read_html(url)
+  tables <- page |> html_table()
+  
+  # Select the table with Grand Prix, Circuit, and Driver columns
+  laps <- keep(tables, ~ all(c("Grand Prix", "Circuit", "Driver") %in% names(.x))) |>
+    pluck(1)
+  
+  mutate(laps, year = y, .before = 1)
+})
 
+fastest_laps
 
 
 # -----------------------------------------------------------------------------
