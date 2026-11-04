@@ -21,7 +21,7 @@
 
 Wins vs. races participated (top multi-champions), colour-coded by era:
 
-![F1 Wins vs Races](docs/f1_wins_vs_races.png)
+![F1 Wins vs Races](images/docs/f1_wins_vs_races.png)
 
 ---
 
