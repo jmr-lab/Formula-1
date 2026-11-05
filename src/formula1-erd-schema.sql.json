@@ -1,0 +1,574 @@
+{
+  "tables": [
+    {
+      "schema": "",
+      "table": "base_team",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "name", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "championship_adjustment",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "adjustment", "type": "INT", "nullable": true},
+        {"name": "driver_id", "type": "INT", "nullable": true},
+        {"name": "points", "type": "REAL", "nullable": true},
+        {"name": "season_id", "type": "INT", "nullable": true},
+        {"name": "team_id", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "championship_system",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "name", "type": "TEXT", "nullable": true},
+        {"name": "reference", "type": "TEXT", "nullable": true},
+        {"name": "driver_best_results", "type": "INT", "nullable": true},
+        {"name": "team_best_results", "type": "INT", "nullable": true},
+        {"name": "driver_season_split", "type": "INT", "nullable": true},
+        {"name": "team_season_split", "type": "INT", "nullable": true},
+        {"name": "team_points_per_session", "type": "INT", "nullable": true},
+        {"name": "eligibility", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "circuit",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "name", "type": "TEXT"},
+        {"name": "reference", "type": "TEXT", "nullable": true},
+        {"name": "locality", "type": "TEXT", "nullable": true},
+        {"name": "country", "type": "TEXT", "nullable": true},
+        {"name": "country_code", "type": "TEXT", "nullable": true},
+        {"name": "latitude", "type": "REAL", "nullable": true},
+        {"name": "longitude", "type": "REAL", "nullable": true},
+        {"name": "altitude", "type": "INT", "nullable": true},
+        {"name": "wikipedia", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "countries",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "country_code", "type": "TEXT"},
+        {"name": "country", "type": "TEXT"}
+      ],
+      "primaryKey": {"columns": ["id"]},
+      "uniques": [
+        {"name": "uq_countries_country_code", "columns": ["country_code"], "definition": "(country_code)"}
+      ]
+    },
+    {
+      "schema": "",
+      "table": "driver",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "reference", "type": "TEXT", "nullable": true},
+        {"name": "abbreviation", "type": "TEXT", "nullable": true},
+        {"name": "forename", "type": "TEXT", "nullable": true},
+        {"name": "surname", "type": "TEXT", "nullable": true},
+        {"name": "country_code", "type": "TEXT", "nullable": true},
+        {"name": "date_of_birth", "type": "DATE", "nullable": true},
+        {"name": "permanent_car_number", "type": "INT", "nullable": true},
+        {"name": "wikipedia", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "driver_championship",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "year", "type": "INT"},
+        {"name": "driver_id", "type": "INT"},
+        {"name": "round_id", "type": "INT", "nullable": true},
+        {"name": "position", "type": "INT", "nullable": true},
+        {"name": "points", "type": "REAL", "nullable": true},
+        {"name": "win_count", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "highest_finish", "type": "INT", "nullable": true},
+        {"name": "is_eligible", "type": "INT", "nullable": true, "default": "1"},
+        {"name": "adjustment_type", "type": "TEXT", "nullable": true},
+        {"name": "session_id", "type": "INT", "nullable": true},
+        {"name": "session_number", "type": "INT", "nullable": true},
+        {"name": "round_number", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "driver_nationality_corrections",
+      "columns": [
+        {"name": "driver_id", "type": "INT"},
+        {"name": "season_id_start", "type": "INT"},
+        {"name": "season_id_end", "type": "INT", "nullable": true},
+        {"name": "country_code", "type": "TEXT"}
+      ],
+      "primaryKey": {"name": "pk_dnc", "columns": ["driver_id", "season_id_start"]}
+    },
+    {
+      "schema": "",
+      "table": "lap",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "session_entry_id", "type": "INT"},
+        {"name": "number", "type": "INT", "nullable": true},
+        {"name": "position", "type": "INT", "nullable": true},
+        {"name": "time", "type": "TEXT", "nullable": true},
+        {"name": "average_speed", "type": "TEXT", "nullable": true},
+        {"name": "is_entry_fastest_lap", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "is_deleted", "type": "INT", "nullable": true, "default": "0"}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "penalty",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "earned_id", "type": "INT"},
+        {"name": "served_id", "type": "INT"},
+        {"name": "position", "type": "INT", "nullable": true},
+        {"name": "license_points", "type": "INT", "nullable": true},
+        {"name": "is_time_served_in_pit", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "time", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "pit_stop",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "session_entry_id", "type": "INT"},
+        {"name": "lap_id", "type": "INT", "nullable": true},
+        {"name": "number", "type": "INT", "nullable": true},
+        {"name": "duration", "type": "TEXT", "nullable": true},
+        {"name": "local_timestamp", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "points_system",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "name", "type": "TEXT", "nullable": true},
+        {"name": "reference", "type": "TEXT", "nullable": true},
+        {"name": "partial", "type": "INT", "nullable": true},
+        {"name": "driver_position_points", "type": "INT", "nullable": true},
+        {"name": "driver_fastest_lap", "type": "INT", "nullable": true},
+        {"name": "team_position_points", "type": "INT", "nullable": true},
+        {"name": "team_fastest_lap", "type": "INT", "nullable": true},
+        {"name": "shared_drive", "type": "INT", "nullable": true},
+        {"name": "is_double_points", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "round",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "circuit_id", "type": "INT", "nullable": true},
+        {"name": "number", "type": "INT", "nullable": true},
+        {"name": "race_number", "type": "INT", "nullable": true},
+        {"name": "name", "type": "TEXT", "nullable": true},
+        {"name": "date", "type": "DATE", "nullable": true},
+        {"name": "is_cancelled", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "wikipedia", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "roundentry",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "round_id", "type": "INT"},
+        {"name": "team_driver_id", "type": "INT"},
+        {"name": "car_number", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "season",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "year", "type": "INT"},
+        {"name": "championship_system_id", "type": "INT", "nullable": true},
+        {"name": "wikipedia", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]},
+      "uniques": [
+        {"name": "uq_season_year", "columns": ["year"], "definition": "(year)"}
+      ]
+    },
+    {
+      "schema": "",
+      "table": "season_driver",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "driver_id", "type": "INT"},
+        {"name": "country_id", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "season_team",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "team_id", "type": "INT"},
+        {"name": "country_id", "type": "INT", "nullable": true},
+        {"name": "name", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "session",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "round_id", "type": "INT"},
+        {"name": "type", "type": "TEXT"},
+        {"name": "number", "type": "INT", "nullable": true},
+        {"name": "timestamp", "type": "TIMESTAMP", "nullable": true},
+        {"name": "timezone", "type": "TEXT", "nullable": true},
+        {"name": "scheduled_laps", "type": "INT", "nullable": true},
+        {"name": "point_system_id", "type": "INT", "nullable": true},
+        {"name": "is_cancelled", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "has_time_data", "type": "INT", "nullable": true, "default": "0"}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "session_entry",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "session_id", "type": "INT"},
+        {"name": "round_entry_id", "type": "INT"},
+        {"name": "grid", "type": "INT", "nullable": true},
+        {"name": "position", "type": "INT", "nullable": true},
+        {"name": "points", "type": "REAL", "nullable": true},
+        {"name": "laps_completed", "type": "INT", "nullable": true},
+        {"name": "fastest_lap_rank", "type": "INT", "nullable": true},
+        {"name": "time", "type": "TEXT", "nullable": true},
+        {"name": "detail", "type": "TEXT", "nullable": true},
+        {"name": "status", "type": "TEXT", "nullable": true},
+        {"name": "is_classified", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "is_eligible_for_points", "type": "INT", "nullable": true, "default": "0"}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "team",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "name", "type": "TEXT"},
+        {"name": "reference", "type": "TEXT", "nullable": true},
+        {"name": "country_code", "type": "TEXT", "nullable": true},
+        {"name": "base_team_id", "type": "INT", "nullable": true},
+        {"name": "primary_color", "type": "TEXT", "nullable": true},
+        {"name": "wikipedia", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "team_championship",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "year", "type": "INT"},
+        {"name": "team_id", "type": "INT"},
+        {"name": "round_id", "type": "INT", "nullable": true},
+        {"name": "position", "type": "INT", "nullable": true},
+        {"name": "points", "type": "REAL", "nullable": true},
+        {"name": "win_count", "type": "INT", "nullable": true, "default": "0"},
+        {"name": "highest_finish", "type": "INT", "nullable": true},
+        {"name": "is_eligible", "type": "INT", "nullable": true, "default": "1"},
+        {"name": "adjustment_type", "type": "TEXT", "nullable": true},
+        {"name": "session_id", "type": "INT", "nullable": true},
+        {"name": "session_number", "type": "INT", "nullable": true},
+        {"name": "round_number", "type": "INT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]}
+    },
+    {
+      "schema": "",
+      "table": "team_driver",
+      "columns": [
+        {"name": "id", "type": "INTEGER"},
+        {"name": "season_id", "type": "INT"},
+        {"name": "team_id", "type": "INT"},
+        {"name": "driver_id", "type": "INT"},
+        {"name": "role", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"columns": ["id"]},
+      "uniques": [
+        {"name": "uq_team_driver", "columns": ["season_id", "team_id", "driver_id"], "definition": "(season_id, team_id, driver_id)"}
+      ]
+    },
+    {
+      "schema": "",
+      "table": "team_nationality_corrections",
+      "columns": [
+        {"name": "team_id", "type": "INT"},
+        {"name": "season_id_start", "type": "INT"},
+        {"name": "season_id_end", "type": "INT", "nullable": true},
+        {"name": "country_code", "type": "TEXT"},
+        {"name": "name", "type": "TEXT", "nullable": true}
+      ],
+      "primaryKey": {"name": "pk_tnc", "columns": ["team_id", "season_id_start"]}
+    }
+  ],
+  "relations": [
+    {
+      "name": "circuit_country_code_fk_az",
+      "src": {"table": ".circuit", "column": "country_code"},
+      "ref": {"table": ".countries", "column": "country_code"}
+    },
+    {
+      "name": "driver_country_code_fk_az",
+      "src": {"table": ".driver", "column": "country_code"},
+      "ref": {"table": ".countries", "column": "country_code"}
+    },
+    {
+      "name": "team_base_team_id_fk_az",
+      "src": {"table": ".team", "column": "base_team_id"},
+      "ref": {"table": ".base_team", "column": "id"}
+    },
+    {
+      "name": "team_country_code_fk_az",
+      "src": {"table": ".team", "column": "country_code"},
+      "ref": {"table": ".countries", "column": "country_code"}
+    },
+    {
+      "name": "season_championship_system_id_fk_az",
+      "src": {"table": ".season", "column": "championship_system_id"},
+      "ref": {"table": ".championship_system", "column": "id"}
+    },
+    {
+      "name": "round_circuit_id_fk_az",
+      "src": {"table": ".round", "column": "circuit_id"},
+      "ref": {"table": ".circuit", "column": "id"}
+    },
+    {
+      "name": "round_season_id_fk_az",
+      "src": {"table": ".round", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "session_point_system_id_fk_az",
+      "src": {"table": ".session", "column": "point_system_id"},
+      "ref": {"table": ".points_system", "column": "id"}
+    },
+    {
+      "name": "session_round_id_fk_az",
+      "src": {"table": ".session", "column": "round_id"},
+      "ref": {"table": ".round", "column": "id"}
+    },
+    {
+      "name": "team_driver_driver_id_fk_az",
+      "src": {"table": ".team_driver", "column": "driver_id"},
+      "ref": {"table": ".driver", "column": "id"}
+    },
+    {
+      "name": "team_driver_team_id_fk_az",
+      "src": {"table": ".team_driver", "column": "team_id"},
+      "ref": {"table": ".team", "column": "id"}
+    },
+    {
+      "name": "team_driver_season_id_fk_az",
+      "src": {"table": ".team_driver", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "season_driver_country_id_fk_az",
+      "src": {"table": ".season_driver", "column": "country_id"},
+      "ref": {"table": ".countries", "column": "id"}
+    },
+    {
+      "name": "season_driver_driver_id_fk_az",
+      "src": {"table": ".season_driver", "column": "driver_id"},
+      "ref": {"table": ".driver", "column": "id"}
+    },
+    {
+      "name": "season_driver_season_id_fk_az",
+      "src": {"table": ".season_driver", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "season_team_country_id_fk_az",
+      "src": {"table": ".season_team", "column": "country_id"},
+      "ref": {"table": ".countries", "column": "id"}
+    },
+    {
+      "name": "season_team_team_id_fk_az",
+      "src": {"table": ".season_team", "column": "team_id"},
+      "ref": {"table": ".team", "column": "id"}
+    },
+    {
+      "name": "season_team_season_id_fk_az",
+      "src": {"table": ".season_team", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "roundentry_team_driver_id_fk_az",
+      "src": {"table": ".roundentry", "column": "team_driver_id"},
+      "ref": {"table": ".team_driver", "column": "id"}
+    },
+    {
+      "name": "roundentry_round_id_fk_az",
+      "src": {"table": ".roundentry", "column": "round_id"},
+      "ref": {"table": ".round", "column": "id"}
+    },
+    {
+      "name": "session_entry_round_entry_id_fk_az",
+      "src": {"table": ".session_entry", "column": "round_entry_id"},
+      "ref": {"table": ".roundentry", "column": "id"}
+    },
+    {
+      "name": "session_entry_session_id_fk_az",
+      "src": {"table": ".session_entry", "column": "session_id"},
+      "ref": {"table": ".session", "column": "id"}
+    },
+    {
+      "name": "lap_session_entry_id_fk_az",
+      "src": {"table": ".lap", "column": "session_entry_id"},
+      "ref": {"table": ".session_entry", "column": "id"}
+    },
+    {
+      "name": "pit_stop_lap_id_fk_az",
+      "src": {"table": ".pit_stop", "column": "lap_id"},
+      "ref": {"table": ".lap", "column": "id"}
+    },
+    {
+      "name": "pit_stop_session_entry_id_fk_az",
+      "src": {"table": ".pit_stop", "column": "session_entry_id"},
+      "ref": {"table": ".session_entry", "column": "id"}
+    },
+    {
+      "name": "driver_championship_session_id_fk_az",
+      "src": {"table": ".driver_championship", "column": "session_id"},
+      "ref": {"table": ".session", "column": "id"}
+    },
+    {
+      "name": "driver_championship_round_id_fk_az",
+      "src": {"table": ".driver_championship", "column": "round_id"},
+      "ref": {"table": ".round", "column": "id"}
+    },
+    {
+      "name": "driver_championship_driver_id_fk_az",
+      "src": {"table": ".driver_championship", "column": "driver_id"},
+      "ref": {"table": ".driver", "column": "id"}
+    },
+    {
+      "name": "driver_championship_season_id_fk_az",
+      "src": {"table": ".driver_championship", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "team_championship_session_id_fk_az",
+      "src": {"table": ".team_championship", "column": "session_id"},
+      "ref": {"table": ".session", "column": "id"}
+    },
+    {
+      "name": "team_championship_round_id_fk_az",
+      "src": {"table": ".team_championship", "column": "round_id"},
+      "ref": {"table": ".round", "column": "id"}
+    },
+    {
+      "name": "team_championship_team_id_fk_az",
+      "src": {"table": ".team_championship", "column": "team_id"},
+      "ref": {"table": ".team", "column": "id"}
+    },
+    {
+      "name": "team_championship_season_id_fk_az",
+      "src": {"table": ".team_championship", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "championship_adjustment_team_id_fk_az",
+      "src": {"table": ".championship_adjustment", "column": "team_id"},
+      "ref": {"table": ".team", "column": "id"}
+    },
+    {
+      "name": "championship_adjustment_season_id_fk_az",
+      "src": {"table": ".championship_adjustment", "column": "season_id"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "championship_adjustment_driver_id_fk_az",
+      "src": {"table": ".championship_adjustment", "column": "driver_id"},
+      "ref": {"table": ".driver", "column": "id"}
+    },
+    {
+      "name": "driver_nationality_corrections_country_code_fk_az",
+      "src": {"table": ".driver_nationality_corrections", "column": "country_code"},
+      "ref": {"table": ".countries", "column": "country_code"}
+    },
+    {
+      "name": "driver_nationality_corrections_season_id_end_fk_az",
+      "src": {"table": ".driver_nationality_corrections", "column": "season_id_end"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "driver_nationality_corrections_season_id_start_fk_az",
+      "src": {"table": ".driver_nationality_corrections", "column": "season_id_start"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "driver_nationality_corrections_driver_id_fk_az",
+      "src": {"table": ".driver_nationality_corrections", "column": "driver_id"},
+      "ref": {"table": ".driver", "column": "id"}
+    },
+    {
+      "name": "team_nationality_corrections_country_code_fk_az",
+      "src": {"table": ".team_nationality_corrections", "column": "country_code"},
+      "ref": {"table": ".countries", "column": "country_code"}
+    },
+    {
+      "name": "team_nationality_corrections_season_id_end_fk_az",
+      "src": {"table": ".team_nationality_corrections", "column": "season_id_end"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "team_nationality_corrections_season_id_start_fk_az",
+      "src": {"table": ".team_nationality_corrections", "column": "season_id_start"},
+      "ref": {"table": ".season", "column": "id"}
+    },
+    {
+      "name": "team_nationality_corrections_team_id_fk_az",
+      "src": {"table": ".team_nationality_corrections", "column": "team_id"},
+      "ref": {"table": ".team", "column": "id"}
+    },
+    {
+      "name": "penalty_served_id_fk_az",
+      "src": {"table": ".penalty", "column": "served_id"},
+      "ref": {"table": ".session_entry", "column": "id"}
+    },
+    {
+      "name": "penalty_earned_id_fk_az",
+      "src": {"table": ".penalty", "column": "earned_id"},
+      "ref": {"table": ".session_entry", "column": "id"}
+    }
+  ]
+}
