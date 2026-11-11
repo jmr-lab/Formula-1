@@ -60,7 +60,7 @@ career <- formula1 %>%
 
 # Replace country name by link to image
 career <- career %>%
-  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"))
+  mutate(countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"))
 
 # Joining titles and career points data frames
 f1_summary <- titles_count %>%
@@ -333,7 +333,7 @@ wc_low_wins <- driver_titles %>%
   filter(titles > 0) %>%
   inner_join(driver_wins %>% filter(wins < 11), by = "driverName") %>%
   left_join(world_champions, by = "driverName") %>%
-  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
+  mutate(countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
   select(countryImage, driverName, titles, wins, year) %>%
   arrange(year)
 wc_low_wins
@@ -571,8 +571,8 @@ differences <- merged_data %>%
   filter(driverName_Champion != driverName_Best | driverCountry_Champion != driverCountry_Best) %>%
   mutate(points_Champion = paste(total_points_Champion, "(", total_cumul_points_Champion, ")", sep = ""),
          points_Best = paste(total_points_Best, "(", total_cumul_points_Best, ")", sep = ""),
-         countryImage_Champion = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry_Champion)), "-50.png"),
-         countryImage_Best = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry_Best)), "-50.png")) %>%
+         countryImage_Champion = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry_Champion)), "-50.png"),
+         countryImage_Best = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry_Best)), "-50.png")) %>%
   select(year,
          countryImage_Champion,
          driverName_Champion,
@@ -626,7 +626,7 @@ plot_percentage_wins
 
 performance_stats %>%
   arrange(-percentage_wins) %>%
-  mutate(countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"),
+  mutate(countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"),
          driverName = paste0("\\includegraphics[width=0.25cm]{", countryImage, "}", " ", driverName),
          percentage_wins = round(percentage_wins, 1)) %>%
   select(year,
@@ -675,7 +675,7 @@ constructorResults <- formula1 %>%
   group_by(year) %>%
   arrange(desc(points)) %>%
   mutate(positionOrder = row_number(),
-         countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(constructorCountry)), "-50.png")) %>%
+         countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(constructorCountry)), "-50.png")) %>%
   ungroup() %>%
   arrange(year, -points)
 constructorResults
@@ -734,7 +734,7 @@ driverResults <- formula1 %>%
   group_by(year) %>%
   arrange(desc(points)) %>%
   mutate(positionOrder = row_number(),
-         countryImage = paste0("images/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
+         countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
   ungroup() %>%
   arrange(year, -points)
 driverResults

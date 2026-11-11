@@ -1,0 +1,1168 @@
+year,#,Grand Prix,Circuit,Country,Name,Constructor
+1950,1,Britain,Silverstone,ITA,Giuseppe Farina,Alfa Romeo
+1950,2,Monaco,Monte Carlo,ARG,Juan Manuel Fangio,Alfa Romeo
+1950,3,Indianapolis 500,Indianapolis,USA,Johnnie Parsons,Kurtis Kraft-Offenhauser
+1950,4,Switzerland,Bremgarten,ITA,Giuseppe Farina,Alfa Romeo
+1950,5,Belgium,Spa-Francorchamps,ITA,Giuseppe Farina,Alfa Romeo
+1950,6,France,Reims,ARG,Juan Manuel Fangio,Alfa Romeo
+1950,7,Italy,Monza,ARG,Juan Manuel Fangio,Alfa Romeo
+1951,1,Switzerland,Bremgarten,ARG,Juan Manuel Fangio,Alfa Romeo
+1951,2,Indianapolis 500,Indianapolis,USA,Lee Wallard,Kurtis Kraft-Offenhauser
+1951,3,Belgium,Spa-Francorchamps,ARG,Juan Manuel Fangio,Alfa Romeo
+1951,4,France,Reims,ARG,Juan Manuel Fangio,Alfa Romeo
+1951,5,Britain,Silverstone,ITA,Giuseppe Farina,Alfa Romeo
+1951,6,Germany,Nurburgring,ARG,Juan Manuel Fangio,Alfa Romeo
+1951,7,Italy,Monza,ITA,Giuseppe Farina,Alfa Romeo
+1951,8,Spain,Pedralbes,ARG,Juan Manuel Fangio,Alfa Romeo
+1952,1,Switzerland,Bremgarten,ITA,Piero Taruffi,Ferrari
+1952,2,Indianapolis 500,Indianapolis,USA,Bill Vukovich,Kurtis Kraft-Offenhauser
+1952,3,Belgium,Spa-Francorchamps,ITA,Alberto Ascari,Ferrari
+1952,4,France,Rouen-les-Essarts,ITA,Alberto Ascari,Ferrari
+1952,5,Britain,Silverstone,ITA,Alberto Ascari,Ferrari
+1952,6,Germany,Nurburgring,ITA,Alberto Ascari,Ferrari
+1952,7,Netherlands,Zandvoort,ITA,Alberto Ascari,Ferrari
+1952,8,Italy,Monza,ITA,Alberto Ascari,Ferrari
+1952,8,Italy,Monza,ARG,Jose Froilan Gonzalez,Maserati
+1953,1,Argentina,Buenos Aires,ITA,Alberto Ascari,Ferrari
+1953,2,Indianapolis 500,Indianapolis,USA,Bill Vukovich,Kurtis Kraft-Offenhauser
+1953,3,Netherlands,Zandvoort,ITA,Luigi Villoresi,Ferrari
+1953,4,Belgium,Spa-Francorchamps,ARG,Jose Froilan Gonzalez,Maserati
+1953,5,France,Reims,ARG,Juan Manuel Fangio,Maserati
+1953,6,Britain,Silverstone,ITA,Alberto Ascari,Ferrari
+1953,6,Britain,Silverstone,ARG,Jose Froilan Gonzalez,Maserati
+1953,7,Germany,Nurburgring,ITA,Alberto Ascari,Ferrari
+1953,8,Switzerland,Bremgarten,ITA,Alberto Ascari,Ferrari
+1953,9,Italy,Monza,ARG,Juan Manuel Fangio,Maserati
+1954,1,Argentina,Buenos Aires,ARG,Jose Froilan Gonzalez,Ferrari
+1954,2,Indianapolis 500,Indianapolis,USA,Jack McGrath,Kurtis Kraft-Offenhauser
+1954,3,Belgium,Spa-Francorchamps,ARG,Juan Manuel Fangio,Maserati
+1954,4,France,Reims,DEU,Hans Herrmann,Mercedes
+1954,5,Britain,Silverstone,ITA,Alberto Ascari,Maserati
+1954,5,Britain,Silverstone,FRA,Jean Behra,Gordini
+1954,5,Britain,Silverstone,ARG,Juan Manuel Fangio,Mercedes
+1954,5,Britain,Silverstone,ARG,Jose Froilan Gonzalez,Ferrari
+1954,5,Britain,Silverstone,GBR,Mike Hawthorn,Ferrari
+1954,5,Britain,Silverstone,ARG,Onofre Marimon,Maserati
+1954,5,Britain,Silverstone,GBR,Stirling Moss,Maserati
+1954,6,Germany,Nurburgring,DEU,Karl Kling,Mercedes
+1954,7,Switzerland,Bremgarten,ARG,Juan Manuel Fangio,Mercedes
+1954,8,Italy,Monza,ARG,Jose Froilan Gonzalez,Ferrari
+1954,9,Spain,Pedralbes,ITA,Alberto Ascari,Lancia
+1955,1,Argentina,Buenos Aires,ARG,Juan Manuel Fangio,Mercedes
+1955,2,Monaco,Monte Carlo,ARG,Juan Manuel Fangio,Mercedes
+1955,3,Indianapolis 500,Indianapolis,USA,Bill Vukovich,Kurtis Kraft-Offenhauser
+1955,4,Belgium,Spa-Francorchamps,ARG,Juan Manuel Fangio,Mercedes
+1955,5,Netherlands,Zandvoort,ARG,Roberto Mieres,Maserati
+1955,6,Britain,Aintree,GBR,Stirling Moss,Mercedes
+1955,7,Italy,Monza,GBR,Stirling Moss,Mercedes
+1956,1,Argentina,Buenos Aires,ARG,Juan Manuel Fangio,Ferrari
+1956,2,Monaco,Monte Carlo,ARG,Juan Manuel Fangio,Ferrari
+1956,3,Indianapolis 500,Indianapolis,USA,Paul Russo,Kurtis Kraft-Novi
+1956,4,Belgium,Spa-Francorchamps,GBR,Stirling Moss,Maserati
+1956,5,France,Reims,ARG,Juan Manuel Fangio,Ferrari
+1956,6,Britain,Silverstone,GBR,Stirling Moss,Maserati
+1956,7,Germany,Nurburgring,ARG,Juan Manuel Fangio,Ferrari
+1956,8,Italy,Monza,GBR,Stirling Moss,Maserati
+1957,1,Argentina,Buenos Aires,GBR,Stirling Moss,Maserati
+1957,2,Monaco,Monte Carlo,ARG,Juan Manuel Fangio,Maserati
+1957,3,Indianapolis 500,Indianapolis,USA,Jim Rathmann,Epperly-Offenhauser
+1957,4,France,Rouen-les-Essarts,ITA,Luigi Musso,Ferrari
+1957,5,Britain,Aintree,GBR,Stirling Moss,Vanwall
+1957,6,Germany,Nurburgring,ARG,Juan Manuel Fangio,Maserati
+1957,7,Pescara,Pescara,GBR,Stirling Moss,Vanwall
+1957,8,Italy,Monza,GBR,Tony Brooks,Vanwall
+1958,1,Argentina,Buenos Aires,ARG,Juan Manuel Fangio,Maserati
+1958,2,Monaco,Monte Carlo,GBR,Mike Hawthorn,Ferrari
+1958,3,Netherlands,Zandvoort,GBR,Stirling Moss,Vanwall
+1958,4,Indianapolis 500,Indianapolis,USA,Tony Bettenhausen,Epperly-Offenhauser
+1958,5,Belgium,Spa-Francorchamps,GBR,Mike Hawthorn,Ferrari
+1958,6,France,Reims,GBR,Mike Hawthorn,Ferrari
+1958,7,Britain,Silverstone,GBR,Mike Hawthorn,Ferrari
+1958,8,Germany,Nurburgring,GBR,Stirling Moss,Vanwall
+1958,9,Portugal,Porto,GBR,Mike Hawthorn,Ferrari
+1958,10,Italy,Monza,USA,Phil Hill,Ferrari
+1958,11,Morocco,Casablanca,GBR,Stirling Moss,Vanwall
+1959,1,Monaco,Monte Carlo,AUS,Jack Brabham,Cooper-Climax
+1959,2,Indianapolis 500,Indianapolis,USA,Johnny Thomson,Lesovsky-Offenhauser
+1959,3,Netherlands,Zandvoort,GBR,Stirling Moss,Cooper-Climax
+1959,4,France,Reims,GBR,Stirling Moss,BRM
+1959,5,Britain,Aintree,GBR,Stirling Moss,BRMCooper-Climax
+1959,5,Britain,Aintree,NZL,Bruce McLaren,BRMCooper-Climax
+1959,6,Germany,AVUS,GBR,Tony Brooks,Ferrari
+1959,7,Portugal,Monsanto,GBR,Stirling Moss,Cooper-Climax
+1959,8,Italy,Monza,USA,Phil Hill,Ferrari
+1959,9,USA,Sebring,FRA,Maurice Trintignant,Cooper-Climax
+1960,1,Argentina,Buenos Aires,GBR,Stirling Moss,Cooper-Climax
+1960,2,Monaco,Monte Carlo,NZL,Bruce McLaren,Cooper-Climax
+1960,3,Indianapolis 500,Indianapolis,USA,Jim Rathmann,Watson-Offenhauser
+1960,4,Netherlands,Zandvoort,GBR,Stirling Moss,Lotus-Climax
+1960,5,Belgium,Spa-Francorchamps,GBR,Innes Ireland,Lotus-Climax
+1960,5,Belgium,Spa-Francorchamps,USA,Phil Hill,Ferrari
+1960,5,Belgium,Spa-Francorchamps,AUS,Jack Brabham,Cooper-Climax
+1960,6,France,Reims,AUS,Jack Brabham,Cooper-Climax
+1960,7,Britain,Silverstone,GBR,Graham Hill,BRM
+1960,8,Portugal,Porto,GBR,John Surtees,Lotus-Climax
+1960,9,Italy,Monza,USA,Phil Hill,Ferrari
+1960,10,USA,Riverside,AUS,Jack Brabham,Cooper-Climax
+1961,1,Monaco,Monte Carlo,USA,Richie Ginther,Ferrari
+1961,1,Monaco,Monte Carlo,GBR,Stirling Moss,Lotus-Climax
+1961,2,Netherlands,Zandvoort,GBR,Jim Clark,Lotus-Climax
+1961,3,Belgium,Spa-Francorchamps,USA,Richie Ginther,Ferrari
+1961,4,France,Reims,USA,Phil Hill,Ferrari
+1961,5,Britain,Aintree,GBR,Tony Brooks,BRM-Climax
+1961,6,Germany,Nurburgring,USA,Phil Hill,Ferrari
+1961,7,Italy,Monza,ITA,Giancarlo Baghetti,Ferrari
+1961,8,USA,Watkins Glen,AUS,Jack Brabham,Cooper-Climax
+1962,1,Netherlands,Zandvoort,NZL,Bruce McLaren,Cooper-Climax
+1962,2,Monaco,Monte Carlo,GBR,Jim Clark,Lotus-Climax
+1962,3,Belgium,Spa-Francorchamps,GBR,Jim Clark,Lotus-Climax
+1962,4,France,Rouen-les-Essarts,GBR,Graham Hill,BRM
+1962,5,Britain,Aintree,GBR,Jim Clark,Lotus-Climax
+1962,6,Germany,Nurburgring,GBR,Graham Hill,BRM
+1962,7,Italy,Monza,GBR,Graham Hill,BRM
+1962,8,USA,Watkins Glen,GBR,Jim Clark,Lotus-Climax
+1962,9,South Africa,East London,GBR,Jim Clark,Lotus-Climax
+1963,1,Monaco,Monte Carlo,GBR,John Surtees,Ferrari
+1963,2,Belgium,Spa-Francorchamps,GBR,Jim Clark,Lotus-Climax
+1963,3,Netherlands,Zandvoort,GBR,Jim Clark,Lotus-Climax
+1963,4,France,Reims,GBR,Jim Clark,Lotus-Climax
+1963,5,Britain,Silverstone,GBR,John Surtees,Ferrari
+1963,6,Germany,Nurburgring,GBR,John Surtees,Ferrari
+1963,7,Italy,Monza,GBR,Jim Clark,Lotus-Climax
+1963,8,USA,Watkins Glen,GBR,Jim Clark,Lotus-Climax
+1963,9,Mexico,Mexico City,GBR,Jim Clark,Lotus-Climax
+1963,10,South Africa,East London,USA,Dan Gurney,Brabham-Climax
+1964,1,Monaco,Monte Carlo,GBR,Graham Hill,BRM
+1964,2,Netherlands,Zandvoort,GBR,Jim Clark,Lotus-Climax
+1964,3,Belgium,Spa-Francorchamps,USA,Dan Gurney,Brabham-Climax
+1964,4,France,Rouen-les-Essarts,AUS,Jack Brabham,Brabham-Climax
+1964,5,Britain,Brands Hatch,GBR,Jim Clark,Lotus-Climax
+1964,6,Germany,Nurburgring,GBR,John Surtees,Ferrari
+1964,7,Austria,Zeltweg,USA,Dan Gurney,Brabham-Climax
+1964,8,Italy,Monza,GBR,John Surtees,Ferrari
+1964,9,USA,Watkins Glen,GBR,Jim Clark,Lotus-Climax
+1964,10,Mexico,Mexico City,GBR,Jim Clark,Lotus-Climax
+1965,1,South Africa,East London,GBR,Jim Clark,Lotus-Climax
+1965,2,Monaco,Monte Carlo,GBR,Graham Hill,BRM
+1965,3,Belgium,Spa-Francorchamps,GBR,Jim Clark,Lotus-Climax
+1965,4,France,Clermont-Ferrand,GBR,Jim Clark,Lotus-Climax
+1965,5,Britain,Silverstone,GBR,Graham Hill,BRM
+1965,6,Netherlands,Zandvoort,GBR,Jim Clark,Lotus-Climax
+1965,7,Germany,Nurburgring,GBR,Jim Clark,Lotus-Climax
+1965,8,Italy,Monza,GBR,Jim Clark,Lotus-Climax
+1965,9,USA,Watkins Glen,GBR,Graham Hill,BRM
+1965,10,Mexico,Mexico City,USA,Dan Gurney,Brabham-Climax
+1966,1,Monaco,Monte Carlo,ITA,Lorenzo Bandini,Ferrari
+1966,2,Belgium,Spa-Francorchamps,GBR,John Surtees,Ferrari
+1966,3,France,Reims,ITA,Lorenzo Bandini,Ferrari
+1966,4,Britain,Brands Hatch,AUS,Jack Brabham,Brabham-Repco
+1966,5,Netherlands,Zandvoort,NZL,Denny Hulme,Brabham-Repco
+1966,6,Germany,Nurburgring,GBR,John Surtees,Cooper-Maserati
+1966,7,Italy,Monza,ITA,Ludovico Scarfiotti,Ferrari
+1966,8,USA,Watkins Glen,GBR,John Surtees,Cooper-Maserati
+1966,9,Mexico,Mexico City,USA,Richie Ginther,Honda
+1967,1,South Africa,Kyalami,NZL,Denny Hulme,Brabham-Repco
+1967,2,Monaco,Monte Carlo,GBR,Jim Clark,Lotus-Climax
+1967,3,Netherlands,Zandvoort,GBR,Jim Clark,Lotus-Ford Cosworth
+1967,4,Belgium,Spa-Francorchamps,USA,Dan Gurney,Eagle-Weslake
+1967,5,France,Le Mans,GBR,Graham Hill,Lotus-Ford Cosworth
+1967,6,Britain,Silverstone,NZL,Denny Hulme,Brabham-Repco
+1967,7,Germany,Nurburgring,USA,Dan Gurney,Eagle-Weslake
+1967,8,Canada,Mosport,GBR,Jim Clark,Lotus-Ford Cosworth
+1967,9,Italy,Monza,GBR,Jim Clark,Lotus-Ford Cosworth
+1967,10,USA,Watkins Glen,GBR,Graham Hill,Lotus-Ford Cosworth
+1967,11,Mexico,Mexico City,GBR,Jim Clark,Lotus-Ford Cosworth
+1968,1,South Africa,Kyalami,GBR,Jim Clark,Lotus-Ford Cosworth
+1968,2,Spain,Jarama,FRA,Jean-Pierre Beltoise,Matra-Ford Cosworth
+1968,3,Monaco,Monte Carlo,GBR,Richard Attwood,BRM
+1968,4,Belgium,Spa-Francorchamps,GBR,John Surtees,Honda
+1968,5,Netherlands,Zandvoort,FRA,Jean-Pierre Beltoise,Matra
+1968,6,France,Rouen-les-Essarts,MEX,Pedro Rodriguez,BRM
+1968,7,Britain,Brands Hatch,CHE,Jo Siffert,Lotus-Ford Cosworth
+1968,8,Germany,Nurburgring,GBR,Jackie Stewart,Matra-Ford Cosworth
+1968,9,Italy,Monza,GBR,Jackie Oliver,Lotus-Ford Cosworth
+1968,10,Canada,Mont-Tremblant,CHE,Jo Siffert,Lotus-Ford Cosworth
+1968,11,USA,Watkins Glen,GBR,Jackie Stewart,Matra-Ford Cosworth
+1968,12,Mexico,Mexico City,CHE,Jo Siffert,Lotus-Ford Cosworth
+1969,1,South Africa,Kyalami,GBR,Jackie Stewart,Matra-Ford Cosworth
+1969,2,Spain,Montjuic Park,AUT,Jochen Rindt,Lotus-Ford Cosworth
+1969,3,Monaco,Monte Carlo,GBR,Jackie Stewart,Matra-Ford Cosworth
+1969,4,Netherlands,Zandvoort,GBR,Jackie Stewart,Matra-Ford Cosworth
+1969,5,France,Clermont-Ferrand,GBR,Jackie Stewart,Matra-Ford Cosworth
+1969,6,Britain,Silverstone,GBR,Jackie Stewart,Matra-Ford Cosworth
+1969,7,Germany,Nurburgring,BEL,Jacky Ickx,Brabham-Ford Cosworth
+1969,8,Italy,Monza,FRA,Jean-Pierre Beltoise,Matra-Ford Cosworth
+1969,9,Canada,Mosport,BEL,Jacky Ickx,Brabham-Ford Cosworth
+1969,9,Canada,Mosport,AUS,Jack Brabham,Brabham-Ford Cosworth
+1969,10,USA,Watkins Glen,AUT,Jochen Rindt,Lotus-Ford Cosworth
+1969,11,Mexico,Mexico City,BEL,Jacky Ickx,Brabham-Ford Cosworth
+1970,1,South Africa,Kyalami,GBR,John Surtees,McLaren-Ford Cosworth
+1970,1,South Africa,Kyalami,AUS,Jack Brabham,Brabham-Ford Cosworth
+1970,2,Spain,Jarama,AUS,Jack Brabham,Brabham-Ford Cosworth
+1970,3,Monaco,Monte Carlo,AUT,Jochen Rindt,Lotus-Ford Cosworth
+1970,4,Belgium,Spa-Francorchamps,NZL,Chris Amon,March-Ford Cosworth
+1970,5,Netherlands,Zandvoort,BEL,Jacky Ickx,Ferrari
+1970,6,France,Clermont-Ferrand,AUS,Jack Brabham,Brabham-Ford Cosworth
+1970,7,Britain,Brands Hatch,AUS,Jack Brabham,Brabham-Ford Cosworth
+1970,8,Germany,Hockenheim,BEL,Jacky Ickx,Ferrari
+1970,9,Austria,Osterreichring,CHE,Clay Regazzoni,Ferrari
+1970,9,Austria,Osterreichring,BEL,Jacky Ickx,Ferrari
+1970,10,Italy,Monza,CHE,Clay Regazzoni,Ferrari
+1970,11,Canada,Mont-Tremblant,CHE,Clay Regazzoni,Ferrari
+1970,12,USA,Watkins Glen,BEL,Jacky Ickx,Ferrari
+1970,13,Mexico,Mexico City,BEL,Jacky Ickx,Ferrari
+1971,1,South Africa,Kyalami,USA,Mario Andretti,Ferrari
+1971,2,Spain,Montjuic Park,BEL,Jacky Ickx,Ferrari
+1971,3,Monaco,Monte Carlo,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1971,4,Netherlands,Zandvoort,BEL,Jacky Ickx,Ferrari
+1971,5,France,Le Castellet,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1971,6,Britain,Silverstone,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1971,7,Germany,Nurburgring,FRA,Francois Cevert,Tyrrell-Ford Cosworth
+1971,8,Austria,Osterreichring,CHE,Jo Siffert,BRM
+1971,9,Italy,Monza,FRA,Henri Pescarolo,March-Ford Cosworth
+1971,10,Canada,Mosport,NZL,Denny Hulme,McLaren-Ford Cosworth
+1971,11,USA,Watkins Glen,BEL,Jacky Ickx,Ferrari
+1972,1,Argentina,Buenos Aires,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1972,2,South Africa,Kyalami,GBR,Mike Hailwood,Surtees-Ford Cosworth
+1972,3,Spain,Jarama,BEL,Jacky Ickx,Ferrari
+1972,4,Monaco,Monte Carlo,FRA,Jean-Pierre Beltoise,BRM
+1972,5,Belgium,Nivelles,NZL,Chris Amon,Matra
+1972,6,France,Clermont-Ferrand,NZL,Chris Amon,Matra
+1972,7,Britain,Brands Hatch,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1972,8,Germany,Nurburgring,BEL,Jacky Ickx,Ferrari
+1972,9,Austria,Osterreichring,NZL,Denny Hulme,McLaren-Ford Cosworth
+1972,10,Italy,Monza,BEL,Jacky Ickx,Ferrari
+1972,11,Canada,Mosport,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1972,12,USA,Watkins Glen,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1973,1,Argentina,Buenos Aires,BRA,Emerson Fittipaldi,Lotus-Ford Cosworth
+1973,2,Brazil,Interlagos,BRA,Emerson Fittipaldi,Lotus-Ford CosworthMcLaren-Ford Cosworth
+1973,2,Brazil,Interlagos,NZL,Denny Hulme,Lotus-Ford CosworthMcLaren-Ford Cosworth
+1973,3,South Africa,Kyalami,BRA,Emerson Fittipaldi,Lotus-Ford Cosworth
+1973,4,Spain,Montjuic Park,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1973,5,Belgium,Zolder,FRA,Francois Cevert,Tyrrell-Ford Cosworth
+1973,6,Monaco,Monte Carlo,BRA,Emerson Fittipaldi,Lotus-Ford Cosworth
+1973,7,Sweden,Anderstorp,NZL,Denny Hulme,McLaren-Ford Cosworth
+1973,8,France,Le Castellet,NZL,Denny Hulme,McLaren-Ford Cosworth
+1973,9,Britain,Silverstone,GBR,James Hunt,March-Ford Cosworth
+1973,10,Netherlands,Zandvoort,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1973,11,Germany,Nurburgring,BRA,Carlos Pace,Surtees-Ford Cosworth
+1973,12,Austria,Osterreichring,BRA,Carlos Pace,Surtees-Ford Cosworth
+1973,13,Italy,Monza,GBR,Jackie Stewart,Tyrrell-Ford Cosworth
+1973,14,Canada,Mosport,BRA,Emerson Fittipaldi,Lotus-Ford Cosworth
+1973,15,USA,Watkins Glen,GBR,James Hunt,March-Ford Cosworth
+1974,1,Argentina,Buenos Aires,CHE,Clay Regazzoni,Ferrari
+1974,2,Brazil,Interlagos,CHE,Clay Regazzoni,Ferrari
+1974,3,South Africa,Kyalami,ARG,Carlos Reutemann,Brabham-Ford Cosworth
+1974,4,Spain,Jarama,AUT,Niki Lauda,Ferrari
+1974,5,Belgium,Nivelles,NZL,Denny Hulme,McLaren-Ford Cosworth
+1974,6,Monaco,Monte Carlo,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1974,7,Sweden,Anderstorp,FRA,Patrick Depailler,Tyrrell-Ford Cosworth
+1974,8,Netherlands,Zandvoort,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1974,9,France,Dijon-Prenois,ZAF,Jody Scheckter,Tyrrell-Ford Cosworth
+1974,10,Britain,Brands Hatch,AUT,Niki Lauda,Ferrari
+1974,11,Germany,Nurburgring,ZAF,Jody Scheckter,Tyrrell-Ford Cosworth
+1974,12,Austria,Osterreichring,CHE,Clay Regazzoni,Ferrari
+1974,13,Italy,Monza,BRA,Carlos Pace,Brabham-Ford Cosworth
+1974,14,Canada,Mosport,AUT,Niki Lauda,Ferrari
+1974,15,USA,Watkins Glen,BRA,Carlos Pace,Brabham-Ford Cosworth
+1975,1,Argentina,Buenos Aires,GBR,James Hunt,Hesketh-Ford Cosworth
+1975,2,Brazil,Interlagos,FRA,Jean-Pierre Jarier,Shadow-Ford Cosworth
+1975,3,South Africa,Kyalami,BRA,Carlos Pace,Brabham-Ford Cosworth
+1975,4,Spain,Montjuic Park,USA,Mario Andretti,Parnelli-Ford Cosworth
+1975,5,Monaco,Monte Carlo,FRA,Patrick Depailler,Tyrrell-Ford Cosworth
+1975,6,Belgium,Zolder,CHE,Clay Regazzoni,Ferrari
+1975,7,Sweden,Anderstorp,AUT,Niki Lauda,Ferrari
+1975,8,Netherlands,Zandvoort,AUT,Niki Lauda,Ferrari
+1975,9,France,Le Castellet,DEU,Jochen Mass,McLaren-Ford Cosworth
+1975,10,Britain,Silverstone,CHE,Clay Regazzoni,Ferrari
+1975,11,Germany,Nurburgring,CHE,Clay Regazzoni,Ferrari
+1975,12,Austria,Osterreichring,ITA,Vittorio Brambilla,March-Ford Cosworth
+1975,13,Italy,Monza,CHE,Clay Regazzoni,Ferrari
+1975,14,USA,Watkins Glen,BRA,Emerson Fittipaldi,McLaren-Ford Cosworth
+1976,1,Brazil,Interlagos,FRA,Jean-Pierre Jarier,Shadow-Ford Cosworth
+1976,2,South Africa,Kyalami,AUT,Niki Lauda,Ferrari
+1976,3,USA West,Long Beach,CHE,Clay Regazzoni,Ferrari
+1976,4,Spain,Jarama,DEU,Jochen Mass,McLaren-Ford Cosworth
+1976,5,Belgium,Zolder,AUT,Niki Lauda,Ferrari
+1976,6,Monaco,Monte Carlo,CHE,Clay Regazzoni,Ferrari
+1976,7,Sweden,Anderstorp,USA,Mario Andretti,Lotus-Ford Cosworth
+1976,8,France,Le Castellet,AUT,Niki Lauda,Ferrari
+1976,9,Britain,Brands Hatch,AUT,Niki Lauda,Ferrari
+1976,10,Germany,Nurburgring,ZAF,Jody Scheckter,Tyrrell-Ford Cosworth
+1976,11,Austria,Osterreichring,GBR,James Hunt,McLaren-Ford Cosworth
+1976,12,Netherlands,Zandvoort,CHE,Clay Regazzoni,Ferrari
+1976,13,Italy,Monza,SWE,Ronnie Peterson,March-Ford Cosworth
+1976,14,Canada,Mosport,FRA,Patrick Depailler,Tyrrell-Ford Cosworth
+1976,15,USA,Watkins Glen,GBR,James Hunt,McLaren-Ford Cosworth
+1976,16,Japan,Fuji,FRA,Jacques Laffite,Ligier-Matra
+1977,1,Argentina,Buenos Aires,GBR,James Hunt,McLaren-Ford Cosworth
+1977,2,Brazil,Interlagos,GBR,James Hunt,McLaren-Ford Cosworth
+1977,3,South Africa,Kyalami,GBR,John Watson,Brabham-Alfa Romeo
+1977,4,USA West,Long Beach,AUT,Niki Lauda,Ferrari
+1977,5,Spain,Jarama,FRA,Jacques Laffite,Ligier-Matra
+1977,6,Monaco,Monte Carlo,ZAF,Jody Scheckter,Wolf-Ford Cosworth
+1977,7,Belgium,Zolder,SWE,Gunnar Nilsson,Lotus-Ford Cosworth
+1977,8,Sweden,Anderstorp,USA,Mario Andretti,Lotus-Ford Cosworth
+1977,9,France,Dijon-Prenois,USA,Mario Andretti,Lotus-Ford Cosworth
+1977,10,Britain,Silverstone,GBR,James Hunt,McLaren-Ford Cosworth
+1977,11,Germany,Hockenheim,AUT,Niki Lauda,Ferrari
+1977,12,Austria,Osterreichring,GBR,John Watson,Brabham-Alfa Romeo
+1977,13,Netherlands,Zandvoort,AUT,Niki Lauda,Ferrari
+1977,14,Italy,Monza,USA,Mario Andretti,Lotus-Ford Cosworth
+1977,15,USA,Watkins Glen,SWE,Ronnie Peterson,Tyrrell-Ford Cosworth
+1977,16,Canada,Mosport,USA,Mario Andretti,Lotus-Ford Cosworth
+1977,17,Japan,Fuji,ZAF,Jody Scheckter,Wolf-Ford Cosworth
+1978,1,Argentina,Buenos Aires,CAN,Gilles Villeneuve,Ferrari
+1978,2,Brazil,Jacarepagua,ARG,Carlos Reutemann,Ferrari
+1978,3,South Africa,Kyalami,USA,Mario Andretti,Lotus-Ford Cosworth
+1978,4,USA West,Long Beach,AUS,Alan Jones,Williams-Ford Cosworth
+1978,5,Monaco,Monte Carlo,AUT,Niki Lauda,Brabham-Alfa Romeo
+1978,6,Belgium,Zolder,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1978,7,Spain,Jarama,USA,Mario Andretti,Lotus-Ford Cosworth
+1978,8,Sweden,Anderstorp,AUT,Niki Lauda,Brabham-Alfa Romeo
+1978,9,France,Le Castellet,ARG,Carlos Reutemann,Ferrari
+1978,10,Britain,Brands Hatch,AUT,Niki Lauda,Brabham-Alfa Romeo
+1978,11,Germany,Hockenheim,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1978,12,Austria,Osterreichring,SWE,Ronnie Peterson,Lotus-Ford Cosworth
+1978,13,Netherlands,Zandvoort,AUT,Niki Lauda,Brabham-Alfa Romeo
+1978,14,Italy,Monza,USA,Mario Andretti,Lotus-Ford Cosworth
+1978,15,USA,Watkins Glen,FRA,Jean-Pierre Jarier,Lotus-Ford Cosworth
+1978,16,Canada,Montreal,AUS,Alan Jones,Williams-Ford Cosworth
+1979,1,Argentina,Buenos Aires,FRA,Jacques Laffite,Ligier-Ford Cosworth
+1979,2,Brazil,Interlagos,FRA,Jacques Laffite,Ligier-Ford Cosworth
+1979,3,South Africa,Kyalami,CAN,Gilles Villeneuve,Ferrari
+1979,4,USA West,Long Beach,CAN,Gilles Villeneuve,Ferrari
+1979,5,Spain,Jarama,CAN,Gilles Villeneuve,Ferrari
+1979,6,Belgium,Zolder,CAN,Gilles Villeneuve,Ferrari
+1979,7,Monaco,Monte Carlo,FRA,Patrick Depailler,Ligier-Ford Cosworth
+1979,8,France,Dijon-Prenois,FRA,Rene Arnoux,Renault
+1979,9,Britain,Silverstone,CHE,Clay Regazzoni,Williams-Ford Cosworth
+1979,10,Germany,Hockenheim,CAN,Gilles Villeneuve,Ferrari
+1979,11,Austria,Osterreichring,FRA,Rene Arnoux,Renault
+1979,12,Netherlands,Zandvoort,CAN,Gilles Villeneuve,Ferrari
+1979,13,Italy,Monza,CHE,Clay Regazzoni,Williams-Ford Cosworth
+1979,14,Canada,Montreal,AUS,Alan Jones,Williams-Ford Cosworth
+1979,15,USA,Watkins Glen,BRA,Nelson Piquet,Brabham-Ford Cosworth
+1980,1,Argentina,Buenos Aires,AUS,Alan Jones,Williams-Ford Cosworth
+1980,2,Brazil,Interlagos,FRA,Rene Arnoux,Renault
+1980,3,South Africa,Kyalami,FRA,Rene Arnoux,Renault
+1980,4,USA West,Long Beach,BRA,Nelson Piquet,Brabham-Ford Cosworth
+1980,5,Belgium,Zolder,FRA,Jacques Laffite,Ligier-Ford Cosworth
+1980,6,Monaco,Monte Carlo,ARG,Carlos Reutemann,Williams-Ford Cosworth
+1980,7,France,Le Castellet,AUS,Alan Jones,Williams-Ford Cosworth
+1980,8,Britain,Brands Hatch,FRA,Didier Pironi,Ligier-Ford Cosworth
+1980,9,Germany,Hockenheim,AUS,Alan Jones,Williams-Ford Cosworth
+1980,10,Austria,Osterreichring,FRA,Rene Arnoux,Renault
+1980,11,Netherlands,Zandvoort,FRA,Rene Arnoux,Renault
+1980,12,Italy,Imola,AUS,Alan Jones,Williams-Ford Cosworth
+1980,13,Canada,Montreal,FRA,Didier Pironi,Ligier-Ford Cosworth
+1980,14,USA,Watkins Glen,AUS,Alan Jones,Williams-Ford Cosworth
+1981,1,USA West,Long Beach,AUS,Alan Jones,Williams-Ford Cosworth
+1981,2,Brazil,Jacarepagua,CHE,Marc Surer,Ensign-Ford Cosworth
+1981,3,Argentina,Buenos Aires,BRA,Nelson Piquet,Brabham-Ford Cosworth
+1981,4,San Marino,Imola,CAN,Gilles Villeneuve,Ferrari
+1981,5,Belgium,Zolder,ARG,Carlos Reutemann,Williams-Ford Cosworth
+1981,6,Monaco,Monte Carlo,AUS,Alan Jones,Williams-Ford Cosworth
+1981,7,Spain,Jarama,AUS,Alan Jones,Williams-Ford Cosworth
+1981,8,France,Dijon-Prenois,FRA,Alain Prost,Renault
+1981,9,Britain,Silverstone,FRA,Rene Arnoux,Renault
+1981,10,Germany,Hockenheim,AUS,Alan Jones,Williams-Ford Cosworth
+1981,11,Austria,Osterreichring,FRA,Jacques Laffite,Ligier-Matra
+1981,12,Netherlands,Zandvoort,AUS,Alan Jones,Williams-Ford Cosworth
+1981,13,Italy,Monza,ARG,Carlos Reutemann,Williams-Ford Cosworth
+1981,14,Canada,Montreal,GBR,John Watson,McLaren-Ford Cosworth
+1981,15,Caesars Palace,Las Vegas,FRA,Didier Pironi,Ferrari
+1982,1,South Africa,Kyalami,FRA,Alain Prost,Renault
+1982,2,Brazil,Jacarepagua,FRA,Alain Prost,Renault
+1982,3,USA West,Long Beach,AUT,Niki Lauda,McLaren-Ford Cosworth
+1982,4,San Marino,Imola,FRA,Didier Pironi,Ferrari
+1982,5,Belgium,Zolder,GBR,John Watson,McLaren-Ford Cosworth
+1982,6,Monaco,Monte Carlo,ITA,Riccardo Patrese,Brabham-Ford Cosworth
+1982,7,Detroit,Detroit,FRA,Alain Prost,Renault
+1982,8,Canada,Montreal,FRA,Didier Pironi,Ferrari
+1982,9,Netherlands,Zandvoort,GBR,Derek Warwick,Toleman-Hart
+1982,10,Britain,Brands Hatch,GBR,Brian Henton,Tyrrell-Ford Cosworth
+1982,11,France,Le Castellet,ITA,Riccardo Patrese,Brabham-BMW
+1982,12,Germany,Hockenheim,BRA,Nelson Piquet,Brabham-BMW
+1982,13,Austria,Osterreichring,BRA,Nelson Piquet,Brabham-BMW
+1982,14,Switzerland,Dijon-Prenois,FRA,Alain Prost,Renault
+1982,15,Italy,Monza,FRA,Rene Arnoux,Renault
+1982,16,Caesars Palace,Las Vegas,ITA,Michele Alboreto,Tyrrell-Ford Cosworth
+1983,1,Brazil,Jacarepagua,BRA,Nelson Piquet,Brabham-BMW
+1983,2,USA West,Long Beach,AUT,Niki Lauda,McLaren-Ford Cosworth
+1983,3,France,Le Castellet,FRA,Alain Prost,Renault
+1983,4,San Marino,Imola,ITA,Riccardo Patrese,Brabham-BMW
+1983,5,Monaco,Monte Carlo,BRA,Nelson Piquet,Brabham-BMW
+1983,6,Belgium,Spa-Francorchamps,ITA,Andrea de Cesaris,Alfa Romeo
+1983,7,Detroit,Detroit,GBR,John Watson,McLaren-Ford Cosworth
+1983,8,Canada,Montreal,FRA,Patrick Tambay,Ferrari
+1983,9,Britain,Silverstone,FRA,Alain Prost,Renault
+1983,10,Germany,Hockenheim,FRA,Rene Arnoux,Ferrari
+1983,11,Austria,Osterreichring,FRA,Alain Prost,Renault
+1983,12,Netherlands,Zandvoort,FRA,Rene Arnoux,Ferrari
+1983,13,Italy,Monza,BRA,Nelson Piquet,Brabham-BMW
+1983,14,Europe,Brands Hatch,GBR,Nigel Mansell,Lotus-Renault
+1983,15,South Africa,Kyalami,BRA,Nelson Piquet,Brabham-BMW
+1984,1,Brazil,Jacarepagua,FRA,Alain Prost,McLaren-TAG
+1984,2,South Africa,Kyalami,FRA,Patrick Tambay,Renault
+1984,3,Belgium,Zolder,FRA,Rene Arnoux,Ferrari
+1984,4,San Marino,Imola,BRA,Nelson Piquet,Brabham-BMW
+1984,5,France,Dijon-Prenois,FRA,Alain Prost,McLaren-TAG
+1984,6,Monaco,Monte Carlo,BRA,Ayrton Senna,Toleman-Hart
+1984,7,Canada,Montreal,BRA,Nelson Piquet,Brabham-BMW
+1984,8,Detroit,Detroit,GBR,Derek Warwick,Renault
+1984,9,Dallas,Dallas,AUT,Niki Lauda,McLaren-TAG
+1984,10,Britain,Brands Hatch,AUT,Niki Lauda,McLaren-TAG
+1984,11,Germany,Hockenheim,FRA,Alain Prost,McLaren-TAG
+1984,12,Austria,Osterreichring,AUT,Niki Lauda,McLaren-TAG
+1984,13,Netherlands,Zandvoort,FRA,Rene Arnoux,Ferrari
+1984,14,Italy,Monza,AUT,Niki Lauda,McLaren-TAG
+1984,15,Europe,Nurburgring,BRA,Nelson Piquet,Brabham-BMWFerrari
+1984,15,Europe,Nurburgring,ITA,Michele Alboreto,Brabham-BMWFerrari
+1984,16,Portugal,Estoril,AUT,Niki Lauda,McLaren-TAG
+1985,1,Brazil,Jacarepagua,FRA,Alain Prost,McLaren-TAG
+1985,2,Portugal,Estoril,BRA,Ayrton Senna,Lotus-Renault
+1985,3,San Marino,Imola,ITA,Michele Alboreto,Ferrari
+1985,4,Monaco,Monte Carlo,ITA,Michele Alboreto,Ferrari
+1985,5,Canada,Montreal,BRA,Ayrton Senna,Lotus-Renault
+1985,6,Detroit,Detroit,BRA,Ayrton Senna,Lotus-Renault
+1985,7,France,Le Castellet,FIN,Keke Rosberg,Williams-Honda
+1985,8,Britain,Silverstone,FRA,Alain Prost,McLaren-TAG
+1985,9,Germany,Nurburgring,AUT,Niki Lauda,McLaren-TAG
+1985,10,Austria,Osterreichring,FRA,Alain Prost,McLaren-TAG
+1985,11,Netherlands,Zandvoort,FRA,Alain Prost,McLaren-TAG
+1985,12,Italy,Monza,GBR,Nigel Mansell,Williams-Honda
+1985,13,Belgium,Spa-Francorchamps,FRA,Alain Prost,McLaren-TAG
+1985,14,Europe,Brands Hatch,FRA,Jacques Laffite,Ligier-Renault
+1985,15,South Africa,Kyalami,FIN,Keke Rosberg,Williams-Honda
+1985,16,Australia,Adelaide,FIN,Keke Rosberg,Williams-Honda
+1986,1,Brazil,Jacarepagua,BRA,Nelson Piquet,Williams-Honda
+1986,2,Spain,Jerez,GBR,Nigel Mansell,Williams-Honda
+1986,3,San Marino,Imola,BRA,Nelson Piquet,Williams-Honda
+1986,4,Monaco,Monte Carlo,FRA,Alain Prost,McLaren-TAG
+1986,5,Belgium,Spa-Francorchamps,FRA,Alain Prost,McLaren-TAG
+1986,6,Canada,Montreal,BRA,Nelson Piquet,Williams-Honda
+1986,7,Detroit,Detroit,BRA,Nelson Piquet,Williams-Honda
+1986,8,France,Le Castellet,GBR,Nigel Mansell,Williams-Honda
+1986,9,Britain,Brands Hatch,GBR,Nigel Mansell,Williams-Honda
+1986,10,Germany,Hockenheim,AUT,Gerhard Berger,Benetton-BMW
+1986,11,Hungary,Hungaroring,BRA,Nelson Piquet,Williams-Honda
+1986,12,Austria,Osterreichring,AUT,Gerhard Berger,Benetton-BMW
+1986,13,Italy,Monza,ITA,Teo Fabi,Benetton-BMW
+1986,14,Portugal,Estoril,GBR,Nigel Mansell,Williams-Honda
+1986,15,Mexico,Mexico City,BRA,Nelson Piquet,Williams-Honda
+1986,16,Australia,Adelaide,BRA,Nelson Piquet,Williams-Honda
+1987,1,Brazil,Jacarepagua,BRA,Nelson Piquet,Williams-Honda
+1987,2,San Marino,Imola,ITA,Teo Fabi,Benetton-Ford Cosworth
+1987,3,Belgium,Spa-Francorchamps,FRA,Alain Prost,McLaren-TAG
+1987,4,Monaco,Monte Carlo,BRA,Ayrton Senna,Lotus-Honda
+1987,5,Detroit,Detroit,BRA,Ayrton Senna,Lotus-Honda
+1987,6,France,Le Castellet,BRA,Nelson Piquet,Williams-Honda
+1987,7,Britain,Silverstone,GBR,Nigel Mansell,Williams-Honda
+1987,8,Germany,Hockenheim,GBR,Nigel Mansell,Williams-Honda
+1987,9,Hungary,Hungaroring,BRA,Nelson Piquet,Williams-Honda
+1987,10,Austria,Osterreichring,GBR,Nigel Mansell,Williams-Honda
+1987,11,Italy,Monza,BRA,Ayrton Senna,Lotus-Honda
+1987,12,Portugal,Estoril,AUT,Gerhard Berger,Ferrari
+1987,13,Spain,Jerez,AUT,Gerhard Berger,Ferrari
+1987,14,Mexico,Mexico City,BRA,Nelson Piquet,Williams-Honda
+1987,15,Japan,Suzuka,FRA,Alain Prost,McLaren-TAG
+1987,16,Australia,Adelaide,AUT,Gerhard Berger,Ferrari
+1988,1,Brazil,Jacarepagua,AUT,Gerhard Berger,Ferrari
+1988,2,San Marino,Imola,FRA,Alain Prost,McLaren-Honda
+1988,3,Monaco,Monte Carlo,BRA,Ayrton Senna,McLaren-Honda
+1988,4,Mexico,Mexico City,FRA,Alain Prost,McLaren-Honda
+1988,5,Canada,Montreal,BRA,Ayrton Senna,McLaren-Honda
+1988,6,Detroit,Detroit,FRA,Alain Prost,McLaren-Honda
+1988,7,France,Le Castellet,FRA,Alain Prost,McLaren-Honda
+1988,8,Britain,Silverstone,GBR,Nigel Mansell,Williams-Judd
+1988,9,Germany,Hockenheim,ITA,Alessandro Nannini,Benetton-Ford Cosworth
+1988,10,Hungary,Hungaroring,FRA,Alain Prost,McLaren-Honda
+1988,11,Belgium,Spa-Francorchamps,AUT,Gerhard Berger,Ferrari
+1988,12,Italy,Monza,ITA,Michele Alboreto,Ferrari
+1988,13,Portugal,Estoril,AUT,Gerhard Berger,Ferrari
+1988,14,Spain,Jerez,FRA,Alain Prost,McLaren-Honda
+1988,15,Japan,Suzuka,BRA,Ayrton Senna,McLaren-Honda
+1988,16,Australia,Adelaide,FRA,Alain Prost,McLaren-Honda
+1989,1,Brazil,Jacarepagua,ITA,Riccardo Patrese,Williams-Renault
+1989,2,San Marino,Imola,FRA,Alain Prost,McLaren-Honda
+1989,3,Monaco,Monte Carlo,FRA,Alain Prost,McLaren-Honda
+1989,4,Mexico,Mexico City,GBR,Nigel Mansell,Ferrari
+1989,5,USA,Phoenix,BRA,Ayrton Senna,McLaren-Honda
+1989,6,Canada,Montreal,GBR,Jonathan Palmer,Tyrrell-Ford Cosworth
+1989,7,France,Le Castellet,BRA,Mauricio Gugelmin,March-Judd
+1989,8,Britain,Silverstone,GBR,Nigel Mansell,Ferrari
+1989,9,Germany,Hockenheim,BRA,Ayrton Senna,McLaren-Honda
+1989,10,Hungary,Hungaroring,GBR,Nigel Mansell,Ferrari
+1989,11,Belgium,Spa-Francorchamps,FRA,Alain Prost,McLaren-Honda
+1989,12,Italy,Monza,FRA,Alain Prost,McLaren-Honda
+1989,13,Portugal,Estoril,AUT,Gerhard Berger,Ferrari
+1989,14,Spain,Jerez,BRA,Ayrton Senna,McLaren-Honda
+1989,15,Japan,Suzuka,FRA,Alain Prost,McLaren-Honda
+1989,16,Australia,Adelaide,JPN,Satoru Nakajima,Lotus-Judd
+1990,1,USA,Phoenix,AUT,Gerhard Berger,McLaren-Honda
+1990,2,Brazil,Interlagos,AUT,Gerhard Berger,McLaren-Honda
+1990,3,San Marino,Imola,ITA,Alessandro Nannini,Benetton-Ford Cosworth
+1990,4,Monaco,Monte Carlo,BRA,Ayrton Senna,McLaren-Honda
+1990,5,Canada,Montreal,AUT,Gerhard Berger,McLaren-Honda
+1990,6,Mexico,Mexico City,FRA,Alain Prost,Ferrari
+1990,7,France,Le Castellet,GBR,Nigel Mansell,Ferrari
+1990,8,Britain,Silverstone,GBR,Nigel Mansell,Ferrari
+1990,9,Germany,Hockenheim,BEL,Thierry Boutsen,Williams-Renault
+1990,10,Hungary,Hungaroring,ITA,Riccardo Patrese,Williams-Renault
+1990,11,Belgium,Spa-Francorchamps,FRA,Alain Prost,Ferrari
+1990,12,Italy,Monza,BRA,Ayrton Senna,McLaren-Honda
+1990,13,Portugal,Estoril,ITA,Riccardo Patrese,Williams-Renault
+1990,14,Spain,Jerez,ITA,Riccardo Patrese,Williams-Renault
+1990,15,Japan,Suzuka,ITA,Riccardo Patrese,Williams-Renault
+1990,16,Australia,Adelaide,GBR,Nigel Mansell,Ferrari
+1991,1,USA,Phoenix,FRA,Jean Alesi,Ferrari
+1991,2,Brazil,Interlagos,GBR,Nigel Mansell,Williams-Renault
+1991,3,San Marino,Imola,AUT,Gerhard Berger,McLaren-Honda
+1991,4,Monaco,Monte Carlo,FRA,Alain Prost,Ferrari
+1991,5,Canada,Montreal,GBR,Nigel Mansell,Williams-Renault
+1991,6,Mexico,Mexico City,GBR,Nigel Mansell,Williams-Renault
+1991,7,France,Magny-Cours,GBR,Nigel Mansell,Williams-Renault
+1991,8,Britain,Silverstone,GBR,Nigel Mansell,Williams-Renault
+1991,9,Germany,Hockenheim,ITA,Riccardo Patrese,Williams-Renault
+1991,10,Hungary,Hungaroring,FRA,Bertrand Gachot,Jordan-Ford Cosworth
+1991,11,Belgium,Spa-Francorchamps,BRA,Roberto Moreno,Benetton-Ford Cosworth
+1991,12,Italy,Monza,BRA,Ayrton Senna,McLaren-Honda
+1991,13,Portugal,Estoril,GBR,Nigel Mansell,Williams-Renault
+1991,14,Spain,Catalunya,ITA,Riccardo Patrese,Williams-Renault
+1991,15,Japan,Suzuka,BRA,Ayrton Senna,McLaren-Honda
+1991,16,Australia,Adelaide,AUT,Gerhard Berger,McLaren-Honda
+1992,1,South Africa,Kyalami,GBR,Nigel Mansell,Williams-Renault
+1992,2,Mexico,Mexico City,AUT,Gerhard Berger,McLaren-Honda
+1992,3,Brazil,Interlagos,ITA,Riccardo Patrese,Williams-Renault
+1992,4,Spain,Catalunya,GBR,Nigel Mansell,Williams-Renault
+1992,5,San Marino,Imola,ITA,Riccardo Patrese,Williams-Renault
+1992,6,Monaco,Monte Carlo,GBR,Nigel Mansell,Williams-Renault
+1992,7,Canada,Montreal,AUT,Gerhard Berger,McLaren-Honda
+1992,8,France,Magny-Cours,GBR,Nigel Mansell,Williams-Renault
+1992,9,Britain,Silverstone,GBR,Nigel Mansell,Williams-Renault
+1992,10,Germany,Hockenheim,ITA,Riccardo Patrese,Williams-Renault
+1992,11,Hungary,Hungaroring,GBR,Nigel Mansell,Williams-Renault
+1992,12,Belgium,Spa-Francorchamps,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1992,13,Italy,Monza,GBR,Nigel Mansell,Williams-Renault
+1992,14,Portugal,Estoril,BRA,Ayrton Senna,McLaren-Honda
+1992,15,Japan,Suzuka,GBR,Nigel Mansell,Williams-Renault
+1992,16,Australia,Adelaide,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,1,South Africa,Kyalami,FRA,Alain Prost,Williams-Renault
+1993,2,Brazil,Interlagos,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,3,Europe,Donington,BRA,Ayrton Senna,McLaren-Ford Cosworth
+1993,4,San Marino,Imola,FRA,Alain Prost,Williams-Renault
+1993,5,Spain,Catalunya,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,6,Monaco,Monte Carlo,FRA,Alain Prost,Williams-Renault
+1993,7,Canada,Montreal,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,8,France,Magny-Cours,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,9,Britain,Silverstone,GBR,Damon Hill,Williams-Renault
+1993,10,Germany,Hockenheim,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1993,11,Hungary,Hungaroring,FRA,Alain Prost,Williams-Renault
+1993,12,Belgium,Spa-Francorchamps,FRA,Alain Prost,Williams-Renault
+1993,13,Italy,Monza,GBR,Damon Hill,Williams-Renault
+1993,14,Portugal,Estoril,GBR,Damon Hill,Williams-Renault
+1993,15,Japan,Suzuka,FRA,Alain Prost,Williams-Renault
+1993,16,Australia,Adelaide,GBR,Damon Hill,Williams-Renault
+1994,1,Brazil,Interlagos,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,2,Pacific,Aida,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,3,San Marino,Imola,GBR,Damon Hill,Williams-Renault
+1994,4,Monaco,Monte Carlo,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,5,Spain,Catalunya,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,6,Canada,Montreal,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,7,France,Magny-Cours,GBR,Damon Hill,Williams-Renault
+1994,8,Britain,Silverstone,GBR,Damon Hill,Williams-Renault
+1994,9,Germany,Hockenheim,GBR,David Coulthard,Williams-Renault
+1994,10,Hungary,Hungaroring,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,11,Belgium,Spa-Francorchamps,GBR,Damon Hill,Williams-Renault
+1994,12,Italy,Monza,GBR,Damon Hill,Williams-Renault
+1994,13,Portugal,Estoril,GBR,David Coulthard,Williams-Renault
+1994,14,Europe,Jerez,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1994,15,Japan,Suzuka,GBR,Damon Hill,Williams-Renault
+1994,16,Australia,Adelaide,DEU,Michael Schumacher,Benetton-Ford Cosworth
+1995,1,Brazil,Interlagos,DEU,Michael Schumacher,Benetton-Renault
+1995,2,Argentina,Buenos Aires,DEU,Michael Schumacher,Benetton-Renault
+1995,3,San Marino,Imola,AUT,Gerhard Berger,Ferrari
+1995,4,Spain,Catalunya,GBR,Damon Hill,Williams-Renault
+1995,5,Monaco,Monte Carlo,FRA,Jean Alesi,Ferrari
+1995,6,Canada,Montreal,DEU,Michael Schumacher,Benetton-Renault
+1995,7,France,Magny-Cours,DEU,Michael Schumacher,Benetton-Renault
+1995,8,Britain,Silverstone,GBR,Damon Hill,Williams-Renault
+1995,9,Germany,Hockenheim,DEU,Michael Schumacher,Benetton-Renault
+1995,10,Hungary,Hungaroring,GBR,Damon Hill,Williams-Renault
+1995,11,Belgium,Spa-Francorchamps,GBR,David Coulthard,Williams-Renault
+1995,12,Italy,Monza,AUT,Gerhard Berger,Ferrari
+1995,13,Portugal,Estoril,GBR,David Coulthard,Williams-Renault
+1995,14,Europe,Nurburgring,DEU,Michael Schumacher,Benetton-Renault
+1995,15,Pacific,Aida,DEU,Michael Schumacher,Benetton-Renault
+1995,16,Japan,Suzuka,DEU,Michael Schumacher,Benetton-Renault
+1995,17,Australia,Adelaide,GBR,Damon Hill,Williams-Renault
+1996,1,Australia,Melbourne,CAN,Jacques Villeneuve,Williams-Renault
+1996,2,Brazil,Interlagos,GBR,Damon Hill,Williams-Renault
+1996,3,Argentina,Buenos Aires,FRA,Jean Alesi,Benetton-Renault
+1996,4,Europe,Nurburgring,GBR,Damon Hill,Williams-Renault
+1996,5,San Marino,Imola,GBR,Damon Hill,Williams-Renault
+1996,6,Monaco,Monte Carlo,FRA,Jean Alesi,Benetton-Renault
+1996,7,Spain,Catalunya,DEU,Michael Schumacher,Ferrari
+1996,8,Canada,Montreal,CAN,Jacques Villeneuve,Williams-Renault
+1996,9,France,Magny-Cours,CAN,Jacques Villeneuve,Williams-Renault
+1996,10,Britain,Silverstone,CAN,Jacques Villeneuve,Williams-Renault
+1996,11,Germany,Hockenheim,GBR,Damon Hill,Williams-Renault
+1996,12,Hungary,Hungaroring,GBR,Damon Hill,Williams-Renault
+1996,13,Belgium,Spa-Francorchamps,AUT,Gerhard Berger,Benetton-Renault
+1996,14,Italy,Monza,DEU,Michael Schumacher,Ferrari
+1996,15,Portugal,Estoril,CAN,Jacques Villeneuve,Williams-Renault
+1996,16,Japan,Suzuka,CAN,Jacques Villeneuve,Williams-Renault
+1997,1,Australia,Melbourne,DEU,Heinz-Harald Frentzen,Williams-Renault
+1997,2,Brazil,Interlagos,CAN,Jacques Villeneuve,Williams-Renault
+1997,3,Argentina,Buenos Aires,AUT,Gerhard Berger,Benetton-Renault
+1997,4,San Marino,Imola,DEU,Heinz-Harald Frentzen,Williams-Renault
+1997,5,Monaco,Monte Carlo,DEU,Michael Schumacher,Ferrari
+1997,6,Spain,Catalunya,ITA,Giancarlo Fisichella,Jordan-Peugeot
+1997,7,Canada,Montreal,GBR,David Coulthard,McLaren-Mercedes
+1997,8,France,Magny-Cours,DEU,Michael Schumacher,Ferrari
+1997,9,Britain,Silverstone,DEU,Michael Schumacher,Ferrari
+1997,10,Germany,Hockenheim,AUT,Gerhard Berger,Benetton-Renault
+1997,11,Hungary,Hungaroring,DEU,Heinz-Harald Frentzen,Williams-Renault
+1997,12,Belgium,Spa-Francorchamps,CAN,Jacques Villeneuve,Williams-Renault
+1997,13,Italy,Monza,FIN,Mika Hakkinen,McLaren-Mercedes
+1997,14,Austria,Spielberg,CAN,Jacques Villeneuve,Williams-Renault
+1997,15,Luxembourg,Nurburgring,DEU,Heinz-Harald Frentzen,Williams-Renault
+1997,16,Japan,Suzuka,DEU,Heinz-Harald Frentzen,Williams-Renault
+1997,17,Europe,Jerez,DEU,Heinz-Harald Frentzen,Williams-Renault
+1998,1,Australia,Melbourne,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,2,Brazil,Interlagos,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,3,Argentina,Buenos Aires,AUT,Alexander Wurz,Benetton-Playlife
+1998,4,San Marino,Imola,DEU,Michael Schumacher,Ferrari
+1998,5,Spain,Catalunya,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,6,Monaco,Monte Carlo,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,7,Canada,Montreal,DEU,Michael Schumacher,Ferrari
+1998,8,France,Magny-Cours,GBR,David Coulthard,McLaren-Mercedes
+1998,9,Britain,Silverstone,DEU,Michael Schumacher,Ferrari
+1998,10,Austria,Spielberg,GBR,David Coulthard,McLaren-Mercedes
+1998,11,Germany,Hockenheim,GBR,David Coulthard,McLaren-Mercedes
+1998,12,Hungary,Hungaroring,DEU,Michael Schumacher,Ferrari
+1998,13,Belgium,Spa-Francorchamps,DEU,Michael Schumacher,Ferrari
+1998,14,Italy,Monza,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,15,Luxembourg,Nurburgring,FIN,Mika Hakkinen,McLaren-Mercedes
+1998,16,Japan,Suzuka,DEU,Michael Schumacher,Ferrari
+1999,1,Australia,Melbourne,DEU,Michael Schumacher,Ferrari
+1999,2,Brazil,Interlagos,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,3,San Marino,Imola,DEU,Michael Schumacher,Ferrari
+1999,4,Monaco,Monte Carlo,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,5,Spain,Catalunya,DEU,Michael Schumacher,Ferrari
+1999,6,Canada,Montreal,GBR,Eddie Irvine,Ferrari
+1999,7,France,Magny-Cours,GBR,David Coulthard,McLaren-Mercedes
+1999,8,Britain,Silverstone,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,9,Austria,Spielberg,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,10,Germany,Hockenheim,GBR,David Coulthard,McLaren-Mercedes
+1999,11,Hungary,Hungaroring,GBR,David Coulthard,McLaren-Mercedes
+1999,12,Belgium,Spa-Francorchamps,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,13,Italy,Monza,DEU,Ralf Schumacher,Williams-Supertec
+1999,14,Europe,Nurburgring,FIN,Mika Hakkinen,McLaren-Mercedes
+1999,15,Malaysia,Sepang,DEU,Michael Schumacher,Ferrari
+1999,16,Japan,Suzuka,DEU,Michael Schumacher,Ferrari
+2000,1,Australia,Melbourne,BRA,Rubens Barrichello,Ferrari
+2000,2,Brazil,Interlagos,DEU,Michael Schumacher,Ferrari
+2000,3,San Marino,Imola,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,4,Britain,Silverstone,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,5,Spain,Catalunya,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,6,Europe,Nurburgring,DEU,Michael Schumacher,Ferrari
+2000,7,Monaco,Monte Carlo,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,8,Canada,Montreal,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,9,France,Magny-Cours,GBR,David Coulthard,McLaren-Mercedes
+2000,10,Austria,Spielberg,GBR,David Coulthard,McLaren-Mercedes
+2000,11,Germany,Hockenheim,BRA,Rubens Barrichello,Ferrari
+2000,12,Hungary,Hungaroring,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,13,Belgium,Spa-Francorchamps,BRA,Rubens Barrichello,Ferrari
+2000,14,Italy,Monza,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,15,USA,Indianapolis,GBR,David Coulthard,McLaren-Mercedes
+2000,16,Japan,Suzuka,FIN,Mika Hakkinen,McLaren-Mercedes
+2000,17,Malaysia,Sepang,FIN,Mika Hakkinen,McLaren-Mercedes
+2001,1,Australia,Melbourne,DEU,Michael Schumacher,Ferrari
+2001,2,Malaysia,Sepang,FIN,Mika Hakkinen,McLaren-Mercedes
+2001,3,Brazil,Interlagos,DEU,Ralf Schumacher,Williams-BMW
+2001,4,San Marino,Imola,DEU,Ralf Schumacher,Williams-BMW
+2001,5,Spain,Catalunya,DEU,Michael Schumacher,Ferrari
+2001,6,Austria,Spielberg,GBR,David Coulthard,McLaren-Mercedes
+2001,7,Monaco,Monte Carlo,GBR,David Coulthard,McLaren-Mercedes
+2001,8,Canada,Montreal,DEU,Ralf Schumacher,Williams-BMW
+2001,9,Europe,Nurburgring,COL,Juan Pablo Montoya,Williams-BMW
+2001,10,France,Magny-Cours,GBR,David Coulthard,McLaren-Mercedes
+2001,11,Britain,Silverstone,FIN,Mika Hakkinen,McLaren-Mercedes
+2001,12,Germany,Hockenheim,COL,Juan Pablo Montoya,Williams-BMW
+2001,13,Hungary,Hungaroring,FIN,Mika Hakkinen,McLaren-Mercedes
+2001,14,Belgium,Spa-Francorchamps,DEU,Michael Schumacher,Ferrari
+2001,15,Italy,Monza,DEU,Ralf Schumacher,Williams-BMW
+2001,16,USA,Indianapolis,COL,Juan Pablo Montoya,Williams-BMW
+2001,17,Japan,Suzuka,DEU,Ralf Schumacher,Williams-BMW
+2002,1,Australia,Melbourne,FIN,Kimi Raikkonen,McLaren-Mercedes
+2002,2,Malaysia,Sepang,COL,Juan Pablo Montoya,Williams-BMW
+2002,3,Brazil,Interlagos,COL,Juan Pablo Montoya,Williams-BMW
+2002,4,San Marino,Imola,BRA,Rubens Barrichello,Ferrari
+2002,5,Spain,Catalunya,DEU,Michael Schumacher,Ferrari
+2002,6,Austria,Spielberg,DEU,Michael Schumacher,Ferrari
+2002,7,Monaco,Monte Carlo,BRA,Rubens Barrichello,Ferrari
+2002,8,Canada,Montreal,COL,Juan Pablo Montoya,Williams-BMW
+2002,9,Europe,Nurburgring,DEU,Michael Schumacher,Ferrari
+2002,10,Britain,Silverstone,BRA,Rubens Barrichello,Ferrari
+2002,11,France,Magny-Cours,GBR,David Coulthard,McLaren-Mercedes
+2002,12,Germany,Hockenheim,DEU,Michael Schumacher,Ferrari
+2002,13,Hungary,Hungaroring,DEU,Michael Schumacher,Ferrari
+2002,14,Belgium,Spa-Francorchamps,DEU,Michael Schumacher,Ferrari
+2002,15,Italy,Monza,BRA,Rubens Barrichello,Ferrari
+2002,16,USA,Indianapolis,BRA,Rubens Barrichello,Ferrari
+2002,17,Japan,Suzuka,DEU,Michael Schumacher,Ferrari
+2003,1,Australia,Melbourne,FIN,Kimi Raikkonen,McLaren-Mercedes
+2003,2,Malaysia,Sepang,DEU,Michael Schumacher,Ferrari
+2003,3,Brazil,Interlagos,BRA,Rubens Barrichello,Ferrari
+2003,4,San Marino,Imola,DEU,Michael Schumacher,Ferrari
+2003,5,Spain,Catalunya,BRA,Rubens Barrichello,Ferrari
+2003,6,Austria,Spielberg,DEU,Michael Schumacher,Ferrari
+2003,7,Monaco,Monte Carlo,FIN,Kimi Raikkonen,McLaren-Mercedes
+2003,8,Canada,Montreal,ESP,Fernando Alonso,Renault
+2003,9,Europe,Nurburgring,FIN,Kimi Raikkonen,McLaren-Mercedes
+2003,10,France,Magny-Cours,COL,Juan Pablo Montoya,Williams-BMW
+2003,11,Britain,Silverstone,BRA,Rubens Barrichello,Ferrari
+2003,12,Germany,Hockenheim,COL,Juan Pablo Montoya,Williams-BMW
+2003,13,Hungary,Hungaroring,COL,Juan Pablo Montoya,Williams-BMW
+2003,14,Italy,Monza,DEU,Michael Schumacher,Ferrari
+2003,15,USA,Indianapolis,DEU,Michael Schumacher,Ferrari
+2003,16,Japan,Suzuka,DEU,Ralf Schumacher,Williams-BMW
+2004,1,Australia,Melbourne,DEU,Michael Schumacher,Ferrari
+2004,2,Malaysia,Sepang,COL,Juan Pablo Montoya,Williams-BMW
+2004,3,Bahrain,Sakhir,DEU,Michael Schumacher,Ferrari
+2004,4,San Marino,Imola,DEU,Michael Schumacher,Ferrari
+2004,5,Spain,Catalunya,DEU,Michael Schumacher,Ferrari
+2004,6,Monaco,Monte Carlo,DEU,Michael Schumacher,Ferrari
+2004,7,Europe,Nurburgring,DEU,Michael Schumacher,Ferrari
+2004,8,Canada,Montreal,BRA,Rubens Barrichello,Ferrari
+2004,9,USA,Indianapolis,BRA,Rubens Barrichello,Ferrari
+2004,10,France,Magny-Cours,DEU,Michael Schumacher,Ferrari
+2004,11,Britain,Silverstone,DEU,Michael Schumacher,Ferrari
+2004,12,Germany,Hockenheim,FIN,Kimi Raikkonen,McLaren-Mercedes
+2004,13,Hungary,Hungaroring,DEU,Michael Schumacher,Ferrari
+2004,14,Belgium,Spa-Francorchamps,FIN,Kimi Raikkonen,McLaren-Mercedes
+2004,15,Italy,Monza,BRA,Rubens Barrichello,Ferrari
+2004,16,China,Shanghai,DEU,Michael Schumacher,Ferrari
+2004,17,Japan,Suzuka,BRA,Rubens Barrichello,Ferrari
+2004,18,Brazil,Interlagos,COL,Juan Pablo Montoya,Williams-BMW
+2005,1,Australia,Melbourne,ESP,Fernando Alonso,Renault
+2005,2,Malaysia,Sepang,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,3,Bahrain,Sakhir,ESP,Pedro de la Rosa,McLaren-Mercedes
+2005,4,San Marino,Imola,DEU,Michael Schumacher,Ferrari
+2005,5,Spain,Catalunya,ITA,Giancarlo Fisichella,Renault
+2005,6,Monaco,Monte Carlo,DEU,Michael Schumacher,Ferrari
+2005,7,Europe,Nurburgring,ESP,Fernando Alonso,Renault
+2005,8,Canada,Montreal,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,9,USA,Indianapolis,DEU,Michael Schumacher,Ferrari
+2005,10,France,Magny-Cours,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,11,Britain,Silverstone,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,12,Germany,Hockenheim,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,13,Hungary,Hungaroring,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,14,Turkey,Istanbul,COL,Juan Pablo Montoya,McLaren-Mercedes
+2005,15,Italy,Monza,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,16,Belgium,Spa-Francorchamps,DEU,Ralf Schumacher,Toyota
+2005,17,Brazil,Interlagos,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,18,Japan,Suzuka,FIN,Kimi Raikkonen,McLaren-Mercedes
+2005,19,China,Shanghai,FIN,Kimi Raikkonen,McLaren-Mercedes
+2006,1,Bahrain,Sakhir,DEU,Nico Rosberg,Williams-Cosworth
+2006,2,Malaysia,Sepang,ESP,Fernando Alonso,Renault
+2006,3,Australia,Melbourne,FIN,Kimi Raikkonen,McLaren-Mercedes
+2006,4,San Marino,Imola,ESP,Fernando Alonso,Renault
+2006,5,Europe,Nurburgring,DEU,Michael Schumacher,Ferrari
+2006,6,Spain,Catalunya,BRA,Felipe Massa,Ferrari
+2006,7,Monaco,Monte Carlo,DEU,Michael Schumacher,Ferrari
+2006,8,Britain,Silverstone,ESP,Fernando Alonso,Renault
+2006,9,Canada,Montreal,FIN,Kimi Raikkonen,McLaren-Mercedes
+2006,10,USA,Indianapolis,DEU,Michael Schumacher,Ferrari
+2006,11,France,Magny-Cours,DEU,Michael Schumacher,Ferrari
+2006,12,Germany,Hockenheim,DEU,Michael Schumacher,Ferrari
+2006,13,Hungary,Hungaroring,BRA,Felipe Massa,Ferrari
+2006,14,Turkey,Istanbul,DEU,Michael Schumacher,Ferrari
+2006,15,Italy,Monza,FIN,Kimi Raikkonen,McLaren-Mercedes
+2006,16,China,Shanghai,ESP,Fernando Alonso,Renault
+2006,17,Japan,Suzuka,ESP,Fernando Alonso,Renault
+2006,18,Brazil,Interlagos,DEU,Michael Schumacher,Ferrari
+2007,1,Australia,Melbourne,FIN,Kimi Raikkonen,Ferrari
+2007,2,Malaysia,Sepang,GBR,Lewis Hamilton,McLaren-Mercedes
+2007,3,Bahrain,Sakhir,BRA,Felipe Massa,Ferrari
+2007,4,Spain,Catalunya,BRA,Felipe Massa,Ferrari
+2007,5,Monaco,Monte Carlo,ESP,Fernando Alonso,McLaren-Mercedes
+2007,6,Canada,Montreal,ESP,Fernando Alonso,McLaren-Mercedes
+2007,7,USA,Indianapolis,FIN,Kimi Raikkonen,Ferrari
+2007,8,France,Magny-Cours,BRA,Felipe Massa,Ferrari
+2007,9,Britain,Silverstone,FIN,Kimi Raikkonen,Ferrari
+2007,10,Europe,Nurburgring,BRA,Felipe Massa,Ferrari
+2007,11,Hungary,Hungaroring,FIN,Kimi Raikkonen,Ferrari
+2007,12,Turkey,Istanbul,FIN,Kimi Raikkonen,Ferrari
+2007,13,Italy,Monza,ESP,Fernando Alonso,McLaren-Mercedes
+2007,14,Belgium,Spa-Francorchamps,BRA,Felipe Massa,Ferrari
+2007,15,Japan,Fuji,GBR,Lewis Hamilton,McLaren-Mercedes
+2007,16,China,Shanghai,BRA,Felipe Massa,Ferrari
+2007,17,Brazil,Interlagos,FIN,Kimi Raikkonen,Ferrari
+2008,1,Australia,Melbourne,FIN,Heikki Kovalainen,McLaren-Mercedes
+2008,2,Malaysia,Sepang,DEU,Nick Heidfeld,BMW Sauber-BMW
+2008,3,Bahrain,Sakhir,FIN,Heikki Kovalainen,McLaren-Mercedes
+2008,4,Spain,Catalunya,FIN,Kimi Raikkonen,Ferrari
+2008,5,Turkey,Istanbul,FIN,Kimi Raikkonen,Ferrari
+2008,6,Monaco,Monte Carlo,FIN,Kimi Raikkonen,Ferrari
+2008,7,Canada,Montreal,FIN,Kimi Raikkonen,Ferrari
+2008,8,France,Magny-Cours,FIN,Kimi Raikkonen,Ferrari
+2008,9,Britain,Silverstone,FIN,Kimi Raikkonen,Ferrari
+2008,10,Germany,Hockenheim,DEU,Nick Heidfeld,BMW Sauber-BMW
+2008,11,Hungary,Hungaroring,FIN,Kimi Raikkonen,Ferrari
+2008,12,Europe,Valencia,BRA,Felipe Massa,Ferrari
+2008,13,Belgium,Spa-Francorchamps,FIN,Kimi Raikkonen,Ferrari
+2008,14,Italy,Monza,FIN,Kimi Raikkonen,Ferrari
+2008,15,Singapore,Marina Bay,FIN,Kimi Raikkonen,Ferrari
+2008,16,Japan,Fuji,BRA,Felipe Massa,Ferrari
+2008,17,China,Shanghai,GBR,Lewis Hamilton,McLaren-Mercedes
+2008,18,Brazil,Interlagos,BRA,Felipe Massa,Ferrari
+2009,1,Australia,Melbourne,DEU,Nico Rosberg,Williams-Toyota
+2009,2,Malaysia,Sepang,GBR,Jenson Button,Brawn GP-Mercedes
+2009,3,China,Shanghai,BRA,Rubens Barrichello,Brawn GP-Mercedes
+2009,4,Bahrain,Sakhir,ITA,Jarno Trulli,Toyota
+2009,5,Spain,Catalunya,BRA,Rubens Barrichello,Brawn GP-Mercedes
+2009,6,Monaco,Monte Carlo,BRA,Felipe Massa,Ferrari
+2009,7,Turkey,Istanbul,GBR,Jenson Button,Brawn GP-Mercedes
+2009,8,Britain,Silverstone,DEU,Sebastian Vettel,Red Bull-Renault
+2009,9,Germany,Nurburgring,ESP,Fernando Alonso,Renault
+2009,10,Hungary,Hungaroring,AUS,Mark Webber,Red Bull-Renault
+2009,11,Europe,Valencia,DEU,Timo Glock,Toyota
+2009,12,Belgium,Spa-Francorchamps,DEU,Sebastian Vettel,Red Bull-Renault
+2009,13,Italy,Monza,DEU,Adrian Sutil,Force India-Mercedes
+2009,14,Singapore,Marina Bay,ESP,Fernando Alonso,Renault
+2009,15,Japan,Suzuka,AUS,Mark Webber,Red Bull-Renault
+2009,16,Brazil,Interlagos,AUS,Mark Webber,Red Bull-Renault
+2009,17,Abu Dhabi,Yas Marina,DEU,Sebastian Vettel,Red Bull-Renault
+2010,1,Bahrain,Sakhir,ESP,Fernando Alonso,Ferrari
+2010,2,Australia,Melbourne,AUS,Mark Webber,Red Bull-Renault
+2010,3,Malaysia,Sepang,AUS,Mark Webber,Red Bull-Renault
+2010,4,China,Shanghai,GBR,Lewis Hamilton,McLaren-Mercedes
+2010,5,Spain,Catalunya,GBR,Lewis Hamilton,McLaren-Mercedes
+2010,6,Monaco,Monte Carlo,DEU,Sebastian Vettel,Red Bull-Renault
+2010,7,Turkey,Istanbul,RUS,Vitaly Petrov,Renault
+2010,8,Canada,Montreal,POL,Robert Kubica,Renault
+2010,9,Europe,Valencia,GBR,Jenson Button,McLaren-Mercedes
+2010,10,Britain,Silverstone,ESP,Fernando Alonso,Ferrari
+2010,11,Germany,Nurburgring,DEU,Sebastian Vettel,Red Bull-Renault
+2010,12,Hungary,Hungaroring,DEU,Sebastian Vettel,Red Bull-Renault
+2010,13,Belgium,Spa-Francorchamps,GBR,Lewis Hamilton,McLaren-Mercedes
+2010,14,Italy,Monza,ESP,Fernando Alonso,Ferrari
+2010,15,Singapore,Marina Bay,ESP,Fernando Alonso,Ferrari
+2010,16,Japan,Suzuka,AUS,Mark Webber,Red Bull-Renault
+2010,17,South Korea,Yeongam,ESP,Fernando Alonso,Ferrari
+2010,18,Brazil,Interlagos,GBR,Lewis Hamilton,McLaren-Mercedes
+2010,19,Abu Dhabi,Yas Marina,GBR,Lewis Hamilton,McLaren-Mercedes
+2011,1,Australia,Melbourne,BRA,Felipe Massa,Ferrari
+2011,2,Malaysia,Sepang,AUS,Mark Webber,Red Bull-Renault
+2011,3,China,Shanghai,AUS,Mark Webber,Red Bull-Renault
+2011,4,Turkey,Istanbul,AUS,Mark Webber,Red Bull-Renault
+2011,5,Spain,Catalunya,GBR,Lewis Hamilton,McLaren-Mercedes
+2011,6,Monaco,Monte Carlo,AUS,Mark Webber,Red Bull-Renault
+2011,7,Canada,Montreal,GBR,Jenson Button,McLaren-Mercedes
+2011,8,Europe,Valencia,DEU,Sebastian Vettel,Red Bull-Renault
+2011,9,Britain,Silverstone,ESP,Fernando Alonso,Ferrari
+2011,10,Germany,Nurburgring,GBR,Lewis Hamilton,McLaren-Mercedes
+2011,11,Hungary,Hungaroring,BRA,Felipe Massa,Ferrari
+2011,12,Belgium,Spa-Francorchamps,AUS,Mark Webber,Red Bull-Renault
+2011,13,Italy,Monza,GBR,Lewis Hamilton,McLaren-Mercedes
+2011,14,Singapore,Marina Bay,GBR,Jenson Button,McLaren-Mercedes
+2011,15,Japan,Suzuka,GBR,Jenson Button,McLaren-Mercedes
+2011,16,South Korea,Yeongam,DEU,Sebastian Vettel,Red Bull-Renault
+2011,17,India,Buddh,DEU,Sebastian Vettel,Red Bull-Renault
+2011,18,Brazil,Interlagos,AUS,Mark Webber,Red Bull-Renault
+2011,19,Abu Dhabi,Yas Marina,AUS,Mark Webber,Red Bull-Renault
+2012,1,Australia,Melbourne,GBR,Jenson Button,McLaren-Mercedes
+2012,2,Malaysia,Sepang,FIN,Kimi Raikkonen,Lotus-Renault
+2012,3,China,Shanghai,JPN,Kamui Kobayashi,Sauber-Ferrari
+2012,4,Bahrain,Sakhir,DEU,Sebastian Vettel,Red Bull-Renault
+2012,5,Spain,Catalunya,FRA,Romain Grosjean,Lotus-Renault
+2012,6,Monaco,Monte Carlo,MEX,Sergio Perez,Sauber-Ferrari
+2012,7,Canada,Montreal,DEU,Sebastian Vettel,Red Bull-Renault
+2012,8,Europe,Valencia,DEU,Nico Rosberg,Mercedes
+2012,9,Britain,Silverstone,FIN,Kimi Raikkonen,Lotus-Renault
+2012,10,Germany,Hockenheim,DEU,Michael Schumacher,Mercedes
+2012,11,Hungary,Hungaroring,DEU,Sebastian Vettel,Red Bull-Renault
+2012,12,Belgium,Spa-Francorchamps,BRA,Bruno Senna,Williams-Renault
+2012,13,Italy,Monza,DEU,Nico Rosberg,Mercedes
+2012,14,Singapore,Marina Bay,DEU,Nico Hulkenberg,Force India-Mercedes
+2012,15,Japan,Suzuka,DEU,Sebastian Vettel,Red Bull-Renault
+2012,16,South Korea,Yeongam,AUS,Mark Webber,Red Bull-Renault
+2012,17,India,Buddh,GBR,Jenson Button,McLaren-Mercedes
+2012,18,Abu Dhabi,Yas Marina,DEU,Sebastian Vettel,Red Bull-Renault
+2012,19,USA,Austin,DEU,Sebastian Vettel,Red Bull-Renault
+2012,20,Brazil,Interlagos,GBR,Lewis Hamilton,McLaren-Mercedes
+2013,1,Australia,Melbourne,FIN,Kimi Raikkonen,Lotus-Renault
+2013,2,Malaysia,Sepang,MEX,Sergio Perez,McLaren-Mercedes
+2013,3,China,Shanghai,DEU,Sebastian Vettel,Red Bull-Renault
+2013,4,Bahrain,Sakhir,DEU,Sebastian Vettel,Red Bull-Renault
+2013,5,Spain,Catalunya,MEX,Esteban Gutierrez,Sauber-Ferrari
+2013,6,Monaco,Monte Carlo,DEU,Sebastian Vettel,Red Bull-Renault
+2013,7,Canada,Montreal,AUS,Mark Webber,Red Bull-Renault
+2013,8,Britain,Silverstone,AUS,Mark Webber,Red Bull-Renault
+2013,9,Germany,Nurburgring,ESP,Fernando Alonso,Ferrari
+2013,10,Hungary,Hungaroring,AUS,Mark Webber,Red Bull-Renault
+2013,11,Belgium,Spa-Francorchamps,DEU,Sebastian Vettel,Red Bull-Renault
+2013,12,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2013,13,Singapore,Marina Bay,DEU,Sebastian Vettel,Red Bull-Renault
+2013,14,South Korea,Yeongam,DEU,Sebastian Vettel,Red Bull-Renault
+2013,15,Japan,Suzuka,AUS,Mark Webber,Red Bull-Renault
+2013,16,India,Buddh,FIN,Kimi Raikkonen,Lotus-Renault
+2013,17,Abu Dhabi,Yas Marina,ESP,Fernando Alonso,Ferrari
+2013,18,USA,Austin,DEU,Sebastian Vettel,Red Bull-Renault
+2013,19,Brazil,Interlagos,AUS,Mark Webber,Red Bull-Renault
+2014,1,Australia,Melbourne,DEU,Nico Rosberg,Mercedes
+2014,2,Malaysia,Sepang,GBR,Lewis Hamilton,Mercedes
+2014,3,Bahrain,Sakhir,DEU,Nico Rosberg,Mercedes
+2014,4,China,Shanghai,DEU,Nico Rosberg,Mercedes
+2014,5,Spain,Catalunya,DEU,Sebastian Vettel,Red Bull-Renault
+2014,6,Monaco,Monte Carlo,FIN,Kimi Raikkonen,Ferrari
+2014,7,Canada,Montreal,BRA,Felipe Massa,Williams-Mercedes
+2014,8,Austria,Spielberg,MEX,Sergio Perez,Force India-Mercedes
+2014,9,Britain,Silverstone,GBR,Lewis Hamilton,Mercedes
+2014,10,Germany,Hockenheim,GBR,Lewis Hamilton,Mercedes
+2014,11,Hungary,Hungaroring,DEU,Nico Rosberg,Mercedes
+2014,12,Belgium,Spa-Francorchamps,DEU,Nico Rosberg,Mercedes
+2014,13,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2014,14,Singapore,Marina Bay,GBR,Lewis Hamilton,Mercedes
+2014,15,Japan,Suzuka,GBR,Lewis Hamilton,Mercedes
+2014,16,Russia,Sochi,FIN,Valtteri Bottas,Williams-Mercedes
+2014,17,USA,Austin,DEU,Sebastian Vettel,Red Bull-Renault
+2014,18,Brazil,Interlagos,GBR,Lewis Hamilton,Mercedes
+2014,19,Abu Dhabi,Yas Marina,AUS,Daniel Ricciardo,Red Bull-Renault
+2015,1,Australia,Melbourne,GBR,Lewis Hamilton,Mercedes
+2015,2,Malaysia,Sepang,DEU,Nico Rosberg,Mercedes
+2015,3,China,Shanghai,GBR,Lewis Hamilton,Mercedes
+2015,4,Bahrain,Sakhir,FIN,Kimi Raikkonen,Ferrari
+2015,5,Spain,Catalunya,GBR,Lewis Hamilton,Mercedes
+2015,6,Monaco,Monte Carlo,AUS,Daniel Ricciardo,Red Bull-Renault
+2015,7,Canada,Montreal,FIN,Kimi Raikkonen,Ferrari
+2015,8,Austria,Spielberg,DEU,Nico Rosberg,Mercedes
+2015,9,Britain,Silverstone,GBR,Lewis Hamilton,Mercedes
+2015,10,Hungary,Hungaroring,AUS,Daniel Ricciardo,Red Bull-Renault
+2015,11,Belgium,Spa-Francorchamps,DEU,Nico Rosberg,Mercedes
+2015,12,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2015,13,Singapore,Marina Bay,AUS,Daniel Ricciardo,Red Bull-Renault
+2015,14,Japan,Suzuka,GBR,Lewis Hamilton,Mercedes
+2015,15,Russia,Sochi,DEU,Sebastian Vettel,Ferrari
+2015,16,USA,Austin,DEU,Nico Rosberg,Mercedes
+2015,17,Mexico,Mexico City,DEU,Nico Rosberg,Mercedes
+2015,18,Brazil,Interlagos,GBR,Lewis Hamilton,Mercedes
+2015,19,Abu Dhabi,Yas Marina,GBR,Lewis Hamilton,Mercedes
+2016,1,Australia,Melbourne,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2016,2,Bahrain,Sakhir,DEU,Nico Rosberg,Mercedes
+2016,3,China,Shanghai,DEU,Nico Hulkenberg,Force India-Mercedes
+2016,4,Russia,Sochi,DEU,Nico Rosberg,Mercedes
+2016,5,Spain,Catalunya,RUS,Daniil Kvyat,Toro Rosso-Ferrari
+2016,6,Monaco,Monte Carlo,GBR,Lewis Hamilton,Mercedes
+2016,7,Canada,Montreal,DEU,Nico Rosberg,Mercedes
+2016,8,Europe,Baku,DEU,Nico Rosberg,Mercedes
+2016,9,Austria,Spielberg,GBR,Lewis Hamilton,Mercedes
+2016,10,Britain,Silverstone,DEU,Nico Rosberg,Mercedes
+2016,11,Hungary,Hungaroring,FIN,Kimi Raikkonen,Ferrari
+2016,12,Germany,Hockenheim,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2016,13,Belgium,Spa-Francorchamps,GBR,Lewis Hamilton,Mercedes
+2016,14,Italy,Monza,ESP,Fernando Alonso,McLaren-Honda
+2016,15,Singapore,Marina Bay,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2016,16,Malaysia,Sepang,DEU,Nico Rosberg,Mercedes
+2016,17,Japan,Suzuka,DEU,Sebastian Vettel,Ferrari
+2016,18,USA,Austin,DEU,Sebastian Vettel,Ferrari
+2016,19,Mexico,Mexico City,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2016,20,Brazil,Interlagos,NLD,Max Verstappen,Red Bull-TAG Heuer
+2016,21,Abu Dhabi,Yas Marina,DEU,Sebastian Vettel,Ferrari
+2017,1,Australia,Melbourne,FIN,Kimi Raikkonen,Ferrari
+2017,2,China,Shanghai,GBR,Lewis Hamilton,Mercedes
+2017,3,Bahrain,Sakhir,GBR,Lewis Hamilton,Mercedes
+2017,4,Russia,Sochi,FIN,Kimi Raikkonen,Ferrari
+2017,5,Spain,Catalunya,GBR,Lewis Hamilton,Mercedes
+2017,6,Monaco,Monte Carlo,MEX,Sergio Perez,Force India-Mercedes
+2017,7,Canada,Montreal,GBR,Lewis Hamilton,Mercedes
+2017,8,Azerbaijan,Baku,DEU,Sebastian Vettel,Ferrari
+2017,9,Austria,Spielberg,GBR,Lewis Hamilton,Mercedes
+2017,10,Britain,Silverstone,GBR,Lewis Hamilton,Mercedes
+2017,11,Hungary,Hungaroring,ESP,Fernando Alonso,McLaren-Honda
+2017,12,Belgium,Spa-Francorchamps,DEU,Sebastian Vettel,Ferrari
+2017,13,Italy,Monza,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2017,14,Singapore,Marina Bay,GBR,Lewis Hamilton,Mercedes
+2017,15,Malaysia,Sepang,DEU,Sebastian Vettel,Ferrari
+2017,16,Japan,Suzuka,FIN,Valtteri Bottas,Mercedes
+2017,17,USA,Austin,DEU,Sebastian Vettel,Ferrari
+2017,18,Mexico,Mexico City,DEU,Sebastian Vettel,Ferrari
+2017,19,Brazil,Interlagos,NLD,Max Verstappen,Red Bull-TAG Heuer
+2017,20,Abu Dhabi,Yas Marina,FIN,Valtteri Bottas,Mercedes
+2018,1,Australia,Melbourne,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2018,2,Bahrain,Sakhir,FIN,Valtteri Bottas,Mercedes
+2018,3,China,Shanghai,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2018,4,Azerbaijan,Baku,FIN,Valtteri Bottas,Mercedes
+2018,5,Spain,Catalunya,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2018,6,Monaco,Monte Carlo,NLD,Max Verstappen,Red Bull-TAG Heuer
+2018,7,Canada,Montreal,NLD,Max Verstappen,Red Bull-TAG Heuer
+2018,8,France,Le Castellet,FIN,Valtteri Bottas,Mercedes
+2018,9,Austria,Spielberg,FIN,Kimi Raikkonen,Ferrari
+2018,10,Britain,Silverstone,DEU,Sebastian Vettel,Ferrari
+2018,11,Germany,Hockenheim,GBR,Lewis Hamilton,Mercedes
+2018,12,Hungary,Hungaroring,AUS,Daniel Ricciardo,Red Bull-TAG Heuer
+2018,13,Belgium,Spa-Francorchamps,FIN,Valtteri Bottas,Mercedes
+2018,14,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2018,15,Singapore,Marina Bay,DNK,Kevin Magnussen,Haas-Ferrari
+2018,16,Russia,Sochi,FIN,Valtteri Bottas,Mercedes
+2018,17,Japan,Suzuka,DEU,Sebastian Vettel,Ferrari
+2018,18,USA,Austin,GBR,Lewis Hamilton,Mercedes
+2018,19,Mexico,Mexico City,FIN,Valtteri Bottas,Mercedes
+2018,20,Brazil,Interlagos,FIN,Valtteri Bottas,Mercedes
+2018,21,Abu Dhabi,Yas Marina,DEU,Sebastian Vettel,Ferrari
+2019,1,Australia,Melbourne,FIN,Valtteri Bottas,Mercedes
+2019,2,Bahrain,Sakhir,MCO,Charles Leclerc,Ferrari
+2019,3,China,Shanghai,FRA,Pierre Gasly,Red Bull-Honda
+2019,4,Azerbaijan,Baku,MCO,Charles Leclerc,Ferrari
+2019,5,Spain,Catalunya,GBR,Lewis Hamilton,Mercedes
+2019,6,Monaco,Monte Carlo,FRA,Pierre Gasly,Red Bull-Honda
+2019,7,Canada,Montreal,FIN,Valtteri Bottas,Mercedes
+2019,8,France,Le Castellet,DEU,Sebastian Vettel,Ferrari
+2019,9,Austria,Spielberg,NLD,Max Verstappen,Red Bull-Honda
+2019,10,Britain,Silverstone,GBR,Lewis Hamilton,Mercedes
+2019,11,Germany,Hockenheim,NLD,Max Verstappen,Red Bull-Honda
+2019,12,Hungary,Hungaroring,NLD,Max Verstappen,Red Bull-Honda
+2019,13,Belgium,Spa-Francorchamps,DEU,Sebastian Vettel,Ferrari
+2019,14,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2019,15,Singapore,Marina Bay,DNK,Kevin Magnussen,Haas-Ferrari
+2019,16,Russia,Sochi,GBR,Lewis Hamilton,Mercedes
+2019,17,Japan,Suzuka,GBR,Lewis Hamilton,Mercedes
+2019,18,Mexico,Mexico City,MCO,Charles Leclerc,Ferrari
+2019,19,USA,Austin,MCO,Charles Leclerc,Ferrari
+2019,20,Brazil,Interlagos,FIN,Valtteri Bottas,Mercedes
+2019,21,Abu Dhabi,Yas Marina,GBR,Lewis Hamilton,Mercedes
+2020,1,Austria,Spielberg,GBR,Lando Norris,McLaren-Renault
+2020,2,Styria,Spielberg,ESP,Carlos Sainz,McLaren-Renault
+2020,3,Hungary,Hungaroring,GBR,Lewis Hamilton,Mercedes
+2020,4,Britain,Silverstone,NLD,Max Verstappen,Red Bull-Honda
+2020,5,70th Anniversary,Silverstone,GBR,Lewis Hamilton,Mercedes
+2020,6,Spain,Catalunya,FIN,Valtteri Bottas,Mercedes
+2020,7,Belgium,Spa-Francorchamps,AUS,Daniel Ricciardo,Renault
+2020,8,Italy,Monza,GBR,Lewis Hamilton,Mercedes
+2020,9,Tuscany,Mugello,GBR,Lewis Hamilton,Mercedes
+2020,10,Russia,Sochi,FIN,Valtteri Bottas,Mercedes
+2020,11,Eifel,Nurburgring,NLD,Max Verstappen,Red Bull-Honda
+2020,12,Portugal,Portimao,GBR,Lewis Hamilton,Mercedes
+2020,13,Emilia Romagna,Imola,GBR,Lewis Hamilton,Mercedes
+2020,14,Turkey,Istanbul,GBR,Lando Norris,McLaren-Renault
+2020,15,Bahrain,Sakhir,NLD,Max Verstappen,Red Bull-Honda
+2020,16,Sakhir,Sakhir,GBR,George Russell,Mercedes
+2020,17,Abu Dhabi,Yas Marina,AUS,Daniel Ricciardo,Renault
+2021,1,Bahrain,Sakhir,FIN,Valtteri Bottas,Mercedes
+2021,2,Emilia Romagna,Imola,GBR,Lewis Hamilton,Mercedes
+2021,3,Portugal,Portimao,FIN,Valtteri Bottas,Mercedes
+2021,4,Spain,Catalunya,NLD,Max Verstappen,Red Bull-Honda
+2021,5,Monaco,Monte Carlo,GBR,Lewis Hamilton,Mercedes
+2021,6,Azerbaijan,Baku,NLD,Max Verstappen,Red Bull-Honda
+2021,7,France,Le Castellet,NLD,Max Verstappen,Red Bull-Honda
+2021,8,Styria,Spielberg,GBR,Lewis Hamilton,Mercedes
+2021,9,Austria,Spielberg,NLD,Max Verstappen,Red Bull-Honda
+2021,10,Britain,Silverstone,MEX,Sergio Perez,Red Bull-Honda
+2021,11,Hungary,Hungaroring,FRA,Pierre Gasly,Alpha
+2021,11,Hungary,Hungaroring,FRA,Pierre Gasly,Tauri-Honda
+2021,13,Netherlands,Zandvoort,GBR,Lewis Hamilton,Mercedes
+2021,14,Italy,Monza,AUS,Daniel Ricciardo,McLaren-Mercedes
+2021,15,Russia,Sochi,GBR,Lando Norris,McLaren-Mercedes
+2021,16,Turkey,Istanbul,FIN,Valtteri Bottas,Mercedes
+2021,17,USA,Austin,GBR,Lewis Hamilton,Mercedes
+2021,18,Mexico City,Mexico City,FIN,Valtteri Bottas,Mercedes
+2021,19,Sao Paulo,Interlagos,MEX,Sergio Perez,Red Bull-Honda
+2021,20,Qatar,Losail,NLD,Max Verstappen,Red Bull-Honda
+2021,21,Saudi Arabia,Jeddah,GBR,Lewis Hamilton,Mercedes
+2021,22,Abu Dhabi,Yas Marina,NLD,Max Verstappen,Red Bull-Honda
+2022,1,Bahrain,Sakhir,MCO,Charles Leclerc,Ferrari
+2022,2,Saudi Arabia,Jeddah,MCO,Charles Leclerc,Ferrari
+2022,3,Australia,Melbourne,MCO,Charles Leclerc,Ferrari
+2022,4,Emilia Romagna,Imola,NLD,Max Verstappen,Red Bull-RBPT
+2022,5,Miami,Florida,NLD,Max Verstappen,Red Bull-RBPT
+2022,6,Spain,Catalunya,MEX,Sergio Perez,Red Bull-RBPT
+2022,7,Monaco,Monte Carlo,GBR,Lando Norris,McLaren-Mercedes
+2022,8,Azerbaijan,Baku,MEX,Sergio Perez,Red Bull-RBPT
+2022,9,Canada,Montreal,ESP,Carlos Sainz,Ferrari
+2022,10,Britain,Silverstone,GBR,Lewis Hamilton,Mercedes
+2022,11,Austria,Spielberg,NLD,Max Verstappen,Red Bull-RBPT
+2022,12,France,Le Castellet,ESP,Carlos Sainz,Ferrari
+2022,13,Hungary,Hungaroring,GBR,Lewis Hamilton,Mercedes
+2022,14,Belgium,Spa-Francorchamps,NLD,Max Verstappen,Red Bull-RBPT
+2022,15,Netherlands,Zandvoort,NLD,Max Verstappen,Red Bull-RBPT
+2022,16,Italy,Monza,MEX,Sergio Perez,Red Bull-RBPT
+2022,17,Singapore,Marina Bay,GBR,George Russell,Mercedes
+2022,18,Japan,Suzuka,CHN,Guanyu Zhou,Alfa Romeo-Ferrari
+2022,19,USA,Austin,GBR,George Russell,Mercedes
+2022,20,Mexico City,Mexico City,GBR,George Russell,Mercedes
+2022,21,Sao Paulo,Interlagos,GBR,George Russell,Mercedes
+2022,22,Abu Dhabi,Yas Marina,GBR,Lando Norris,McLaren-Mercedes
+2023,1,Bahrain,Sakhir,CHN,Guanyu Zhou,Alfa Romeo-Ferrari
+2023,2,Saudi Arabia,Jeddah,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,3,Australia,Melbourne,MEX,Sergio Perez,Red Bull-Honda RBPT
+2023,4,Azerbaijan,Baku,GBR,George Russell,Mercedes
+2023,5,Miami,Florida,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,6,Monaco,Monte Carlo,GBR,Lewis Hamilton,Mercedes
+2023,7,Spain,Catalunya,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,8,Canada,Montreal,MEX,Sergio Perez,Red Bull-Honda RBPT
+2023,9,Austria,Spielberg,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,10,Britain,Silverstone,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,11,Hungary,Hungaroring,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,12,Belgium,Spa-Francorchamps,GBR,Lewis Hamilton,Mercedes
+2023,13,Netherlands,Zandvoort,ESP,Fernando Alonso,Aston Martin-Mercedes
+2023,14,Italy,Monza,AUS,Oscar Piastri,McLaren-Mercedes
+2023,15,Singapore,Marina Bay,GBR,Lewis Hamilton,Mercedes
+2023,16,Japan,Suzuka,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,17,Qatar,Losail,NLD,Max Verstappen,Red Bull-Honda RBPT
+2023,18,USA,Austin,JPN,Yuki Tsunoda,Alpha
+2023,18,USA,Austin,JPN,Yuki Tsunoda,Tauri-Honda RBPT
+2023,19,Mexico City,Mexico City,GBR,Lewis Hamilton,Mercedes
+2023,20,Sao Paulo,Interlagos,GBR,Lando Norris,McLaren-Mercedes
+2023,21,Las Vegas,Las Vegas (strip),AUS,Oscar Piastri,McLaren-Mercedes
+2023,22,Abu Dhabi,Yas Marina,NLD,Max Verstappen,Red Bull-Honda RBPT
+2024,1,Bahrain,Sakhir,NLD,Max Verstappen,Red Bull-Honda RBPT
+2024,2,Saudi Arabia,Jeddah,MCO,Charles Leclerc,Ferrari
+2024,3,Australia,Melbourne,MCO,Charles Leclerc,Ferrari
+2024,4,Japan,Suzuka,NLD,Max Verstappen,Red Bull-Honda RBPT
+2024,5,China,Shanghai,ESP,Fernando Alonso,Aston Martin-Mercedes
+2024,6,Miami,Florida,AUS,Oscar Piastri,McLaren-Mercedes
+2024,7,Emilia Romagna,Imola,GBR,George Russell,Mercedes
+2024,8,Monaco,Monte Carlo,GBR,Lewis Hamilton,Mercedes
+2024,9,Canada,Montreal,GBR,Lewis Hamilton,Mercedes
+2024,10,Spain,Catalunya,GBR,Lando Norris,McLaren-Mercedes
+2024,11,Austria,Spielberg,ESP,Fernando Alonso,Aston Martin-Mercedes
+2024,12,Britain,Silverstone,ESP,Carlos Sainz,Ferrari
+2024,13,Hungary,Hungaroring,GBR,George Russell,Mercedes
+2024,14,Belgium,Spa-Francorchamps,MEX,Sergio Perez,Red Bull-Honda RBPT
+2024,15,Netherlands,Zandvo|ort,GBR,Lando Norris,McLaren-Mercedes
+2024,16,Italy,Monza,GBR,Lando Norris,McLaren-Mercedes
+2024,17,Azerbaijan,Baku,GBR,Lando Norris,McLaren-Mercedes
+2024,18,Singapore,Marina Bay,AUS,Daniel Ricciardo,Racing Bulls-Honda RBPT
+2024,19,USA,Austin,FRA,Esteban Ocon,Alpine-Renault
+2024,20,Mexico City,Mexico City,MCO,Charles Leclerc,Ferrari
+2024,21,Sao Paulo,Interlagos,NLD,Max Verstappen,Red Bull-Honda RBPT
+2024,22,Las Vegas,Las Vegas (strip),GBR,Lando Norris,McLaren-Mercedes
+2024,23,Qatar,Losail,GBR,Lando Norris,McLaren-Mercedes
+2024,24,Abu Dhabi,Yas Marina,DNK,Kevin Magnussen,Haas-Ferrari
+2025,1,Australia,Melbourne,GBR,Lando Norris,McLaren-Mercedes
+2025,2,China,Shanghai,GBR,Lando Norris,McLaren-Mercedes
+2025,3,Japan,Suzuka,ITA,Andrea Kimi Antonelli,Mercedes
+2025,4,Bahrain,Sakhir,AUS,Oscar Piastri,McLaren-Mercedes
+2025,5,Saudi Arabia,Jeddah,GBR,Lando Norris,McLaren-Mercedes
+2025,6,Miami,Florida,GBR,Lando Norris,McLaren-Mercedes
+2025,7,Emilia Romagna,Imola,NLD,Max Verstappen,Red Bull-Honda RBPT
+2025,8,Monaco,Monte Carlo,GBR,Lando Norris,McLaren-Mercedes
+2025,9,Spain,Catalunya,AUS,Oscar Piastri,McLaren-Mercedes
+2025,10,Canada,Montreal,GBR,George Russell,Mercedes
+2025,11,Austria,Spielberg,AUS,Oscar Piastri,McLaren-Mercedes
+2025,12,Britain,Silverstone,AUS,Oscar Piastri,McLaren-Mercedes
+2025,13,Belgium,Spa-Francorchamps,ITA,Andrea Kimi Antonelli,Mercedes
+2025,14,Hungary,Hungaroring,GBR,George Russell,Mercedes
+2025,15,Netherlands,Zandvoort,AUS,Oscar Piastri,McLaren-Mercedes
+2025,16,Italy,Monza,GBR,Lando Norris,McLaren-Mercedes
+2025,17,Azerbaijan,Baku,NLD,Max Verstappen,Red Bull-Honda RBPT
+2025,18,Singapore,Marina Bay,GBR,Lewis Hamilton,Ferrari
+2025,19,USA,Austin,ITA,Andrea Kimi Antonelli,Mercedes
+2025,20,Mexico City,Mexico City,GBR,George Russell,Mercedes
+2025,21,Sao Paulo,Interlagos,THA,Alexander Albon,Williams-Mercedes
+2025,22,Las Vegas,Las Vegas (strip),NLD,Max Verstappen,Red Bull-Honda RBPT
+2025,23,Qatar,Losail,AUS,Oscar Piastri,McLaren-Mercedes
+2025,24,Abu Dhabi,Yas Marina,MCO,Charles Leclerc,Ferrari

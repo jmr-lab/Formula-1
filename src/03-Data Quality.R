@@ -32,6 +32,10 @@ head(session_entry)
 
 results <- session_entry %>%
   left_join(
+    session %>% select(id, type),
+    by = c("session_id" = "id")
+  ) %>%
+  left_join(
     roundentry %>% select(id, round_id, team_driver_id),
     by = c("round_entry_id" = "id")
   ) %>%
@@ -55,11 +59,39 @@ results <- session_entry %>%
     season %>% select(id, year),
     by = c("season_id" = "id")
   ) %>%
+  filter(type == "R") %>%
   select(
     id, year, circuit, forename, surname, team,
-    points, detail, laps_completed, fastest_lap_rank,
+    position, points, detail, laps_completed, fastest_lap_rank,
     is_classified, is_eligible_for_points
   )
+
+results %>%
+  group_by(year, circuit) %>%
+  filter(position == 1) %>%
+  summarise(n_winners = n()) %>%
+  filter(n_winners > 1)
+results %>%
+  filter(position == 1 & year == 1994 & circuit == "French Grand Prix")
+results %>%
+  filter(surname == "Hill" & year == 1994 & circuit == "French Grand Prix")
+
+# -----------------------------------------------------------------------------
+# QA CHECK 1: WINNERS
+# -----------------------------------------------------------------------------
+# Races with more than one winner:
+session %>%
+  filter(type == "R") %>%
+  left_join(session_entry, by = c("id" = "session_id")) %>%
+  filter(position == 1) %>%
+  count(id, name = "n_winners") %>%
+  filter(n_winners > 1)
+# Using the result data frame to have more details:
+results %>%
+  group_by(year, circuit) %>%
+  filter(position == 1) %>%
+  summarise(n_winners = n()) %>%
+  filter(n_winners > 1)
 
 # -----------------------------------------------------------------------------
 # QA CHECK 1: UNCLASSIFIED DRIVERS WHO SCORED POINTS
@@ -103,6 +135,11 @@ decimals_explained <- results %>%
   select(-is_classified, -is_eligible_for_points)
 decimals_explained
 
+
+results %>%
+  filter(points %% 1 != 0) %>%
+  count(points, name = "n_awards") %>%
+  arrange(points)
 # Known fractional cases from preliminary scan:
 # • 1954 British GP: 7 drivers shared fastest lap → 1/7 = 0.14 pts each (the fastest_lap_rank should be 1)
 # • 1955 Argentine GP: 3 drivers shared a 3rd-place car → 4/3 = 1.33 pts each
@@ -136,7 +173,7 @@ monaco_1956
 
 
 
-
+head(team %>% select(name, nationality))
 
 
 results %>% filter(year <= 1959 & !is.na(fastest_lap_rank))
@@ -184,7 +221,34 @@ fastest_laps <- map_dfr(years, function(y) {
 
 fastest_laps
 
+library(tidyverse)
 
+fl_clean <- fastest_laps %>%
+  mutate(
+    # Extract each "(XXX) Name" chunk from combined driver cells
+    Driver_new = map(str_extract_all(Driver, "\\([A-Z]{3}\\)\\s*[^()]+"), trimws),
+    # Split constructors at lowercase->uppercase boundaries,
+    # protecting "Mc" (as in McLaren) from being split
+    Constructor_new = map(Constructor, ~ {
+      masked <- str_replace_all(.x, "Mc", "\u0001")          # hide "Mc"
+      parts  <- str_split_1(masked, "(?<=[a-z])(?=[A-Z])")  # split camel-case joins
+      str_replace_all(parts, "\u0001", "Mc")                 # restore "Mc"
+    })
+  ) %>%
+  select(-Driver, -Constructor) %>%
+  # Unnest both columns in lockstep (they have equal lengths per row)
+  unnest(c(Driver_new, Constructor_new)) %>%
+  rename(Driver = Driver_new, Constructor = Constructor_new)
+fl_clean
+
+fl_clean <- fl_clean %>%
+  separate_wider_regex(
+    Driver,
+    patterns = c(Country = "\\([A-Z]{3}\\)", "\\s*", Name = ".*")
+  ) %>%
+  mutate(Country = str_remove_all(Country, "[()]"))
+
+fl_clean
 # -----------------------------------------------------------------------------
 # SUMMARY OF DATA QUALITY ISSUES IDENTIFIED
 # -----------------------------------------------------------------------------
@@ -206,9 +270,32 @@ standard_cols <- c(
   "points", "detail", "laps_completed", "fastest_lap_rank"
 )
 
-quality_issues_summary <- list(
-  unclassified_count = nrow(unclassified_with_points),
-  decimal_races = nrow(decimals_explained),
-  ineligible_count = nrow(ineligible_with_points),
-  case_studies = c(fangio_monaco_1956$year, fangio_monaco_1956$circuit)
-)
+#quality_issues_summary <- list(
+#  unclassified_count = nrow(unclassified_with_points),
+#  decimal_races = nrow(decimals_explained),
+#  ineligible_count = nrow(ineligible_with_points),
+#  case_studies = c(fangio_monaco_1956$year, fangio_monaco_1956$circuit)
+#)
+
+session_entry %>%
+  filter(!is.na(points), points %% 1 != 0) %>%
+  mutate(fractional_part = points %% 1) %>%
+  count(fractional_part, name = "n_rows") %>%
+  arrange(desc(n_rows))
+
+session_entry %>%
+  filter(!is.na(points), points %% 1 != 0) %>%
+  mutate(fractional_part = round(points %% 1, 3)) %>%
+  count(fractional_part, name = "n_rows") %>%
+  arrange(desc(n_rows))
+
+results %>%
+  filter(!is.na(points), is_eligible_for_points == "f", points > 0) %>%
+  transmute(year, circuit, driver = paste(forename, surname),
+            team, position, points, detail, laps_completed) %>%
+  arrange(year, circuit)
+
+results %>%
+  filter(year == 1956 & team == "Ferrari" & circuit == "Monaco Grand Prix") %>%
+  transmute(year, circuit, driver = paste(forename, surname),
+            team, position, points, detail, laps_completed)
