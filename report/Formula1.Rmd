@@ -868,8 +868,11 @@ confirmed multi-nationality careers such as Gachot — each entry traceable to
 the historical evidence discussed in Chapter 2.
 
 ```{r, echo=FALSE, message=FALSE}
-# TODO: replace with your actual corrections table extract, e.g.:
-# kbl(head(driver_nationality_corrections), ...) / head(team_nationality_corrections)
+kbl(head(driver_nationality_corrections), format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+
+kbl(head(team_nationality_corrections), format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
 ```
 
 The distinction from the raw schema is worth making explicit: where Jolpica
