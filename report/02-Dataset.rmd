@@ -211,7 +211,7 @@ fmt_schema_table(staging_tables)
 
 \newpage
 
-## 2.4 Table Content
+## 2.4 Quick Analysis
 
 ### 2.4.1 A First Look at the Raw Tables
 

@@ -1,14 +1,11 @@
 ---
-title: "Formula 1"
-subtitle: 'A Mathematical Analysis to Identify the Top Formula 1 Driver in History'
-author: "Jean-Marie Roy"
-date: "`r Sys.Date()`"
 output: 
   pdf_document:
     latex_engine: xelatex
 header-includes:
   - \usepackage{xcolor}
   - \usepackage{hyperref}
+  - \usepackage{eso-pic}
   - \usepackage{draftwatermark}
   - \SetWatermarkText{DRAFT}
   - \SetWatermarkScale{1}
@@ -41,12 +38,49 @@ knitr::opts_chunk$set(echo = TRUE)
 #
 ```
 
+```{r cover-path, include=FALSE}
+# Path for LaTeX must use forward slashes even on Windows
+cover_path <- here::here("images", "report", "cover-background.png")
+cover_path <- gsub("\\\\", "/", cover_path)
+```
+
+\AddToShipoutPictureBG*{
+  \AtPageLowerLeft{
+    \raisebox{0pt}[0pt][0pt]{%
+      \hspace*{-1mm}%
+      \includegraphics[
+        width=\dimexpr\paperwidth+2mm\relax,
+        height=\dimexpr\paperheight+2mm\relax
+      ]{`r cover_path`}
+    }
+  }
+  \AtPageCenter{
+    \raisebox{8cm}{%
+      \makebox(0,0){%
+        \color{white}\bfseries\fontsize{64}{72}\selectfont 1 Formula
+      }
+    }
+  }
+}
+
+\null
+\thispagestyle{empty}
+\clearpage
+
 \begin{center}
+\vspace*{0.18\textheight}
+
+{\Huge\bfseries 1 Formula\par}
+\vspace{1em}
+{\Large A Mathematical Analysis to Identify the Top Formula 1 Driver in History\par}
+\vspace{2em}
+Jean-Marie Roy\par
+`r Sys.Date()`
+
 \vspace*{\fill}
 
 \includegraphics[width=0.2\textwidth]{`r here::here("images/report/flag.png")`}
-
-\vspace*{\fill}
+\vspace*{1em}
 \end{center}
 
 \newpage
