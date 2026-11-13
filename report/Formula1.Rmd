@@ -44,10 +44,10 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-% ---------------------------------------------------------------
-% COVER PAGE
-% Background image + title + subtitle overlaid, author bottom-right
-% ---------------------------------------------------------------
+<!-- --------------------------------------------------------------- -->
+<!-- COVER PAGE -->
+<!-- Background image + title + subtitle overlaid, author bottom-right -->
+<!-- --------------------------------------------------------------- -->
 \AddToShipoutPictureBG*{
   % --- Full-page background image ---
   \AtPageLowerLeft{
