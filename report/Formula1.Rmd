@@ -44,7 +44,12 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
+% ---------------------------------------------------------------
+% COVER PAGE
+% Background image + title + subtitle overlaid, author bottom-right
+% ---------------------------------------------------------------
 \AddToShipoutPictureBG*{
+  % --- Full-page background image ---
   \AtPageLowerLeft{
     \raisebox{0pt}[0pt][0pt]{%
       \hspace*{-1mm}%
@@ -54,10 +59,27 @@ cover_path <- gsub("\\\\", "/", cover_path)
       ]{`r cover_path`}
     }
   }
+  % --- Title and subtitle, centered horizontally, upper third of the page ---
   \AtPageCenter{
-    \raisebox{8cm}{%
+    % Title : raisebox controls vertical position (distance above page center)
+    \raisebox{9.5cm}{%
       \makebox(0,0){%
-        \color{white}\bfseries\fontsize{64}{72}\selectfont 1 Formula
+        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
+      }
+    }
+    % Subtitle, just below the title
+    \raisebox{7.2cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
+      }
+    }
+  }
+  % --- Author, discreet, bottom right corner ---
+  \AtPageLowerLeft{
+    \raisebox{1.5cm}[0pt][0pt]{%
+      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+      \llap{%
+        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
       }
     }
   }
