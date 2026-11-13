@@ -57,999 +57,34 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # 1. Introduction
 
-When posed the question, "Who is or was the best Formula 1 driver of all time?" an AI agent will likely first mention **Lewis Hamilton**, followed by **Michael Schumacher**, based primarily on their respective world championship titles. If asked for a list of top drivers, it might also include **Juan Manuel Fangio**, **Alain Prost**, **Max Verstappen**, and **Sebastian Vettel**, arranged alphabetically. **Fangio** stands out with five championships, while the others each have four.
-
-Interestingly, many fans regard **Ayrton Senna**, with his three titles, as a superior driver compared to **Alain Prost**, despite the latter's four championships. This raises the question: how significant are titles in evaluating a driver’s greatness? Should we consider alternative criteria for determining who truly excels?
-
-If we delve deeper, **Juan Manuel Fangio** won five titles in the 1950s, during the formative years of the Formula 1 World Championship. His legacy is so profound that his name has become synonymous with exceptional driving. In French-speaking regions, the phrase "driving like Fangio" denotes flawless driving. A notable reference appears in *The Adventures of Tintin: The Calculus Affair* [1], where a character remarks, "This must be Fangio at the wheel" as a car skillfully avoids a net, reflecting Fangio's prowess during the height of his career. (In the English edition, it is translated as *"They must have a Jack Brabham at the wheel!"*)
-
-```{r, echo=FALSE, fig.cap="\\textit{\"This must be Fangio at the wheel!\"}", fig.align='center', out.width='70%'}
-knitr::include_graphics(here::here("images", "report", "tintin.png"))
+```{r child="01-Introduction.rmd"}
 ```
-
-Complicating matters further, the rules of Formula 1 have evolved significantly over the years. The number of races has increased (from seven during Fangio's era to 22 today), and the points system has undergone various changes. For instance, the winner received 8 points until **1960**, then 9 points until **1990**, followed by 10 points until **2009**, and has been set at 25 points since **2010**. Additionally, until **1990**, only the best results counted towards the championship, which allowed Senna to secure the title in **1990** against Prost, despite the latter having more points overall; under modern rules, Prost would have been awarded the title instead.
-
-Ultimately, it is evident that even the most skilled drivers depend significantly on their cars' performance. Both Alain Prost in **1991** and Lewis Hamilton in **2025** encountered substantial difficulties while driving for Ferrari, so much so that Prost was dismissed from his team after comparing his car to a "truck." This raises an important question: to what extent is a world title attributable to the car, and how much is a reflection of the driver's ability?
 
 \newpage
 
 # 2. Dataset
 
-## 2.1 Source
-
-The data used throughout this study comes from **Jolpica F1** [2], an open-source
-(Apache 2.0) Formula 1 API maintained by a group of volunteers. Jolpica was
-created as the successor to the widely used Ergast API, which was deprecated at
-the end of the 2024 season, and provides the same type of historical data
-(drivers, teams, sessions, results, standings, lap times and pit stops)
-through a redesigned database schema. According to its maintainers, this new
-schema is intended to better accommodate changing rule sets, reduce duplicated
-information and allow the storage of additional F1-related data.
-
-As Jolpica is an independent open-source project, its internals — scraping
-process, data validation and correction policies — are the responsibility of
-its maintainers and are outside the scope of this work. We therefore treat
-Jolpica as the *system of record* for historical Formula 1 data and restrict
-ourselves to documenting how the data is ingested, transformed and audited on
-our side. A full description of the tables can be found in the project's
-database documentation [3].
-
-It should be noted that Jolpica publishes its database dump with a delay of
-approximately two weeks: more recent data is only available through a paid
-tier. Since this study analyses historical data up to the end of the previous
-season — deliberately excluding the ongoing season — the free release is
-entirely sufficient, and the delayed publication has no impact on the
-completeness of the dataset used here.
-
-## 2.2 Pipeline
-
-```{r, echo=FALSE}
-total_rows_k <- round(sum(inventory$n_rows) / 1000, -1)
+```{r child="02-Dataset.rmd"}
 ```
-
-The ingestion, transformation and publication of the data is fully automated in
-an ELT pipeline published on GitHub [4], orchestrated with **GitHub Actions**
-and scheduled to run **weekly** (with manual triggering also possible). The
-pipeline extracts the raw data from Jolpica and produces two outputs: a
-normalised SQLite database used for validation and transformation, and a
-mirror of the raw tables in Databricks used for interactive analysis.
-
-The pipeline performs the following steps:
-
-1. **Extract** — the full Jolpica database dump (18 CSV files, one per table,
-   ~40 MB compressed) is downloaded from the Jolpica data endpoint. A
-   freshness check skips the download if the data is less than 7 days old,
-   and the original Ergast/Jolpica table schemas are preserved.
-2. **Load** — the raw CSVs are normalised into a **star schema SQLite**
-   database (`jolpica.db`), with foreign key validation guaranteeing
-   referential integrity. This database (~`r total_rows_k`K rows covering every F1 race
-   since 1950) acts as a portable, version-controlled snapshot of the raw
-   data, fully independent from any cloud service.
-3. **Transform** — running in parallel with the publication step, the
-   transformation job reshapes the raw schema into an analytics schema
-   (`formula1.db`), adds derived fields (driver age, cumulative points,
-   country flags), and applies **dbt** models and tests on top.
-4. **Publish to Databricks** — each raw SQLite table is exported to Parquet,
-   staged in a Unity Catalog volume, and loaded into **Delta tables** in
-   Databricks via `COPY INTO`, with automatic type widening and row-count
-   verification against the source. This gives a queryable copy of the raw
-   dataset for exploratory analysis without needing to download the SQLite
-   file.
-
-\newpage
-
-The two branches of the pipeline are intentionally decoupled: a Databricks
-outage cannot block the local SQLite build and release.
-
-```{r, echo=FALSE, out.width='100%', fig.align="center", fig.cap="Pipeline architecture: Jolpica → SQLite → dbt / Databricks"}
-knitr::include_graphics(here::here("images", "report", "pipeline.png"))
-```
-
-Two design decisions are worth highlighting, as they affect the reproducibility
-of the analysis:
-
-* **Full reload instead of incremental processing.** With roughly `r total_rows_k`K rows,
-  reloading the entire dataset at each run is cheap, and — more importantly —
-  safe: F1 stewards occasionally issue disqualifications or points
-  adjustments *after* races, so append-only logic would silently miss
-  retroactive corrections. This is particularly relevant for the historical
-  quirks discussed in Section 2.4.
-* **Release strategy.** The database is distributed via GitHub Releases under
-  a mutable `data-latest` tag, overwritten at each run. Versioned immutable
-  releases (`data-YYYYMMDD`) are a planned improvement; for this study, the
-  dataset snapshot used for the analysis is documented together with the
-  results to ensure reproducibility.
-
-The pipeline consumes a single input: the Jolpica database dump, delivered as
-a ZIP archive of 18 CSV files, one per table. The table below lists these
-input files as recorded in the database inventory; each file corresponds
-one-to-one with a table described in Section 2.3.
-
-```{r, echo=FALSE}
-n_col <- 3
-n_row <- ceiling(nrow(inventory) / n_col)
-
-icon_path <- here::here("images", "report", "file-csv.png")
-icon_latex <- paste0(
-  "\\includegraphics[width=0.5cm]{",
-  gsub("\\\\", "/", icon_path),
-  "}"
-)
-
-files <- sort(paste0(gsub("_", "\\\\_", inventory$table_name), ".csv"))
-files <- c(files, rep("", n_row * n_col - length(files)))
-grid <- matrix(files, nrow = n_row, ncol = n_col, byrow = FALSE)
-
-dataset_files <- data.frame(
-  icon1 = ifelse(grid[, 1] == "", "", icon_latex),
-  file1 = grid[, 1],
-  icon2 = ifelse(grid[, 2] == "", "", icon_latex),
-  file2 = grid[, 2],
-  icon3 = ifelse(grid[, 3] == "", "", icon_latex),
-  file3 = grid[, 3],
-  stringsAsFactors = FALSE
-)
-
-kbl(dataset_files, format = "latex", booktabs = TRUE, linesep = "",
-    escape = FALSE,
-    col.names = c("", "Files", "", "", "", "")) %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position"))
-```
-
-\newpage
-
-## 2.3 Tables
-
-### 2.3.0 Overview
-
-The Jolpica export consists of **18 tables** covering seasons, rounds, circuits, sessions, results, teams, championships, scoring systems, lap times, pit stops and staging tables. Note that the schema intentionally differs from Ergast's: Jolpica splits the old monolithic races/results concepts into fine-grained round, session and session_entry tables, which allows a modern race weekend (practice, qualifying, sprint, race) to be modelled explicitly.
-
-```{r, echo=FALSE, message=FALSE}
-# Look up the formatted row count for a table name
-rows_of <- function(table_name) {
-  idx <- match(table_name, inventory$table_name)
-  if (any(is.na(idx))) {
-    stop("Unknown table(s) in inventory: ",
-         paste(table_name[is.na(idx)], collapse = ", "))
-  }
-  format(inventory$n_rows[idx], big.mark = ",", scientific = FALSE)
-}
-
-to_tex <- function(x) paste0("\\texttt{", gsub("_", "\\\\_", x), "}")
-
-fmt_schema_table <- function(df) {
-  df <- df %>%
-    mutate(Rows = rows_of(Table)) %>%
-    relocate(Table, Rows, Purpose) %>%      # put Rows back where it belongs
-    mutate(Table = to_tex(Table))
-  kbl(df, format = "latex", booktabs = TRUE, linesep = "",
-      escape = FALSE,
-      col.names = c("Table", "Rows", "Purpose")) %>%
-    kable_styling(font_size = 9, latex_options = "hold_position") %>%
-    column_spec(1, width = "4.5cm") %>%
-    column_spec(2, width = "1.5cm") %>%
-    column_spec(3, width = "9cm")
-}
-```
-
-### 2.3.1 Core Season & Race Structure
-
-The three tables below form the backbone of the temporal dimension: they
-identify each season, each Grand Prix, and each physical circuit.
-
-```{r, echo=FALSE, message=FALSE}
-core_tables <- tribble(
-  ~Table,    ~Purpose,
-  "season",  "Master record of every F1 season (1950-present). Contains year, championship system reference, and Wikipedia link. Primary time dimension for all temporal queries.",
-  "round",   "Individual Grands Prix within seasons. Links to season and circuit, includes race number, official name, date, and Wikipedia reference. Represents the traditional race event concept.",
-  "circuit", "Physical racetracks. Stores track metadata including location data and Wikipedia URL. Rarely changes over time - a dimensional lookup table."
-)
-
-fmt_schema_table(core_tables)
-```
-
-### 2.3.2 Session-Level Detail
-
-Modern Formula 1 weekends comprise multiple timed sessions (practice,
-qualifying, sprint, race). Jolpica models this explicitly with two tables:
-
-```{r, echo=FALSE, message=FALSE}
-session_tables <- tribble(
-  ~Table,          ~Purpose,
-  "session",        "Granular timing sessions (Race, Qualifying, Sprint, Practice). Modern F1 structure where a round may have multiple sessions. Includes scheduled laps, timezone, and cancellation flags.",
-  "session_entry",  "Driver results per session. Contains grid position, finishing position, points scored, laps completed, time/difference, status codes, and classification eligibility. Most frequently queried results table."
-)
-
-fmt_schema_table(session_tables)
-```
-
-\newpage
-
-### 2.3.3 Driver & Constructor Records
-
-Drivers and constructors are tracked both as profiles and as historical
-pairings, alongside the legacy entry mechanism used before session-level
-granularity:
-
-```{r, echo=FALSE, message=FALSE}
-driver_team_tables <- tribble(
-  ~Table,        ~Purpose,
-  "driver",       "Driver profiles: names, nationality, date of birth and country. Core dimension for any driver-level aggregation; driver age at race date is derived from it during transformation.",
-  "team",         "All constructor entries in history. Note: constructors evolve or rebrand - this tracks distinct legal entities, not just Ferrari/Mercedes/Red Bull brand names.",
-  "team_driver",  "Historical pairings of which driver drove for which team. Junction table linking drivers and teams, with validity periods implied by related records.",
-  "roundentry",   "Which team-driver combination entered which round (before session granularity). Contains car number assignment. Legacy linkage from older schema design."
-)
-
-fmt_schema_table(driver_team_tables)
-```
-
-### 2.3.4 Championship Standings
-
-Both championships are tracked cumulatively after every round, enabling
-trajectory analysis over the course of a season:
-
-```{r, echo=FALSE, message=FALSE}
-standings_tables <- tribble(
-  ~Table,             ~Purpose,
-  "driver_championship", "Cumulative driver standings across the season. Tracks points accumulation after each round - enabling analysis of championship trajectories, comebacks, and mathematical elimination dates.",
-  "team_championship",   "Equivalent constructor standings. Mirrors the driver championship table structure but for teams. Critical for analysing constructor battles and historic dominance patterns."
-)
-
-fmt_schema_table(standings_tables)
-```
-
-### 2.3.5 Scoring Systems
-
-Point allocation has changed repeatedly across F1 history. Three tables
-document the rules governing how results translate into points:
-
-```{r, echo=FALSE, message=FALSE}
-scoring_tables <- tribble(
-  ~Table,                    ~Purpose,
-  "points_system",           "Historical point-allocation rules. Each row defines a unique scoring scheme used during a period, explaining why different eras award points differently.",
-  "championship_system",     "Broader championship format definitions. May encompass tiebreaker rules, sprint weekend variants, or multi-season aggregations.",
-  "championship_adjustment", "Special corrections to historical standings. Likely captures retroactive disqualifications, title rescissions, or corrections to original records."
-)
-
-fmt_schema_table(scoring_tables)
-```
-
-\newpage
-
-### 2.3.6 Performance Metrics
-
-Two high-cardinality tables capture on-track performance:
-
-```{r, echo=FALSE, message=FALSE}
-performance_tables <- tribble(
-  ~Table,     ~Purpose,
-  "lap",       "Per-lap timing data. The highest-cardinality table, containing individual lap times for every driver in every race session. Essential for pace analysis, fastest-lap identification, and tyre-strategy modelling.",
-  "pit_stop",  "Pit-stop events, including duration and timing within a race, and potentially crew performance data. Critical for race-strategy analysis and comparing pit-crew performance."
-)
-
-fmt_schema_table(performance_tables)
-```
-
-### 2.3.7 Staging Tables (Not Used in Analysis)
-
-Two tables exist as empty staging structures with no analytical value:
-
-```{r, echo=FALSE, message=FALSE}
-staging_tables <- tribble(
-  ~Table,     ~Purpose,
-  "base_team", "Empty staging table - likely intended for ETL operations or future use. Currently contains no data.",
-  "penalty",   "Intended for driver or constructor penalties but currently empty. It may be populated by future pipeline updates or used only when infractions occur."
-)
-
-fmt_schema_table(staging_tables)
-```
-
-\newpage
-
-## 2.4 Table Content
-
-### 2.4.1 A First Look at the Raw Tables
-
-Before describing the issues hidden in the data, it is worth looking at the
-tables themselves. The extracts below show the first rows of two tables —
-`season`, one of the smallest tables in the schema, and `pit_stop`, a
-fact table — chosen so that all their columns fit on the page.
-
-First, the `season` table — with only a handful of rows and columns, it
-defines the championship calendar:
-
-```{r, echo=FALSE, message=FALSE}
-kbl(head(season, 5), format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The extract below shows the first rows of the `pit_stop` table:
-
-```{r, echo=FALSE, message=FALSE}
-kbl(head(pit_stop, 5), format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-### 2.4.2 The `api_id` Column
-
-The two extracts above reveal a common pattern: every table begins with an
-`api_id` column. This identifier is present in **all 18 tables** of the
-export — inspecting the remaining tables (not reproduced here) shows exactly
-the same structure. It mirrors the primary key exposed by the Jolpica API and
-is therefore *application specific*: it identifies records within Jolpica's
-own infrastructure (and its Ergast-compatible endpoints) rather than
-describing anything about the racing data itself.
-
-Since it carries no analytical meaning, duplicates the information already
-present in the pipeline's own keys, and wastes width in every table, **these
-columns will be dropped from all tables during the dbt transformation step**;
-the details are covered in Chapter 3.
-
-Dropping the columns from the analytical tables does not mean discarding the
-information permanently. Should the values ever prove useful again — for
-example, for tracing records back to Jolpica's endpoints or for debugging the
-extraction process — they could be preserved in dedicated, application-level
-lookup tables, kept strictly separate from the F1 data tables described above.
-
-\newpage
-
-### 2.4.3 Winner Uniqueness
-
-The most basic integrity expectation for a results table is that each race
-has exactly one winner. This expectation is, however, merely an assumption
-made by the analyst — the raw export is never accompanied by a formal
-definition of what constitutes a unique race winner — and is therefore worth
-verifying explicitly.
-
-Working directly from the Jolpica `results` table, a simple count of drivers
-classified in first position per race confirms two things. First, no race in
-the dataset lacks a winner altogether; second, several races list **more than
-one** driver in first position:
-
-```{r, echo=FALSE, message=FALSE}
-session %>%
-  filter(type == "R") %>%
-  left_join(session_entry, by = c("id" = "session_id")) %>%
-  filter(position == 1) %>%
-  count(id, name = "n_winners") %>%
-  filter(n_winners > 1) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-To identify the affected races, the races listing more than one winner are
-then joined with the `races` and `drivers` tables — the joins serve purely
-to attach human-readable context, not to derive the counts:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  group_by(year, circuit) %>%
-  filter(position == 1) %>%
-  summarise(n_winners = n()) %>%
-  filter(n_winners > 1) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-At first glance this looks like a data-quality defect, but it turns out to be
-a historically faithful representation of the sport's earliest era, as the
-next section explains.
-
-### 2.4.4 Shared Drives in the Early Years
-
-The multiple-winner phenomenon observed above is not an error in the export
-but a consequence of a practice that was accepted in Formula One's formative
-years: **car sharing**. In the early seasons, teams frequently entered
-smaller fields than the grid size, and a single car could be driven by
-several drivers over the course of one race — one driver starting the race
-and another taking over later, in the manner of an endurance relay.
-
-Under the regulations of the time, all drivers who took the wheel were
-credited with the race result achieved by that car. Consequently, when a
-shared car finished first, the results table records several drivers sharing
-the win — exactly the pattern surfaced by the aggregation in Section 2.4.3.
-The same convention extends beyond victories: position assignments,
-classifications, and championship points accrued by such cars were likewise
-divided among the participating drivers.
-
-From a data-modelling perspective, this means the natural key of the results
-table is not (race, position) alone, since a single finishing position can
-legitimately be occupied by multiple driver rows. Any transformation or
-analysis step must therefore account for this historical peculiarity rather
-than treating duplicate positions as anomalies to be corrected.
-
-\newpage
-
-### 2.4.5 Fractional Point Values
-
-The shared-drive practice of Section 2.4.4 leaves an arithmetic fingerprint
-in the `points` column — but it is not the only source of non-integer point
-values. Up to this point the integrity checks have concerned the *structural*
-attributes of the export — keys, positions, flags; the `points` column itself
-has not been inspected yet, even though it encodes the accumulated effect of
-every historical scoring quirk. Championship points are expected to be whole
-numbers — or, at worst, halves — so a natural first check is to ask which
-values violate this expectation. The query below surveys every non-integer
-value appearing anywhere in the results and counts how many rows carry each
-fractional part:
-
-```{r, echo=FALSE, message=FALSE}
-session_entry %>%
-  filter(!is.na(points), points %% 1 != 0) %>%
-  mutate(fractional_part = round(points %% 1, 3)) %>%
-  count(fractional_part, name = "n_rows") %>%
-  arrange(desc(n_rows)) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The distribution is remarkably clean: the overwhelming majority of
-fractional rows carry an exact half, while only two much finer fractions
-appear at all. Several distinct, well-documented mechanisms can produce
-exact halves, and they are worth enumerating before attempting to attribute
-individual rows:
-
-* **Abandoned races.** When a Grand Prix was halted before the full distance
-  had been covered — typically by torrential rain or a serious accident, with
-  the race unable to resume — drivers received **half** of the points attached
-  to their finishing position. A driver classified fourth in such a race,
-  a placement worth 3 points under the scoring systems that governed the
-  sport for its first four decades, was consequently credited with 1.5
-  points. Rain-shortened editions appear irregularly across the entire
-  history of the championship.
-* **Shared drives.** Whenever *two* drivers shared one car that finished in a
-  points-paying position, the points attached to that place were divided
-  equally between them (Section 2.4.4), and a division of an integer by two
-  again yields exactly one half.
-* **Shared fastest-lap points.** Under the early scoring systems, the bonus
-  point attached to the fastest lap could be **split** when two drivers
-  recorded an identical fastest time — each taking half of the single point.
-  A driver who finished in a points-paying position and co-held the fastest
-  lap thus carries a half appended to an otherwise integral total: second
-  place under the 1950–1959 system (6 points) plus half the bonus yields
-  6.5. This is the two-driver case of the seven-way split examined in
-  Section 2.4.6.
-
-Attributing each individual half to its mechanism is more delicate than it
-may seem, and naive heuristics fail quickly: a points value is the *sum* of
-position points and a possible bonus share, so either component may be the
-halved one, and the mechanisms are not mutually exclusive — a shared car in
-a rain-shortened race is divided twice over, yielding quarters. Rather than
-attempting a per-row classification, the survey above is treated as evidence
-that all fractional values fall within a known, historically grounded set of
-mechanisms. What *cannot* be explained by any of them are the values that
-are neither integers nor exact halves, visible at the tail of the extract;
-isolating them pins down only two affected races, which the next section
-inspects individually.
-
-\newpage
-
-### 2.4.6 Finer Fractions from Shared Awards
-
-Values that are neither integers nor exact halves resist the explanation of
-Section 2.4.5 and require a closer look. Isolating them from the unique point
-values of the `session_entry` table yields only two contaminated races:
-
-```{r, echo=FALSE, message=FALSE}
-df <- session_entry %>%
-  distinct(points) %>%
-  filter(points %% 1 != 0, points %% 1 != 0.5) %>%
-  pull(points)
-
-results %>%
-  filter(points %in% df) %>%
-  transmute(year, circuit, driver = paste(forename, surname),
-            team, position, points) %>%
-  arrange(year, circuit) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-Both races illustrate points being **divided rather than awarded**, each in
-its own way. At the 1954 British Grand Prix, every affected driver carries an
-identical increment of 1/7 point on top of the points earned by finishing
-position — the fastest-lap bonus point of the era's scoring system, awarded
-jointly to seven drivers who set an identical fastest lap and thus shared its
-single point seven ways. At the 1955 Argentine Grand Prix, three drivers
-sharing one car finished jointly in third position; the four points attached
-to that place were divided equally, each driver recording 4/3 points. Both
-mechanisms are consequences of the shared-car and shared-award practices of
-the period described in Section 2.4.4, confined to the 1950s — confirming
-that these fractions are faithful historical records rather than pipeline
-errors.
-
-### 2.4.7 The Absent Fastest Lap
-
-Among the shared awards of Section 2.4.6, one subset deserves a final
-inspection: the drivers who received 1/7 of the fastest-lap point at the
-1954 British Grand Prix. Their fractional increment of ~0.14 makes them easy
-to isolate, and their rows are informative — although a fastest-lap award is
-recorded in the `points` column, the dedicated `fastest_lap_rank` column
-remains empty for every one of them:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  filter(abs(points %% 1 - 1/7) < 1e-2) %>%
-  transmute(year, circuit, driver = paste(forename, surname),
-            team, position, points, fastest_lap_rank) %>%
-  arrange(circuit, position) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The seven `NA` values in the extract are not an accidental omission of these
-particular rows, but a coverage boundary of the source: the dataset contains
-fastest-lap records only starting from the 1958 season, earlier editions of
-the championship having no officially tracked fastest lap. The boundary can
-be located precisely in the data:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  filter(!is.na(fastest_lap_rank)) %>%
-  summarise(first_season_with_fastest_lap = min(year)) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The situation is therefore somewhat ironic: the very drivers who *jointly*
-set the fastest lap in 1954 cannot be recognised as such from the
-`fastest_lap_rank` column. Closing this gap is a candidate for the
-transformation work described in Chapter 3: fastest-lap data for the earlier
-seasons could be integrated from an external source as part of the planned
-modifications, restoring complete coverage of this statistic across the
-championship's history.
-
-### 2.4.8 Ineligible Drivers Who Scored Points
-
-The last integrity check concerns the consistency between the eligibility
-flag and the `points` column. Every row of the results carries an
-`is_eligible_for_points` indicator, and the naive expectation is a strict
-correspondence: drivers flagged as ineligible should record zero points. The
-export violates this expectation exactly once:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  filter(!is.na(points), is_eligible_for_points == "f", points > 0) %>%
-  transmute(year, circuit, driver = paste(forename, surname),
-            team, position, points, detail, laps_completed) %>%
-  arrange(year, circuit) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-Consulting the historical record resolves the apparent contradiction, and it
-involves the shared-drive practice of Section 2.4.4 twice over. At the 1956
-Monaco Grand Prix, Juan Manuel Fangio drove two cars: he shared the car
-number 26, which finished second, with Peter Collins, and the car number 20,
-which finished fourth, with Eugenio Castellotti. Under the regulations of
-the time, the points of a shared car were divided among its drivers — but a
-driver who had already received points from one car was **not entitled to
-collect points from a second one**. Fangio therefore took his half of the
-second-place points (three of six, shared with Collins), while his would-be
-share of the fourth place — three points divided by two, the 1.5 recorded in
-the extract — went uncollected.
-
-The extract below places this single violating row in its full context by
-listing every Ferrari entry of that race:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  filter(year == 1956 & team == "Ferrari" & circuit == "Monaco Grand Prix") %>%
-  transmute(driver = paste(forename, surname), position, points,
-            eligible = is_eligible_for_points, detail, laps_completed) %>%
-  arrange(position) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The table rewards a careful reading. The second row pair shows the shared
-second place: Collins and Fangio both completed 100 laps in car number 26,
-yet Fangio records one point more than his co-driver — the fastest-lap
-bonus of the era's scoring system (Section 2.4.6), set by Fangio that
-afternoon, appended to his half of the position points. The fourth row pair
-shows the shared fourth place at one lap behind (`+1 Lap`, 99 laps
-completed): Castellotti's 1.5 was awarded, while the identical figure next
-to Fangio's name — flagged ineligible, and singled out by the check at the
-top of this section — records the *notional* share that the regulations
-denied him. The two remaining rows complete the picture of the team's
-afternoon: Castellotti's own car, sidelined by clutch failure after 14 laps
-but still classified eleventh, and Musso's, eliminated in an accident after
-two laps and classified fourteenth — a reminder that retirement and
-classification are independent attributes in this export, exactly as the
-classifications of Section 2.4.9 presuppose.
-
-The row is thus internally coherent once both columns are read together:
-the `points` column preserves the notional share attached to the
-fourth-place finish, exactly as the sharing arithmetic would assign it,
-while the `is_eligible_for_points` flag correctly records that this share
-was not awarded. Far from being a data defect, the combination demonstrates
-that the export encodes a subtle piece of period regulation — and, since it
-is unique across the entire dataset, any transformation step can handle it
-as an explicitly documented single case rather than a systematic issue.
-
-\newpage
-
-### 2.4.9 Unclassified Drivers Who Scored Points
-
-The mirror image of the eligibility check of Section 2.4.8 concerns the
-classification flag. The naive expectation is again a strict correspondence:
-a driver flagged as unclassified — one who did not complete a sufficient
-portion of the race distance — should record zero points. The export
-contains a sizeable group of violations of exactly this shape:
-
-```{r, echo=FALSE, message=FALSE}
-results %>%
-  filter(!is.na(points), is_classified == "f", points > 0) %>%
-  transmute(year, circuit, driver = paste(forename, surname),
-            team, position, points, detail, fastest_lap_rank) %>%
-  arrange(year, circuit) %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The pattern in the extract admits a single coherent explanation: the
-**fastest-lap bonus point**. Every row in the table records exactly one
-point — the value traditionally attached to the fastest lap — and every
-`detail` describes a retirement: a mechanical failure, an accident, or, in
-one case, a disqualification. A driver who sets the fastest lap and then
-abandons the race cannot be classified, yet the bonus point earned before
-the retirement remains attached to his name. The rows from 1958 onwards make
-the mechanism directly visible, since they carry `fastest_lap_rank = 1` in
-the column whose coverage gap was analysed in Section 2.4.7; the earlier rows
-show the same one-point signature, but the rank column — not populated before
-1958 — cannot corroborate them.
-
-The extract also contains a historical curiosity: at the 1959 French Grand
-Prix, Stirling Moss was disqualified after setting the fastest lap of the
-race. Stripped of his classification but not of his bonus point, he appears
-in this table as the only disqualified driver of the period to score a
-championship point — a memorable edge case that the export preserves
-faithfully through the combination of `is_classified = f`, a positive point
-value, and the `Disqualified` detail.
-
-### 2.4.10 Country or Nationality
-
-The `team` table attaches a single `nationality` attribute to every
-constructor. A first extract suffices to raise a question about how that
-attribute is assigned:
-
-```{r, echo=FALSE, message=FALSE}
-kbl(head(team %>% select(name, nationality)), format = "latex", booktabs = TRUE,
-    linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-Alfa Romeo — one of the most famous Italian carmakers, and almost certainly
-an Italian team in the championship's early years — appears here as Swiss.
-The situation is in fact stricter than a mere ambiguity: Alfa Romeo is
-recorded as Swiss **for all of its races**, including the very first seasons
-of the championship, when the team was run as an Italian works outfit. The
-dataset therefore does not merely store a single nationality per team — it
-*retrojects the most recent one onto the entire history*. The schema cannot
-express that the nationality attached to an entity changed over the decades
-the data spans: whatever value the source associates with Alfa Romeo today
-(likely reflecting later changes of ownership) silently overwrites the
-Italian identity the team carried in 1950.
-
-The same limitation, in an even more striking form, affects drivers. A
-driver may hold and compete under different nationalities during his career,
-but the export allows only one value per person. Bertrand Gachot is a
-confirmed case: he entered Grands Prix under a Belgian flag as well as a
-French flag, yet the `driver` table can record only one of them. The Renault
-team may present a similar ambiguity, having arguably raced under both French
-and British identities depending on the period considered.
-
-For the analytical purposes of this work the impact is limited — nationality
-is used mainly for descriptive statistics rather than as a join key — but the
-limitation is now confirmed rather than suspected: any temporal analysis of
-team or driver nationality built on this dataset would wrongly describe the
-1950 Alfa Romeo entries as Swiss achievements. This gap is addressed in
-Chapter 3, where a transformation introduces **season-scoped nationality
-tables** for teams and drivers, restoring the ability to represent a
-nationality as it was at the time of each season rather than in its most
-recent state.
 
 \newpage
 
 # 3. Transformation
 
-## 3.1 Principles
-
-The quality review of Chapter 2 leads to a conclusion that shapes every
-decision described in this chapter: the Jolpica export is not a dirty dataset
-in need of cleaning, but a faithful historical record whose apparent anomalies
-— shared drives, divided points, unclassified but scored drivers — reflect the
-regulations of the periods they describe. Editing such values would not
-improve the data; it would destroy it. The transformation work presented here
-is therefore governed by a deliberately restrictive principle:
-
-> **Jolpica data is preserved as-is. Structural changes (renaming, reshaping,
-> removing redundant columns) are permitted freely; editorial changes to the
-> values themselves are permitted only where the source is demonstrably wrong,
-> and are always documented as explicit corrections.**
-
-Three modifications satisfy this criterion and constitute the analytical
-schema (`formula1.db`) built with **dbt** on top of the raw `jolpica.db`:
-
-1. the removal of the application-specific `api_id` column from all tables
-   (Section 3.3);
-2. the introduction of **season-scoped nationality tables** for drivers and
-   teams, correcting the retrojection problem identified in Section 2.4.10
-   (Section 3.4);
-3. the restoration of fastest-lap coverage for the seasons 1950–1957 from an
-   external source, closing the gap documented in Section 2.4.7
-   (Section 3.5).
-
-Everything else passes through unchanged. The historical quirks analysed in
-Sections 2.4.3–2.4.9 are carried into the analytical schema deliberately, and
-Section 3.6 records this decision explicitly so that future readers do not
-mistake preserved history for uncorrected defects.
-
-\newpage
-
-## 3.2 The dbt Layer
-
-The transformation is implemented with **dbt** and executed on the local
-SQLite database (`jolpica.db`) produced by the pipeline's load step. Each raw
-table is declared as a dbt source, and models are organised in the customary
-staging → mart progression. The lineage of the current implementation is shown
-below.
-
-```{r, echo=FALSE, out.width='100%', fig.align="center", fig.cap="Transformation lineage: Jolpica source tables (left) mapped through dbt to the analytical tables (right). This figure is a snapshot; the full, interactive and always up-to-date diagram is available in the project's online dbt documentation."}
-knitr::include_graphics(here::here("images", "report", "dbt-dag.png"))
+```{r child="03-Transformation.rmd"}
 ```
-
-Two observations about the shape of this graph summarise the philosophy of
-Section 3.1. First, the large majority of source tables map one-to-one to
-their analytical counterparts with no intermediate logic: they are renamed,
-stripped of `api_id`, and passed through. Second, the deviations from this
-pattern are few and concentrated — the nationality corrections feed two
-dedicated tables, the external fastest-lap source feeds the enriched results
-model, and a single derived view exists at present. The transformation layer
-is intentionally thin, and it is expected to grow slowly: as new analytical
-views are added, the online documentation will diverge from the snapshot
-reproduced here, which is precisely why the authoritative version is
-published alongside the dbt-generated documentation rather than frozen in
-this document.
-
-\newpage
-
-## 3.3 Removing the `api_id` Columns
-
-As established in Section 2.4.2, every table of the export begins with an
-`api_id` column that identifies records within Jolpica's own infrastructure
-but carries no analytical meaning. All such columns are dropped during the
-staging step. The removal is purely structural — it affects no values, no
-joins and no row counts — and is verified by the row-count checks described
-in Section 2.2.
-
-It should be stressed that this is a **deferral, not a rejection**, of the
-underlying information. Should a need ever arise to trace analytical records
-back to Jolpica's API endpoints — for example, for debugging the extraction
-process or reconciling against future revisions of the dump — the original
-identifiers can be recovered from the raw SQLite snapshot, which is itself
-version-controlled and distributed with the pipeline. Introducing dedicated
-application-level lookup tables now would add joins and maintenance surface
-for a use case that does not currently exist; the decision is therefore
-recorded here and revisited only if that use case materialises.
-
-\newpage
-
-## 3.4 Season-Scoped Nationalities
-
-Section 2.4.10 documented the central limitation of the raw schema regarding
-nationality: a single, current-day value is retrojected onto the entire
-history of each driver and team, so that the 1950 Alfa Romeo works outfit —
-unambiguously Italian at the time — is recorded as Swiss, and drivers who
-competed under more than one nationality, such as Bertrand Gachot, can
-exhibit only one of them.
-
-Fixing this properly would mean recording the nationality of every entity in
-every season. For roughly 800 drivers and several hundred constructor
-entities spanning three quarters of a century, such a complete mapping cannot
-be reliably constructed from public records, and fabricating coverage would
-violate the principle of Section 3.1. The transformation therefore takes a
-narrower and more honest form:
-
-* the original `country_code` attributes on `driver` and `team` are retained
-  unchanged and continue to serve as the **default** nationality;
-* two dedicated correction tables, `driver_nationality_corrections` and
-  `team_nationality_corrections`, associate a country with an entity **over
-  an explicit season interval** (`season_id_start` to `season_id_end`),
-  overlaying the default wherever a correction exists.
-
-The resulting model restores temporal resolution exactly where it is needed:
-a query about a driver's or team's nationality in a given season resolves
-against the correction table first, and falls back to the source value
-otherwise. Corrections are applied only to the cases documented in
-Section 2.4.10 — Alfa Romeo's Italian identity prior to its post-war
-reorganisation, Renault's dual French/British identity, and drivers with
-confirmed multi-nationality careers such as Gachot — each entry traceable to
-the historical evidence discussed in Chapter 2.
-
-```{r, echo=FALSE, message=FALSE}
-kbl(head(driver_nationality_corrections), format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-
-kbl(head(team_nationality_corrections), format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
-```
-
-The distinction from the raw schema is worth making explicit: where Jolpica
-can only state what an entity's nationality *is*, the analytical schema can
-state what it *was at the time of a given season*. Temporal analyses of
-nationality built on `formula1.db` now describe the 1950 Alfa Romeo entries as
-Italian, at the cost of a single join and a documented, extendable correction
-mechanism.
-
-\newpage
-
-## 3.5 Restoring Fastest-Lap Coverage, 1950–1957
-
-Section 2.4.7 located a precise coverage boundary in the source: the
-`fastest_lap_rank` column is empty for every session before the 1958 season,
-because officially tracked fastest laps were not part of the championship's
-recordkeeping before then. The irony highlighted there — that the seven
-drivers who jointly set the fastest lap at the 1954 British Grand Prix carry
-their 1/7-point award in `points` but cannot be recognised by the dedicated
-column — is preserved verbatim by the pass-through philosophy of this
-chapter.
-
-However, unlike the other quirks of Chapter 2, this gap is a genuine
-*absence* of data rather than a period-accurate encoding, and the missing
-information is recoverable: an external dataset records the fastest-lap
-achievers for the seasons 1950–1957. As part of the imminent modifications to
-the pipeline, this external table will be joined onto the results model,
-populating `fastest_lap_rank` (and the related fastest-lap attributes) for the
-affected seasons. The enrichment is applied exclusively where the source is
-empty, so the original values from 1958 onwards remain untouched and
-traceable to Jolpica; provenance of the enriched values is recorded
-separately, in keeping with the audit practices of the pipeline.
-
-For the shared-award cases of Section 2.4.6, the enrichment deliberately
-records the joint achievement as it stands in the historical record rather
-than electing a single fastest driver — consistent with the treatment of
-multi-winner races in Section 2.4.4.
-
-```{r, echo=FALSE, message=FALSE}
-# TODO: once the enrichment lands, add a verification extract here, e.g. the
-# 1954 British GP rows now showing fastest_lap_rank, mirroring Section 2.4.7.
-```
-
-With this change, fastest-lap coverage becomes complete across the entire
-championship history, and the "absent fastest lap" ceases to be a limitation
-of the analytical dataset — while remaining faithfully absent from the raw
-snapshot, which is never modified.
-
-\newpage
-
-\newpage
-
-## 3.6 A Convenience View: `f1summary`
-
-The analytical schema is normalised: answering even a simple question —
-*who finished where, in which car, scoring how many points?* — requires
-joining `session_entry`, `round`, `season`, `circuit`, `driver`, `team` and
-the nationality resolution logic of Section 3.4. Writing these joins anew for
-every query or visualisation is error-prone and obscures the analysis itself.
-To make day-to-day access to the dataset frictionless, the transformation
-therefore includes **convenience views**: flat, denormalised tables that
-pre-resolve the most common joins and expose the data ready for display.
-
-The principal view is `f1summary`, one row per race result, whose columns are
-listed below.
-
-```{r, echo=FALSE, message=FALSE}
-f1summary_columns <- tribble(
-  ~Column,                ~Description,
-  "resultId",              "Unique identifier for each result",
-  "grid",                  "The driver's starting grid position",
-  "positionOrder",         "The driver's finishing position in order",
-  "points",                "Points scored by the driver in the race",
-  "laps",                  "Number of laps completed by the driver",
-  "rank",                  "The rank of the driver's fastest lap",
-  "statusId",              "Foreign key to status.csv",
-  "year",                  "The year of the race",
-  "round",                 "The round number of the race in the season",
-  "circuit",               "The official name of the circuit",
-  "driverNationality",     "The driver's nationality",
-  "constructorName",       "The full name of the constructor",
-  "constructorNationality","The nationality of the constructor",
-  "status",                "A description of the finishing status",
-  "driverAge",             "The driver's age at the time of the race",
-  "driverName",            "The driver's full name"
-)
-
-kbl(f1summary_columns, format = "latex", booktabs = TRUE, linesep = "",
-    col.names = c("Column", "Description")) %>%
-  kable_styling(font_size = 9, latex_options = "hold_position") %>%
-  column_spec(1, width = "4.5cm") %>%
-  column_spec(2, width = "10cm")
-```
-
-An extract of the view illustrates the outcome: each row combines result,
-context and human-readable attributes into a single, display-ready record.
-
-```{r, echo=FALSE, out.width='100%'}
-formula1 %>%
-  select(resultId, positionOrder, points, year, circuit,
-         driverName, driverAge, constructorName) %>%
-  head() %>%
-  kbl(format = "latex", booktabs = TRUE, linesep = "") %>%
-  kable_styling(font_size = 9, latex_options = c("hold_position", "scale_down"))
-```
-
-Two details of the view deserve emphasis. First, the nationality columns
-(`driverNationality`, `constructorNationality`) are **not** a verbatim copy
-of the source attributes: they are resolved through the season-scoped
-correction mechanism of Section 3.4, so the 1950 entries display Alfa Romeo as
-Italian rather than Swiss. This is precisely the kind of logic that belongs
-inside a view rather than being reimplemented (or forgotten) in every
-downstream query. Second, derived attributes computed during transformation —
-`driverAge` among them — appear alongside the raw passthrough columns, giving
-the view everything needed for descriptive analysis without touching the
-normalised tables.
-
-The view is intentionally materialised as a thin projection over the
-analytical tables rather than a replacement for them: any measure beyond its
-fixed column set (per-lap timings, pit stops, championship trajectories)
-still queries the underlying schema directly. As the transformation layer
-grows, additional views following the same pattern will be added; the online
-dbt documentation referenced in Section 3.2 remains the authoritative record
-of what currently exists.
-
-\newpage
-
-## 3.7 The Resulting Schema
-
-The outcome of the transformation is the analytical database `formula1.db`,
-whose structure is shown below. The raw tables appear in the schema largely
-unchanged, grouped by domain; the additions of Section 3.4 are visible as the
-two `*_nationality_corrections` tables together with the `countries` lookup,
-and the season-scoped `season_driver` and `season_team` associations.
-
-```{r, echo=FALSE, out.width='100%', fig.align="center", fig.cap="Entity-relationship diagram of the analytical database `formula1.db` after transformation."}
-knitr::include_graphics(here::here("images", "report", "formula1_erd.png"))
-```
-
-```{r, echo=FALSE, message=FALSE}
-# TODO: optionally add a summary table of the analytical schema
-# (table, rows, delta vs. jolpica.db), reusing the inventory pattern of Ch. 2.
-```
-
-\newpage
-
-## 3.8 What Is Deliberately Not Changed
-
-Completeness requires stating the inverse of the preceding sections: the
-anomalies of Chapter 2 that survive the transformation **on purpose**.
-
-The multiple-winner races arising from shared drives (Section 2.4.3) and the
-fractional points they produce (Section 2.4.6) are preserved as-is; any
-"deduplication" would erase the only record that several drivers jointly
-achieved a result. The driver whose eligibility flag contradicts a positive
-point total (Section 2.4.8) is likewise preserved — the combination of
-`is_eligible_for_points` and the notional point share encodes a genuine
-period regulation, and separating the two columns would lose it.
-Unclassified drivers carrying a fastest-lap point (Section 2.4.9) are
-retained, including the singular case of Stirling Moss at the 1959 French
-Grand Prix. Finally, the legacy `roundentry` linkage and the empty staging
-tables (`base_team`, `penalty`) are carried through unchanged: they cost
-nothing, document the source's own evolution, and removing them would couple
-the analytical schema to assumptions about Jolpica's future development.
-
-Further integrity inconsistencies identified in Chapter 2 that do not admit a
-verified correction at present are explicitly deferred: as with the
-application-level identifier lookup tables of Section 3.3, the guiding rule
-is that a documented limitation is preferable to a silent or speculative
-"fix". The corrections mechanism of Section 3.4 and the enrichment of
-Section 3.5 establish the pattern by which such fixes will be introduced as
-evidence becomes available — narrowly scoped, individually documented, and
-never at the expense of the raw snapshot.
 
 \newpage
 
 # 4. Exploratory Data Analysis
+
+This chapter explores the dataset along three levels, each one stepping back
+from the raw record book. We first examine the drivers and the achievements
+they accumulated — titles, wins, careers. We then turn to the constructors,
+whose cars set the ceiling under which those achievements were earned.
+Finally, we examine the championship framework itself — the calendar and the
+scoring rules — and show that any comparison of drivers across eras must
+first neutralize how much the framework has changed.
 
 ## 4.1 Drivers
 
@@ -1324,109 +359,68 @@ Additionally, the evolution of the sport itself complicates these comparisons. O
 
 Points systems have also varied dramatically, altering how achievements are measured. Modern scoring rewards consistency and resilience across more races, which can skew comparisons against drivers from the past, who may have excelled under a different set of rules. For instance, Fangio's era awarded fewer points for victories, but achieving those wins was often subject to harsher competition and racing conditions. 
 
-Moreover, the cars themselves represent a crucial aspect of this discussion. The technology and engineering behind F1 cars have advanced exponentially over the decades, with modern vehicles benefiting from aerodynamics, data analysis, and materials that were not available in the past. This raises another question: how much of a driver’s success is attributable to their talent and how much is due to the superior performance of the car? A skilled driver in a less competitive car might struggle when compared to a current driver operating one of today’s high-tech machines, even if the former has a proven track record of wins.
+Moreover, the cars themselves represent a crucial aspect of this discussion. The technology and engineering behind F1 cars have advanced exponentially over the decades, with modern vehicles benefiting from aerodynamics, data analysis, and materials that were not available in the past. This raises another question: how much of a driver’s success is attributable to their talent and how much is due to the superior performance of the car?
 
-Ultimately, comparing drivers across different eras poses a complex challenge. While it is tempting to label recent drivers as superior based on their successes, such determinations require a nuanced approach that considers a multitude of factors: career length, the evolution of racing rules, the technological trajectory of car design, and the competitive environment of their respective times. By acknowledging these dimensions, we gain a richer understanding of what it truly means to be "better" in the context of Formula 1, transcending mere statistics to appreciate the intricate tapestry of racing history and driver performance.
+The answer, of course, is that no such verdict can be reached from raw tallies
+alone. Would Juan Manuel Fangio have accumulated 10 titles had he contested 16
+seasons like a modern driver, instead of the 8 years over which he collected
+his 5? The question sounds speculative, but its premise is measurable: the
+number of races contested per season, the points awarded for each result, and
+the number of seasons over which a career could unfold all differ
+systematically between Fangio's era and Hamilton's. A title count, a win
+count, or a points total is therefore not a pure measure of ability — it is a
+count of *opportunities converted*, and the number of opportunities on offer
+varied enormously across the championship's history.
+
+Before these quantities can be compared, one further confounder must be
+acknowledged: none of the results catalogued above were achieved alone. Every
+win and every title was earned in a car built by a constructor, and the
+spread between the dominant machines and the rest has been wider in some eras
+than in others. The next section therefore turns to the constructors, whose
+fortunes bound those of the drivers they employ.
 
 \newpage
 
-## 4.2 Championship
+## 4.2 Constructors
 
-### 4.2.1 Races
+The table below shows the number of constructors involved in the championship over the years ;
 
-The plot below illustrates the trend in the number of Formula 1 races held each year from 1950 to 2023. The x-axis represents the year, while the y-axis indicates the number of races. Each point reflects the actual number of races for that specific year, depicted in gray, and the variation among these points indicates fluctuations in race counts over the years, reflecting changes in the racing calendar and external factors affecting the sport.
-
-```{r, echo=FALSE, fig.align="center", fig.cap = "Races per Year", fig.width = 5, fig.height = 3}
-plot_races_per_year
+```{r, echo=FALSE}
+kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
+  column_spec(1:ncol(constructor_summary_table), width = "2cm")
 ```
 
-A clear upward trend is evident, starting from just 7 races in 1950 and gradually increasing, with several plateaus extending into the late 20th century. A more pronounced rise occurs in the 21st century, culminating in approximately 23 races by 2023, suggesting the growing popularity and expansion of Formula 1.
+As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
 
-The loess smoothing curve, shown in royal blue, overlays the data points to provide a clearer representation of the overall trend in race numbers. This curve highlights the acceleration in race counts, particularly after 2000, indicating that Formula 1 has adapted to demand and increased the frequency of races. The shaded area around the smoothing line captures the confidence interval of the smoothed trend in a light blue hue, suggesting the level of uncertainty about the estimated values and demonstrating the variability in the data points over the years.
-
-The plot conveys the evolution of Formula 1 through the number of races conducted annually. The sharp increase in races in later years reflects various factors, such as enhanced global interest in motorsports, changes in regulations, and the expansion of the racing calendar. The data's variability, particularly in the earlier decades, can be attributed to the formative years of the sport, which experienced significant changes in organization and promotion.
-
-\newpage
-
-### 4.2.2 Points and Rules
-
-The evolution of points systems and rules in Formula 1 has undergone significant changes over the years, reflecting the sport's adaptability to enhance competition and viewer engagement. Understanding these modifications is crucial for properly interpreting statistics and achievements across different eras of racing.
-
-One of the most notable changes in the points system involves the method of calculating scores based on race results. In earlier years, drivers earned points for finishing in the top positions, but not all results were counted towards the championship. For instance, the introduction of the “**8 best results**” system allowed drivers to select their top performances to be counted toward their final tally. This change meant that a driver could have an off day in a few races but still remain competitive based on their standout performances. The revised approach promotes consistency and allows for some leeway, encouraging drivers to focus on achieving high results in selected races rather than simply accumulating points in every competition.
-
-In recent years, the integration of new formats such as **sprint races** has further influenced the dynamics of scoring. Sprint events, which typically take place on weekends with traditional Grand Prix races, offer additional points opportunities. This development adds an exciting layer to the race weekend, allowing drivers to earn points not just through their main races but also by performing well in shorter sprints. The introduction of these sprints has reshaped strategies, pushing teams to adapt their approaches to maximize potential points across various race formats.
-
-Another element that has gained attention is the inclusion of points awarded for the **fastest lap** during a race, further enriching the competitive landscape. By recognizing drivers who secure the fastest lap, this rule incentivizes aggressive racing strategies, compelling drivers to push their limits even when their overall position may not warrant it. This addition exemplifies how changes in rules can elevate the excitement and intensity of each race.
-
-As we compare drivers and their results over time, it is important to note that we will not consider sprint races or fastest laps in our study. Our analysis will focus solely on race results, and we will take into account all points awarded across each driver’s career. This approach allows us to maintain a more consistent basis for comparison, ensuring that our findings reflect the fundamental aspects of performance in Formula 1.
-
-The implications of these transformed points systems extend beyond mere statistics. They affect team and driver strategies, influencing how races are approached. Teams may prioritize specific races or adopt riskier tactics, knowing that achieving the fastest lap or excelling in a sprint can contribute critically to their overall standings. This fosters a more vibrant competitive environment where drivers constantly seek opportunities to maximize their returns, complicating the notion of what it means to be successful in Formula 1.
-
-Moreover, when comparing drivers across different eras, it becomes essential to contextualize their accomplishments within the frameworks established by the rules at the time. Historical figures like Juan Manuel Fangio, for example, achieved remarkable titles under a vastly different scoring system, contrasting sharply with the multifaceted approach seen today. Understanding these differences in rules and points systems allows fans and analysts to appreciate the evolution of the sport while acknowledging the unique challenges faced by drivers across generations.
-
-\newpage
-
-The plot below shows the number of points given according to the race final position :
-
-```{r, echo=FALSE, fig.align="center", fig.cap = "Points per Year", fig.width = 5, fig.height = 3}
-plot_points_per_year
-```
-
-Until 1959, the scoring system for races awarded the winner 8 points, with an additional point granted for the fastest lap achieved during the race. However, in 1960, the point for the fastest lap was eliminated, and instead, the driver finishing in 6th position would receive one point. The following year, in 1961, the points awarded to the winner increased to 9, further evolving the scoring structure. By 1991, winners would receive 10 points, while other position points remained unchanged. The scoring system underwent a significant revision in 2003, when drivers other than the winner began to receive an additional 2 points. Additionally, drivers finishing in 7th and 8th positions would earn 2 points and 1 point, respectively. By 2010, the rules changed again, increasing the winner's points to 25 and extending points to the top 10 finishers.
-
-Although not depicted in this analysis, it's worth noting that in 2019, a point for the fastest lap was reintroduced. Furthermore, between 1950 and 1990, only certain race results contributed towards the championship standings, indicating fluctuations in how scoring impacted overall competitive success during that period.
-
-\newpage
-
-The plot below shows the percentage difference :
-
-```{r, echo=FALSE, fig.align="center", fig.cap = "Percentage Difference", fig.width = 5, fig.height = 3}
-plot_percentage_diff
-```
-
-From 1950 until 1959, the winner received 33% more points than the second-place driver, who was awarded 50% more points than the driver finishing in third, while the third place earned 33% more points than the fourth. However, in 1960, the rules shifted so that the winner received 50% more points than the second-place driver, and this percentage increased to 66% in 1991. Starting in 2003, this difference in points began to decrease significantly, with a slight increase in 2010, resulting in the winner obtaining approximately 40% more points than the second-place finisher, who in turn received 20% more than the third, while the third place earned 25% more than the fourth.
-
-This plot illustrates how the importance of finishing position has diminished since 2003, suggesting that the risks associated with overtaking another driver may no longer justify the potential rewards. As drivers weigh the dangers of overtaking, the incentive structure of points allocation reflects a changing competitive landscape, where maintaining position may become a more strategic choice.
-
-\newpage
-
-The table below displays championships in which the driver who earned the highest total points did not win the title. This occurred because only a portion of these points were counted, allowing the second-place driver to secure the championship with a greater proportion of their retained points :
+And this is a list of the constructors who won the championship at least once :
 
 ```{r, echo=FALSE}
 # Format the country images for LaTeX
-image_latex <- function(path) {
-  vapply(path, function(p) {
-    if (is.na(p) || !nzchar(p)) return("")
-
-    full_path <- normalizePath(
-      here::here(p),
-      winslash = "/",
-      mustWork = TRUE
-    )
-
-    paste0("\\includegraphics[width=0.25cm]{", full_path, "} ")
-  }, character(1))
-}
-
-df <- differences %>%
+df <- constructorSummary %>%
   mutate(
-    driverName_Champion = paste0(
-      image_latex(countryImage_Champion),
-      driverName_Champion
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
     ),
-    driverName_Best = paste0(
-      image_latex(countryImage_Best),
-      driverName_Best
+    constructorName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      constructorName
     )
   ) %>%
-  select(
-    year,
-    driverNameChampion = driverName_Champion,
-    pointsChampion = points_Champion,
-    driverNameBest = driverName_Best,
-    pointsBest = points_Best
-  ) %>%
-  mutate(year = as.character(year))
+  select(constructorName, titles, wins, points, start, end, seasons) %>%
+  filter(titles > 0) %>%
+  mutate(
+    start = as.character(start),
+    end = as.character(end)
+  )
 
 knitr::kable(
   df,
@@ -1442,11 +436,51 @@ knitr::kable(
   )
 ```
 
-In the world of Formula 1 racing, championship titles are not solely determined by the total points a driver accumulates over the season. This nuance became particularly evident in dramatic cases such as those of John Surtees in 1964 and Ayrton Senna in 1988.
+Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades.
 
-In 1964, John Surtees clinched the World Championship with a total of 40 points, and importantly, all of these points were eligible for inclusion in the championship standings. Surtees faced stiff competition from his rival, Graham Hill, who ended the season with 41 points—just a single point ahead. However, not all of Hill's points were counted towards the championship, as only 39 points were eligible, thus causing him to lose the title to Surtees. This incident serves as a poignant reminder of the impact of point retention rules in determining the final standings, which can overshadow pure performance metrics.
+\newpage
 
-Fast forward to 1988, when the same theme of point retention played out yet again in a fierce rivalry between Ayrton Senna and Alain Prost. Senna finished the season with an impressive 94 points, out of which 90 points were counted towards his championship total. Conversely, Alain Prost amassed a remarkable 105 points but faced a significant setback as only 87 of these points were deemed eligible for the championship classification. This discrepancy ultimately placed Prost in second position, despite his overall higher point total.
+Now the constructors results over time. Comparison between constructors who won most points from first to second :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
+plotConstructorResults
+```
+
+And the driver results as a comparison :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
+plotDriverResults
+```
+
+These trajectories make clear that a driver's record is partly a record of
+the car beneath him. Fangio's 5 titles were won with four different
+manufacturers — a feat reflecting an era in which the field was
+comparatively level — while several modern champions collected titles in
+long stretches of team dominance that no rival could match. Participating in
+the right era of the right constructor can thus inflate or deflate a
+driver's tally as surely as any change of rules. Yet even controlling for
+the car does not level the playing field, because the two frameworks in
+which every constructor and driver operated — the length of the calendar and
+the scoring system — shifted repeatedly across the decades. It is to these
+framework effects that the final section of this chapter turns.
+
+\newpage
+
+## 4.3 Championship Framework
+
+### 4.3.1 Races
+
+The plot below illustrates the trend in the number of Formula 1 races held each year from 1950 to 2023. The x-axis represents the year, while the y-axis indicates the number of races. Each point reflects the actual number of races for that specific year, depicted in gray, and the variation among these points indicates fluctuations in race counts over the years, reflecting changes in the racing calendar and external factors affecting the sport.
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Races per Year", fig.width = 5, fig.height = 3}
+plot_races_per_year
+```
+
+A clear upward trend is evident, starting from just 7 races in 1950 and gradually increasing, with several plateaus extending into the late 20th century. A more pronounced rise occurs in the 21st century, culminating in approximately 23 races by 2023, suggesting the growing popularity and expansion of Formula 1.
+
+The loess smoothing curve, shown in royal blue, overlays the data points to provide a clearer representation of the overall trend in race numbers. This curve highlights the acceleration in race counts, particularly after 2000, indicating that Formula 1 has adapted to demand and increased the frequency of races. The shaded area around the smoothing line captures the confidence interval of the smoothed trend in a light blue hue, suggesting the level of uncertainty about the estimated values and demonstrating the variability in the data points over the years.
+
+The plot conveys the evolution of Formula 1 through the number of races conducted annually. The sharp increase in races in later years reflects various factors, such as enhanced global interest in motorsports, changes in regulations, and the expansion of the racing calendar. The data's variability, particularly in the earlier decades, can be attributed to the formative years of the sport, which experienced significant changes in organization and promotion.
 
 \newpage
 
@@ -1573,56 +607,85 @@ Note tat in 2025 the win to races ratio was one of the lowest in the recent year
 
 \newpage
 
-The plot below shows the total number of points given per year :
+### 4.3.2 Points and Rules
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Total Points per Year", fig.width = 5, fig.height = 3}
-plot_total_points_per_year
-```
+The evolution of points systems and rules in Formula 1 has undergone significant changes over the years, reflecting the sport's adaptability to enhance competition and viewer engagement. Understanding these modifications is crucial for properly interpreting statistics and achievements across different eras of racing.
 
-In conclusion, the changes in points and rules over time significantly impact how success and performance are measured in Formula 1. The transition from early systems to contemporary practices reflects the sport's commitment to enhancing competitiveness and excitement. Analyzing these developments provides crucial context for assessing driver achievements and understanding the strategic decisions made by teams and drivers alike. The interplay between points systems, race formats, and performance metrics illustrates the complexity of the sport and highlights how Formula 1 continually evolves to captivate its audience.
+One of the most notable changes in the points system involves the method of calculating scores based on race results. In earlier years, drivers earned points for finishing in the top positions, but not all results were counted towards the championship. For instance, the introduction of the “**8 best results**” system allowed drivers to select their top performances to be counted toward their final tally. This change meant that a driver could have an off day in a few races but still remain competitive based on their standout performances. The revised approach promotes consistency and allows for some leeway, encouraging drivers to focus on achieving high results in selected races rather than simply accumulating points in every competition.
+
+In recent years, the integration of new formats such as **sprint races** has further influenced the dynamics of scoring. Sprint events, which typically take place on weekends with traditional Grand Prix races, offer additional points opportunities. This development adds an exciting layer to the race weekend, allowing drivers to earn points not just through their main races but also by performing well in shorter sprints. The introduction of these sprints has reshaped strategies, pushing teams to adapt their approaches to maximize potential points across various race formats.
+
+Another element that has gained attention is the inclusion of points awarded for the **fastest lap** during a race, further enriching the competitive landscape. By recognizing drivers who secure the fastest lap, this rule incentivizes aggressive racing strategies, compelling drivers to push their limits even when their overall position may not warrant it. This addition exemplifies how changes in rules can elevate the excitement and intensity of each race.
+
+As we compare drivers and their results over time, it is important to note that we will not consider sprint races or fastest laps in our study. Our analysis will focus solely on race results, and we will take into account all points awarded across each driver’s career. This approach allows us to maintain a more consistent basis for comparison, ensuring that our findings reflect the fundamental aspects of performance in Formula 1.
+
+The implications of these transformed points systems extend beyond mere statistics. They affect team and driver strategies, influencing how races are approached. Teams may prioritize specific races or adopt riskier tactics, knowing that achieving the fastest lap or excelling in a sprint can contribute critically to their overall standings. This fosters a more vibrant competitive environment where drivers constantly seek opportunities to maximize their returns, complicating the notion of what it means to be successful in Formula 1.
+
+Moreover, when comparing drivers across different eras, it becomes essential to contextualize their accomplishments within the frameworks established by the rules at the time. Historical figures like Juan Manuel Fangio, for example, achieved remarkable titles under a vastly different scoring system, contrasting sharply with the multifaceted approach seen today. Understanding these differences in rules and points systems allows fans and analysts to appreciate the evolution of the sport while acknowledging the unique challenges faced by drivers across generations.
 
 \newpage
 
-## 4.3 Constructors
+The plot below shows the number of points given according to the race final position :
 
-The table below shows the number of constructors involved in the championship over the years ;
-
-```{r, echo=FALSE}
-kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
-  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
-  column_spec(1:ncol(constructor_summary_table), width = "2cm")
+```{r, echo=FALSE, fig.align="center", fig.cap = "Points per Year", fig.width = 5, fig.height = 3}
+plot_points_per_year
 ```
 
-As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
+Until 1959, the scoring system for races awarded the winner 8 points, with an additional point granted for the fastest lap achieved during the race. However, in 1960, the point for the fastest lap was eliminated, and instead, the driver finishing in 6th position would receive one point. The following year, in 1961, the points awarded to the winner increased to 9, further evolving the scoring structure. By 1991, winners would receive 10 points, while other position points remained unchanged. The scoring system underwent a significant revision in 2003, when drivers other than the winner began to receive an additional 2 points. Additionally, drivers finishing in 7th and 8th positions would earn 2 points and 1 point, respectively. By 2010, the rules changed again, increasing the winner's points to 25 and extending points to the top 10 finishers.
 
-And this is a list of the constructors who won the championship at least once :
+Although not depicted in this analysis, it's worth noting that in 2019, a point for the fastest lap was reintroduced. Furthermore, between 1950 and 1990, only certain race results contributed towards the championship standings, indicating fluctuations in how scoring impacted overall competitive success during that period.
+
+\newpage
+
+The plot below shows the percentage difference :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Percentage Difference", fig.width = 5, fig.height = 3}
+plot_percentage_diff
+```
+
+From 1950 until 1959, the winner received 33% more points than the second-place driver, who was awarded 50% more points than the driver finishing in third, while the third place earned 33% more points than the fourth. However, in 1960, the rules shifted so that the winner received 50% more points than the second-place driver, and this percentage increased to 66% in 1991. Starting in 2003, this difference in points began to decrease significantly, with a slight increase in 2010, resulting in the winner obtaining approximately 40% more points than the second-place finisher, who in turn received 20% more than the third, while the third place earned 25% more than the fourth.
+
+This plot illustrates how the importance of finishing position has diminished since 2003, suggesting that the risks associated with overtaking another driver may no longer justify the potential rewards. As drivers weigh the dangers of overtaking, the incentive structure of points allocation reflects a changing competitive landscape, where maintaining position may become a more strategic choice.
+
+\newpage
+
+The table below displays championships in which the driver who earned the highest total points did not win the title. This occurred because only a portion of these points were counted, allowing the second-place driver to secure the championship with a greater proportion of their retained points :
 
 ```{r, echo=FALSE}
 # Format the country images for LaTeX
-df <- constructorSummary %>%
+image_latex <- function(path) {
+  vapply(path, function(p) {
+    if (is.na(p) || !nzchar(p)) return("")
+
+    full_path <- normalizePath(
+      here::here(p),
+      winslash = "/",
+      mustWork = TRUE
+    )
+
+    paste0("\\includegraphics[width=0.25cm]{", full_path, "} ")
+  }, character(1))
+}
+
+df <- differences %>%
   mutate(
-    image_path = vapply(
-      countryImage,
-      function(path) normalizePath(
-        here::here(path),
-        winslash = "/",
-        mustWork = TRUE
-      ),
-      character(1)
+    driverName_Champion = paste0(
+      image_latex(countryImage_Champion),
+      driverName_Champion
     ),
-    constructorName = paste0(
-      "\\includegraphics[width=0.25cm]{",
-      image_path,
-      "} ",
-      constructorName
+    driverName_Best = paste0(
+      image_latex(countryImage_Best),
+      driverName_Best
     )
   ) %>%
-  select(constructorName, titles, wins, points, start, end, seasons) %>%
-  filter(titles > 0) %>%
-  mutate(
-    start = as.character(start),
-    end = as.character(end)
-  )
+  select(
+    year,
+    driverNameChampion = driverName_Champion,
+    pointsChampion = points_Champion,
+    driverNameBest = driverName_Best,
+    pointsBest = points_Best
+  ) %>%
+  mutate(year = as.character(year))
 
 knitr::kable(
   df,
@@ -1638,21 +701,71 @@ knitr::kable(
   )
 ```
 
-Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades.
+In the world of Formula 1 racing, championship titles are not solely determined by the total points a driver accumulates over the season. This nuance became particularly evident in dramatic cases such as those of John Surtees in 1964 and Ayrton Senna in 1988.
+
+In 1964, John Surtees clinched the World Championship with a total of 40 points, and importantly, all of these points were eligible for inclusion in the championship standings. Surtees faced stiff competition from his rival, Graham Hill, who ended the season with 41 points—just a single point ahead. However, not all of Hill's points were counted towards the championship, as only 39 points were eligible, thus causing him to lose the title to Surtees. This incident serves as a poignant reminder of the impact of point retention rules in determining the final standings, which can overshadow pure performance metrics.
+
+Fast forward to 1988, when the same theme of point retention played out yet again in a fierce rivalry between Ayrton Senna and Alain Prost. Senna finished the season with an impressive 94 points, out of which 90 points were counted towards his championship total. Conversely, Alain Prost amassed a remarkable 105 points but faced a significant setback as only 87 of these points were deemed eligible for the championship classification. This discrepancy ultimately placed Prost in second position, despite his overall higher point total.
 
 \newpage
 
-Now the constructors results over time. Comparison between constructors who won most points from first to second :
+The plot below shows the total number of points given per year :
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
-plotConstructorResults
+```{r, echo=FALSE, fig.align="center", fig.cap = "Total Points per Year", fig.width = 5, fig.height = 3}
+plot_total_points_per_year
 ```
 
-And the driver results as a comparison :
+In conclusion, the changes in points and rules over time significantly impact how success and performance are measured in Formula 1. The transition from early systems to contemporary practices reflects the sport's commitment to enhancing competitiveness and excitement. Analyzing these developments provides crucial context for assessing driver achievements and understanding the strategic decisions made by teams and drivers alike. The interplay between points systems, race formats, and performance metrics illustrates the complexity of the sport and highlights how Formula 1 continually evolves to captivate its audience.
 
-```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
-plotDriverResults
+\newpage
+
+### 4.3.3 Comparing Across Eras
+
+```{r, echo=FALSE}
+min_races <- 7
 ```
+
+The previous two sections of this chapter have each peeled back one layer
+between a driver's statistics and his ability: the car he drove, and now the
+framework in which he raced. Putting the framework's dimensions together,
+the drift across the championship's history is stark. In 1950 a title was
+decided over `r min_races` races; by the 2020s, a season comprises roughly
+four times as many, multiplying the occasions on which a strong driver can
+win and score. The points attached to a victory have grown from 8 to 25, and
+the widening of the points-paying positions — from the top five to the top
+ten — further rewards consistency over the long calendars of the modern era.
+And careers themselves have stretched: where drivers of the 1950s
+typically raced fewer than ten seasons, the front-runners of today contest
+twenty or more, giving each generation more seasons in which to stack
+titles.
+
+None of this is evidence that modern drivers are superior; it is evidence
+that the units in which their records are denominated have inflated. A win
+in 1953 was scarcer by a factor of three than a win in 2023, a title cost
+fewer conversions, and a season offered fewer opportunities to convert them
+at all. Raw tallies — the 105 titles, wins and points enumerated at the
+opening of this chapter — therefore measure opportunities converted, not
+skill displayed.
+
+The conclusion for the remainder of this study follows directly. To compare
+drivers of different eras fairly, the framework must be held constant along
+all three dimensions:
+
+* **Scoring** — each result should be awarded the same points regardless of
+  the season in which it was achieved, normalizing away the evolution from
+  the 8-point systems of the 1950s to the 25-point system in force today;
+* **Calendar** — each season should be reduced to a common number of races,
+  so that a champion of a 7-round calendar is not penalized relative to a
+  champion of a 24-round one;
+* **Longevity** — each career should be measured over the same number of
+  seasons, since the inflation of career length across the decades
+  mechanically favours recent drivers in any cumulative statistic.
+
+Only under these three normalizations do titles, wins and points become
+comparable quantities — and only then can the question left open in
+Section 4.1.6, whether Fangio would have matched today's champions on equal
+terms, be answered with data rather than opinion. Chapter 5 implements
+exactly these transformations.
 
 \newpage
 

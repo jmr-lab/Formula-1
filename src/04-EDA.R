@@ -2,6 +2,8 @@
 # 4. Exploratory Data Analysis                              #
 #############################################################
 
+current_year <- as.numeric(format(Sys.Date(), "%Y"))
+
 formula1 %>% select(resultId, positionOrder, cumulPoints, points, year, driverName, driverCountry, constructorName, constructorCountry)
 
 formula1 %>% select(cumulPoints, points, positionOrder, year, constructorName, constructorCountry, driverName, driverCountry) %>%

@@ -1,0 +1,566 @@
+## 2.1 Source
+
+The data used throughout this study comes from **Jolpica F1** [2], an open-source
+(Apache 2.0) Formula 1 API maintained by a group of volunteers. Jolpica was
+created as the successor to the widely used Ergast API, which was deprecated at
+the end of the 2024 season, and provides the same type of historical data
+(drivers, teams, sessions, results, standings, lap times and pit stops)
+through a redesigned database schema. According to its maintainers, this new
+schema is intended to better accommodate changing rule sets, reduce duplicated
+information and allow the storage of additional F1-related data.
+
+As Jolpica is an independent open-source project, its internals — scraping
+process, data validation and correction policies — are the responsibility of
+its maintainers and are outside the scope of this work. We therefore treat
+Jolpica as the *system of record* for historical Formula 1 data and restrict
+ourselves to documenting how the data is ingested, transformed and audited on
+our side. A full description of the tables can be found in the project's
+database documentation [3].
+
+It should be noted that Jolpica publishes its database dump with a delay of
+approximately two weeks: more recent data is only available through a paid
+tier. Since this study analyses historical data up to the end of the previous
+season — deliberately excluding the ongoing season — the free release is
+entirely sufficient, and the delayed publication has no impact on the
+completeness of the dataset used here.
+
+## 2.2 Pipeline
+
+The ingestion, transformation and publication of the data is fully automated in
+an ELT pipeline published on GitHub [4], orchestrated with **GitHub Actions**
+and scheduled to run **weekly** (with manual triggering also possible). The
+pipeline extracts the raw data from Jolpica and produces two outputs: a
+normalised SQLite database used for validation and transformation, and a
+mirror of the raw tables in Databricks used for interactive analysis.
+
+The pipeline performs the following steps:
+
+1. **Extract** — the full Jolpica database dump (18 CSV files, one per table,
+   ~40 MB compressed) is downloaded from the Jolpica data endpoint. A
+   freshness check skips the download if the data is less than 7 days old,
+   and the original Ergast/Jolpica table schemas are preserved.
+2. **Load** — the raw CSVs are normalised into a **star schema SQLite**
+   database (`jolpica.db`), with foreign key validation guaranteeing
+   referential integrity. This database (~`r total_rows_k`K rows covering every F1 race
+   since 1950) acts as a portable, version-controlled snapshot of the raw
+   data, fully independent from any cloud service.
+3. **Transform** — running in parallel with the publication step, the
+   transformation job reshapes the raw schema into an analytics schema
+   (`formula1.db`), adds derived fields (driver age, cumulative points,
+   country flags), and applies **dbt** models and tests on top.
+4. **Publish to Databricks** — each raw SQLite table is exported to Parquet,
+   staged in a Unity Catalog volume, and loaded into **Delta tables** in
+   Databricks via `COPY INTO`, with automatic type widening and row-count
+   verification against the source. This gives a queryable copy of the raw
+   dataset for exploratory analysis without needing to download the SQLite
+   file.
+
+\newpage
+
+The two branches of the pipeline are intentionally decoupled: a Databricks
+outage cannot block the local SQLite build and release.
+
+```{r, echo=FALSE, out.width='100%', fig.align="center", fig.cap="Pipeline architecture: Jolpica → SQLite → dbt / Databricks"}
+knitr::include_graphics(here::here("images", "report", "pipeline.png"))
+```
+
+Two design decisions are worth highlighting, as they affect the reproducibility
+of the analysis:
+
+* **Full reload instead of incremental processing.** With roughly `r total_rows_k`K rows,
+  reloading the entire dataset at each run is cheap, and — more importantly —
+  safe: F1 stewards occasionally issue disqualifications or points
+  adjustments *after* races, so append-only logic would silently miss
+  retroactive corrections. This is particularly relevant for the historical
+  quirks discussed in Section 2.4.
+* **Release strategy.** The database is distributed via GitHub Releases under
+  a mutable `data-latest` tag, overwritten at each run. Versioned immutable
+  releases (`data-YYYYMMDD`) are a planned improvement; for this study, the
+  dataset snapshot used for the analysis is documented together with the
+  results to ensure reproducibility.
+
+The pipeline consumes a single input: the Jolpica database dump, delivered as
+a ZIP archive of 18 CSV files, one per table. The table below lists these
+input files as recorded in the database inventory; each file corresponds
+one-to-one with a table described in Section 2.3.
+
+```{r, echo=FALSE}
+kbl(dataset_files, format = "latex", booktabs = TRUE, linesep = "", escape = FALSE, col.names = c("", "Files", "", "", "", "")) %>%
+  kable_styling(font_size = 9, latex_options = c("hold_position"))
+```
+
+\newpage
+
+## 2.3 Tables
+
+### 2.3.0 Overview
+
+The Jolpica export consists of **18 tables** covering seasons, rounds, circuits, sessions, results, teams, championships, scoring systems, lap times, pit stops and staging tables. Note that the schema intentionally differs from Ergast's: Jolpica splits the old monolithic races/results concepts into fine-grained round, session and session_entry tables, which allows a modern race weekend (practice, qualifying, sprint, race) to be modelled explicitly.
+
+### 2.3.1 Core Season & Race Structure
+
+The three tables below form the backbone of the temporal dimension: they
+identify each season, each Grand Prix, and each physical circuit.
+
+```{r, echo=FALSE, message=FALSE}
+core_tables <- tribble(
+  ~Table,    ~Purpose,
+  "season",  "Master record of every F1 season (1950-present). Contains year, championship system reference, and Wikipedia link. Primary time dimension for all temporal queries.",
+  "round",   "Individual Grands Prix within seasons. Links to season and circuit, includes race number, official name, date, and Wikipedia reference. Represents the traditional race event concept.",
+  "circuit", "Physical racetracks. Stores track metadata including location data and Wikipedia URL. Rarely changes over time - a dimensional lookup table."
+)
+
+fmt_schema_table(core_tables)
+```
+
+### 2.3.2 Session-Level Detail
+
+Modern Formula 1 weekends comprise multiple timed sessions (practice,
+qualifying, sprint, race). Jolpica models this explicitly with two tables:
+
+```{r, echo=FALSE, message=FALSE}
+session_tables <- tribble(
+  ~Table,          ~Purpose,
+  "session",        "Granular timing sessions (Race, Qualifying, Sprint, Practice). Modern F1 structure where a round may have multiple sessions. Includes scheduled laps, timezone, and cancellation flags.",
+  "session_entry",  "Driver results per session. Contains grid position, finishing position, points scored, laps completed, time/difference, status codes, and classification eligibility. Most frequently queried results table."
+)
+
+fmt_schema_table(session_tables)
+```
+
+\newpage
+
+### 2.3.3 Driver & Constructor Records
+
+Drivers and constructors are tracked both as profiles and as historical
+pairings, alongside the legacy entry mechanism used before session-level
+granularity:
+
+```{r, echo=FALSE, message=FALSE}
+driver_team_tables <- tribble(
+  ~Table,        ~Purpose,
+  "driver",       "Driver profiles: names, nationality, date of birth and country. Core dimension for any driver-level aggregation; driver age at race date is derived from it during transformation.",
+  "team",         "All constructor entries in history. Note: constructors evolve or rebrand - this tracks distinct legal entities, not just Ferrari/Mercedes/Red Bull brand names.",
+  "team_driver",  "Historical pairings of which driver drove for which team. Junction table linking drivers and teams, with validity periods implied by related records.",
+  "roundentry",   "Which team-driver combination entered which round (before session granularity). Contains car number assignment. Legacy linkage from older schema design."
+)
+
+fmt_schema_table(driver_team_tables)
+```
+
+### 2.3.4 Championship Standings
+
+Both championships are tracked cumulatively after every round, enabling
+trajectory analysis over the course of a season:
+
+```{r, echo=FALSE, message=FALSE}
+standings_tables <- tribble(
+  ~Table,             ~Purpose,
+  "driver_championship", "Cumulative driver standings across the season. Tracks points accumulation after each round - enabling analysis of championship trajectories, comebacks, and mathematical elimination dates.",
+  "team_championship",   "Equivalent constructor standings. Mirrors the driver championship table structure but for teams. Critical for analysing constructor battles and historic dominance patterns."
+)
+
+fmt_schema_table(standings_tables)
+```
+
+### 2.3.5 Scoring Systems
+
+Point allocation has changed repeatedly across F1 history. Three tables
+document the rules governing how results translate into points:
+
+```{r, echo=FALSE, message=FALSE}
+scoring_tables <- tribble(
+  ~Table,                    ~Purpose,
+  "points_system",           "Historical point-allocation rules. Each row defines a unique scoring scheme used during a period, explaining why different eras award points differently.",
+  "championship_system",     "Broader championship format definitions. May encompass tiebreaker rules, sprint weekend variants, or multi-season aggregations.",
+  "championship_adjustment", "Special corrections to historical standings. Likely captures retroactive disqualifications, title rescissions, or corrections to original records."
+)
+
+fmt_schema_table(scoring_tables)
+```
+
+\newpage
+
+### 2.3.6 Performance Metrics
+
+Two high-cardinality tables capture on-track performance:
+
+```{r, echo=FALSE, message=FALSE}
+performance_tables <- tribble(
+  ~Table,     ~Purpose,
+  "lap",       "Per-lap timing data. The highest-cardinality table, containing individual lap times for every driver in every race session. Essential for pace analysis, fastest-lap identification, and tyre-strategy modelling.",
+  "pit_stop",  "Pit-stop events, including duration and timing within a race, and potentially crew performance data. Critical for race-strategy analysis and comparing pit-crew performance."
+)
+
+fmt_schema_table(performance_tables)
+```
+
+### 2.3.7 Staging Tables (Not Used in Analysis)
+
+Two tables exist as empty staging structures with no analytical value:
+
+```{r, echo=FALSE, message=FALSE}
+staging_tables <- tribble(
+  ~Table,     ~Purpose,
+  "base_team", "Empty staging table - likely intended for ETL operations or future use. Currently contains no data.",
+  "penalty",   "Intended for driver or constructor penalties but currently empty. It may be populated by future pipeline updates or used only when infractions occur."
+)
+
+fmt_schema_table(staging_tables)
+```
+
+\newpage
+
+## 2.4 Table Content
+
+### 2.4.1 A First Look at the Raw Tables
+
+Before describing the issues hidden in the data, it is worth looking at the
+tables themselves. The extracts below show the first rows of two tables —
+`season`, one of the smallest tables in the schema, and `pit_stop`, a
+fact table — chosen so that all their columns fit on the page.
+
+First, the `season` table — with only a handful of rows and columns, it
+defines the championship calendar:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(head(season, 5), format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The extract below shows the first rows of the `pit_stop` table:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(head(pit_stop, 5), format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+### 2.4.2 The `api_id` Column
+
+The two extracts above reveal a common pattern: every table begins with an
+`api_id` column. This identifier is present in **all 18 tables** of the
+export — inspecting the remaining tables (not reproduced here) shows exactly
+the same structure. It mirrors the primary key exposed by the Jolpica API and
+is therefore *application specific*: it identifies records within Jolpica's
+own infrastructure (and its Ergast-compatible endpoints) rather than
+describing anything about the racing data itself.
+
+Since it carries no analytical meaning, duplicates the information already
+present in the pipeline's own keys, and wastes width in every table, **these
+columns will be dropped from all tables during the dbt transformation step**;
+the details are covered in Chapter 3.
+
+Dropping the columns from the analytical tables does not mean discarding the
+information permanently. Should the values ever prove useful again — for
+example, for tracing records back to Jolpica's endpoints or for debugging the
+extraction process — they could be preserved in dedicated, application-level
+lookup tables, kept strictly separate from the F1 data tables described above.
+
+\newpage
+
+### 2.4.3 Winner Uniqueness
+
+The most basic integrity expectation for a results table is that each race
+has exactly one winner. This expectation is, however, merely an assumption
+made by the analyst — the raw export is never accompanied by a formal
+definition of what constitutes a unique race winner — and is therefore worth
+verifying explicitly.
+
+Working directly from the Jolpica `results` table, a simple count of drivers
+classified in first position per race confirms two things. First, no race in
+the dataset lacks a winner altogether; second, several races list **more than
+one** driver in first position:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(multi_winner_races, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+To identify the affected races, the races listing more than one winner are
+then joined with the `races` and `drivers` tables — the joins serve purely
+to attach human-readable context, not to derive the counts:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(multi_winner_details, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+At first glance this looks like a data-quality defect, but it turns out to be
+a historically faithful representation of the sport's earliest era, as the
+next section explains.
+
+### 2.4.4 Shared Drives in the Early Years
+
+The multiple-winner phenomenon observed above is not an error in the export
+but a consequence of a practice that was accepted in Formula One's formative
+years: **car sharing**. In the early seasons, teams frequently entered
+smaller fields than the grid size, and a single car could be driven by
+several drivers over the course of one race — one driver starting the race
+and another taking over later, in the manner of an endurance relay.
+
+Under the regulations of the time, all drivers who took the wheel were
+credited with the race result achieved by that car. Consequently, when a
+shared car finished first, the results table records several drivers sharing
+the win — exactly the pattern surfaced by the aggregation in Section 2.4.3.
+The same convention extends beyond victories: position assignments,
+classifications, and championship points accrued by such cars were likewise
+divided among the participating drivers.
+
+From a data-modelling perspective, this means the natural key of the results
+table is not (race, position) alone, since a single finishing position can
+legitimately be occupied by multiple driver rows. Any transformation or
+analysis step must therefore account for this historical peculiarity rather
+than treating duplicate positions as anomalies to be corrected.
+
+\newpage
+
+### 2.4.5 Fractional Point Values
+
+The shared-drive practice of Section 2.4.4 leaves an arithmetic fingerprint
+in the `points` column — but it is not the only source of non-integer point
+values. Up to this point the integrity checks have concerned the *structural*
+attributes of the export — keys, positions, flags; the `points` column itself
+has not been inspected yet, even though it encodes the accumulated effect of
+every historical scoring quirk. Championship points are expected to be whole
+numbers — or, at worst, halves — so a natural first check is to ask which
+values violate this expectation. The query below surveys every non-integer
+value appearing anywhere in the results and counts how many rows carry each
+fractional part:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(fractional_points_survey, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The distribution is remarkably clean: the overwhelming majority of
+fractional rows carry an exact half, while only two much finer fractions
+appear at all. Several distinct, well-documented mechanisms can produce
+exact halves, and they are worth enumerating before attempting to attribute
+individual rows:
+
+* **Abandoned races.** When a Grand Prix was halted before the full distance
+  had been covered — typically by torrential rain or a serious accident, with
+  the race unable to resume — drivers received **half** of the points attached
+  to their finishing position. A driver classified fourth in such a race,
+  a placement worth 3 points under the scoring systems that governed the
+  sport for its first four decades, was consequently credited with 1.5
+  points. Rain-shortened editions appear irregularly across the entire
+  history of the championship.
+* **Shared drives.** Whenever *two* drivers shared one car that finished in a
+  points-paying position, the points attached to that place were divided
+  equally between them (Section 2.4.4), and a division of an integer by two
+  again yields exactly one half.
+* **Shared fastest-lap points.** Under the early scoring systems, the bonus
+  point attached to the fastest lap could be **split** when two drivers
+  recorded an identical fastest time — each taking half of the single point.
+  A driver who finished in a points-paying position and co-held the fastest
+  lap thus carries a half appended to an otherwise integral total: second
+  place under the 1950–1959 system (6 points) plus half the bonus yields
+  6.5. This is the two-driver case of the seven-way split examined in
+  Section 2.4.6.
+
+Attributing each individual half to its mechanism is more delicate than it
+may seem, and naive heuristics fail quickly: a points value is the *sum* of
+position points and a possible bonus share, so either component may be the
+halved one, and the mechanisms are not mutually exclusive — a shared car in
+a rain-shortened race is divided twice over, yielding quarters. Rather than
+attempting a per-row classification, the survey above is treated as evidence
+that all fractional values fall within a known, historically grounded set of
+mechanisms. What *cannot* be explained by any of them are the values that
+are neither integers nor exact halves, visible at the tail of the extract;
+isolating them pins down only two affected races, which the next section
+inspects individually.
+
+\newpage
+
+### 2.4.6 Finer Fractions from Shared Awards
+
+Values that are neither integers nor exact halves resist the explanation of
+Section 2.4.5 and require a closer look. Isolating them from the unique point
+values of the `session_entry` table yields only two contaminated races:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(fine_fraction_rows, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+Both races illustrate points being **divided rather than awarded**, each in
+its own way. At the 1954 British Grand Prix, every affected driver carries an
+identical increment of 1/7 point on top of the points earned by finishing
+position — the fastest-lap bonus point of the era's scoring system, awarded
+jointly to seven drivers who set an identical fastest lap and thus shared its
+single point seven ways. At the 1955 Argentine Grand Prix, three drivers
+sharing one car finished jointly in third position; the four points attached
+to that place were divided equally, each driver recording 4/3 points. Both
+mechanisms are consequences of the shared-car and shared-award practices of
+the period described in Section 2.4.4, confined to the 1950s — confirming
+that these fractions are faithful historical records rather than pipeline
+errors.
+
+### 2.4.7 The Absent Fastest Lap
+
+Among the shared awards of Section 2.4.6, one subset deserves a final
+inspection: the drivers who received 1/7 of the fastest-lap point at the
+1954 British Grand Prix. Their fractional increment of ~0.14 makes them easy
+to isolate, and their rows are informative — although a fastest-lap award is
+recorded in the `points` column, the dedicated `fastest_lap_rank` column
+remains empty for every one of them:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(fastest_lap_shared_rows, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The seven `NA` values in the extract are not an accidental omission of these
+particular rows, but a coverage boundary of the source: the dataset contains
+fastest-lap records only starting from the 1958 season, earlier editions of
+the championship having no officially tracked fastest lap. The boundary can
+be located precisely in the data:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(tibble(first_season_with_fastest_lap = first_fastest_lap_season), format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The situation is therefore somewhat ironic: the very drivers who *jointly*
+set the fastest lap in 1954 cannot be recognised as such from the
+`fastest_lap_rank` column. Closing this gap is a candidate for the
+transformation work described in Chapter 3: fastest-lap data for the earlier
+seasons could be integrated from an external source as part of the planned
+modifications, restoring complete coverage of this statistic across the
+championship's history.
+
+### 2.4.8 Ineligible Drivers Who Scored Points
+
+The last integrity check concerns the consistency between the eligibility
+flag and the `points` column. Every row of the results carries an
+`is_eligible_for_points` indicator, and the naive expectation is a strict
+correspondence: drivers flagged as ineligible should record zero points. The
+export violates this expectation exactly once:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(ineligible_scorers, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+Consulting the historical record resolves the apparent contradiction, and it
+involves the shared-drive practice of Section 2.4.4 twice over. At the 1956
+Monaco Grand Prix, Juan Manuel Fangio drove two cars: he shared the car
+number 26, which finished second, with Peter Collins, and the car number 20,
+which finished fourth, with Eugenio Castellotti. Under the regulations of
+the time, the points of a shared car were divided among its drivers — but a
+driver who had already received points from one car was **not entitled to
+collect points from a second one**. Fangio therefore took his half of the
+second-place points (three of six, shared with Collins), while his would-be
+share of the fourth place — three points divided by two, the 1.5 recorded in
+the extract — went uncollected.
+
+The extract below places this single violating row in its full context by
+listing every Ferrari entry of that race:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(ferrari_monaco_1956, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The table rewards a careful reading. The second row pair shows the shared
+second place: Collins and Fangio both completed 100 laps in car number 26,
+yet Fangio records one point more than his co-driver — the fastest-lap
+bonus of the era's scoring system (Section 2.4.6), set by Fangio that
+afternoon, appended to his half of the position points. The fourth row pair
+shows the shared fourth place at one lap behind (`+1 Lap`, 99 laps
+completed): Castellotti's 1.5 was awarded, while the identical figure next
+to Fangio's name — flagged ineligible, and singled out by the check at the
+top of this section — records the *notional* share that the regulations
+denied him. The two remaining rows complete the picture of the team's
+afternoon: Castellotti's own car, sidelined by clutch failure after 14 laps
+but still classified eleventh, and Musso's, eliminated in an accident after
+two laps and classified fourteenth — a reminder that retirement and
+classification are independent attributes in this export, exactly as the
+classifications of Section 2.4.9 presuppose.
+
+The row is thus internally coherent once both columns are read together:
+the `points` column preserves the notional share attached to the
+fourth-place finish, exactly as the sharing arithmetic would assign it,
+while the `is_eligible_for_points` flag correctly records that this share
+was not awarded. Far from being a data defect, the combination demonstrates
+that the export encodes a subtle piece of period regulation — and, since it
+is unique across the entire dataset, any transformation step can handle it
+as an explicitly documented single case rather than a systematic issue.
+
+\newpage
+
+### 2.4.9 Unclassified Drivers Who Scored Points
+
+The mirror image of the eligibility check of Section 2.4.8 concerns the
+classification flag. The naive expectation is again a strict correspondence:
+a driver flagged as unclassified — one who did not complete a sufficient
+portion of the race distance — should record zero points. The export
+contains a sizeable group of violations of exactly this shape:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(unclassified_scorers, format = "latex", booktabs = TRUE, linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+The pattern in the extract admits a single coherent explanation: the
+**fastest-lap bonus point**. Every row in the table records exactly one
+point — the value traditionally attached to the fastest lap — and every
+`detail` describes a retirement: a mechanical failure, an accident, or, in
+one case, a disqualification. A driver who sets the fastest lap and then
+abandons the race cannot be classified, yet the bonus point earned before
+the retirement remains attached to his name. The rows from 1958 onwards make
+the mechanism directly visible, since they carry `fastest_lap_rank = 1` in
+the column whose coverage gap was analysed in Section 2.4.7; the earlier rows
+show the same one-point signature, but the rank column — not populated before
+1958 — cannot corroborate them.
+
+The extract also contains a historical curiosity: at the 1959 French Grand
+Prix, Stirling Moss was disqualified after setting the fastest lap of the
+race. Stripped of his classification but not of his bonus point, he appears
+in this table as the only disqualified driver of the period to score a
+championship point — a memorable edge case that the export preserves
+faithfully through the combination of `is_classified = f`, a positive point
+value, and the `Disqualified` detail.
+
+### 2.4.10 Country or Nationality
+
+The `team` table attaches a single `nationality` attribute to every
+constructor. A first extract suffices to raise a question about how that
+attribute is assigned:
+
+```{r, echo=FALSE, message=FALSE}
+kbl(head(team %>% select(name, nationality)), format = "latex", booktabs = TRUE,
+    linesep = "") %>%
+  kable_styling(font_size = 8, latex_options = c("hold_position", "scale_down"))
+```
+
+Alfa Romeo — one of the most famous Italian carmakers, and almost certainly
+an Italian team in the championship's early years — appears here as Swiss.
+The situation is in fact stricter than a mere ambiguity: Alfa Romeo is
+recorded as Swiss **for all of its races**, including the very first seasons
+of the championship, when the team was run as an Italian works outfit. The
+dataset therefore does not merely store a single nationality per team — it
+*retrojects the most recent one onto the entire history*. The schema cannot
+express that the nationality attached to an entity changed over the decades
+the data spans: whatever value the source associates with Alfa Romeo today
+(likely reflecting later changes of ownership) silently overwrites the
+Italian identity the team carried in 1950.
+
+The same limitation, in an even more striking form, affects drivers. A
+driver may hold and compete under different nationalities during his career,
+but the export allows only one value per person. Bertrand Gachot is a
+confirmed case: he entered Grands Prix under a Belgian flag as well as a
+French flag, yet the `driver` table can record only one of them. The Renault
+team may present a similar ambiguity, having arguably raced under both French
+and British identities depending on the period considered.
+
+For the analytical purposes of this work the impact is limited — nationality
+is used mainly for descriptive statistics rather than as a join key — but the
+limitation is now confirmed rather than suspected: any temporal analysis of
+team or driver nationality built on this dataset would wrongly describe the
+1950 Alfa Romeo entries as Swiss achievements. This gap is addressed in
+Chapter 3, where a transformation introduces **season-scoped nationality
+tables** for teams and drivers, restoring the ability to represent a
+nationality as it was at the time of each season rather than in its most
+recent state.
