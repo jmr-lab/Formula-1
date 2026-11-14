@@ -48,13 +48,12 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-% Full-page background : wallpaper scales the image to 110% of the page
-% width, centers it, and simply crops whatever overflows the page.
-% A 2:3 portrait image at 1.1x page width always covers A4/Letter height.
+% ThisCenterWallPaper : scales the image to 110% of the page, centers it,
+% crops the overflow — and applies to THIS page only (cover).
 % Tune the factor between 1.05 and 1.2 to control the crop.
-\CenterWallPaper{1.1}{`r cover_path`}
+\ThisCenterWallPaper{1.1}{`r cover_path`}
 
-% Text overlay on the FOREGROUND layer so it always sits above the image
+% Text overlay on the FOREGROUND layer, this page only (*)
 \AddToShipoutPictureFG*{
   \AtPageCenter{
     \raisebox{8.8cm}{%
