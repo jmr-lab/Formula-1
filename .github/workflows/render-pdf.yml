@@ -21,13 +21,19 @@ jobs:
       # TeX Gyre fonts ship with TeX Live (GUST, free licence) :
       # no system font install, no Google/Microsoft dependency.
       # fontspec is required by xelatex font loading (\newfontfamily).
+      # NOTE: `array` and `longtable` live in the `tools` bundle on CTAN/TeX Live,
+      # they are NOT standalone tlmgr package names.
       - name: Install LaTeX packages
         run: |
           tlmgr install xetex fontspec realscripts
           tlmgr install tex-gyre
           tlmgr install eso-pic draftwatermark etoolbox
-          # Commonly required by the pdf_document template and kableExtra :
-          tlmgr install booktabs caption longtable float multirow array colortbl geometry hyperref
+          # Commonly required by the pdf_document template and kableExtra
+          # (`tools` provides array, longtable, tabularx, ...) :
+          tlmgr install booktabs caption multirow colortbl geometry hyperref tools
+          # Non-fatal safety net : never break the workflow over a package
+          # that is already present or renamed upstream
+          tlmgr install float || true
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
