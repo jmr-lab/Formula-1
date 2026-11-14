@@ -47,43 +47,52 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-\AddToShipoutPictureBG*{
-  \AtPageLowerLeft{%
-    \put(\LenToUnit{-10mm},\LenToUnit{-10mm}){%
-      \includegraphics[
-        width=\dimexpr\paperwidth+20mm\relax,
-        height=\dimexpr\paperheight+20mm\relax
-      ]{`r cover_path`}%
-    }%
-  }
-}
-
-\AddToShipoutPictureFG*{
-  \AtPageCenter{
-    \raisebox{8.8cm}{%
-      \makebox(0,0){%
-        \color{white}{\coverfont\bfseries\fontsize{110}{114}\selectfont 1~FORMULA}%
-      }
-    }
-    \raisebox{5.8cm}{%
-      \makebox(0,0){%
-        \color{white}{\coverfont\bfseries\fontsize{22}{26}\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%
-      }
-    }
-  }
-  \AtPageLowerLeft{
-    \raisebox{1.5cm}[0pt][0pt]{%
-      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
-      \llap{%
-        \color{white}{\coverfont\bfseries\fontsize{14}{16}\selectfont JEAN-MARIE ROY}%
-      }
-    }
-  }
-}
+```{r cover-latex, echo=FALSE, results='asis'}
+# The cover LaTeX is emitted from R (cat/asis) so that pandoc never
+# parses it as Markdown. Do NOT write these commands directly in the
+# Rmd body: pandoc can split the raw LaTeX block (this is what caused
+# the persistent white band and the printed comments in earlier builds).
+cat(paste(
+  "\\AddToShipoutPictureBG{",
+  "  \\AtPageLowerLeft{%",
+  "    \\raisebox{0pt}[0pt][0pt]{%",
+  "      \\hspace*{-2mm}%",
+  "      \\includegraphics[width=\\dimexpr\\paperwidth+4mm\\relax]{" ,
+  cover_path,
+  "        }%",
+  "    }%",
+  "  }",
+  "}",
+  "",
+  "\\AddToShipoutPictureFG{",
+  "  \\AtPageCenter{",
+  "    \\raisebox{8.8cm}{%",
+  "      \\makebox(0,0){%",
+  "        \\color{white}{\\coverfont\\bfseries\\fontsize{110}{114}\\selectfont 1~FORMULA}%",
+  "      }",
+  "    }",
+  "    \\raisebox{5.8cm}{%",
+  "      \\makebox(0,0){%",
+  "        \\color{white}{\\coverfont\\bfseries\\fontsize{22}{26}\\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%",
+  "      }",
+  "    }",
+  "  }",
+  "  \\AtPageLowerLeft{",
+  "    \\raisebox{1.5cm}[0pt][0pt]{%",
+  "      \\hspace*{\\dimexpr\\paperwidth-1.2cm\\relax}%",
+  "      \\llap{%",
+  "        \\color{white}{\\coverfont\\bfseries\\fontsize{14}{16}\\selectfont JEAN-MARIE ROY}%",
+  "      }",
+  "    }",
+  "  }",
+  "}",
+  sep = "\n"))
+```
 
 \null
 \thispagestyle{empty}
 \clearpage
+\ClearShipoutPicture
 
 \begin{center}
 \vspace*{0.18\textheight}
