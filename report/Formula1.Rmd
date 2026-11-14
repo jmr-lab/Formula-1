@@ -15,7 +15,6 @@ header-includes:
   - \AtBeginEnvironment{Shaded}{\small}
   - \usepackage{graphicx}
   - \usepackage{fontspec}
-  - % TeX Gyre Heros Condensed (free, ships with TeX Live : tlmgr install tex-gyre)
   - \IfFontExistsTF{texgyreheroscn-regular.otf}{\newfontfamily\coverfont{texgyreheroscn}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold]}{\IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}}{\newfontfamily\coverfont{Latin Modern Sans}}}
 urlcolor: blue
 linkcolor: black
