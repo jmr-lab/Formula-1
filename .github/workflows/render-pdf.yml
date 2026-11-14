@@ -47,7 +47,7 @@ jobs:
       - name: Move PDF to report/
         run: |
           mkdir -p report
-          mv report/Formula-1.pdf report/Formula-2.pdf
+          mv report/Formula1.pdf report/Formula-2.pdf
 
       - name: Commit and push PDF
         run: |
