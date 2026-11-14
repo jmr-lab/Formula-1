@@ -39,7 +39,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Run orchestrator
-        run: Rscript 00-Orchestrator.R
+        run: Rscript src/00-Orchestrator.R
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
