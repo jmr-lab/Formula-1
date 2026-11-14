@@ -13,6 +13,10 @@ header-includes:
   - \SetWatermarkColor{gray!10}
   - \usepackage{etoolbox}
   - \AtBeginEnvironment{Shaded}{\small}
+  - \usepackage{graphicx}
+  - \usepackage{fontspec}
+  - % Impact : tall, condensed, heavy — shipped by default on BOTH Windows and macOS
+  - \IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}[BoldFont=Impact]}{\IfFontExistsTF{Haettenschweiler}{\newfontfamily\coverfont{Haettenschweiler}}{\IfFontExistsTF{Arial Black}{\newfontfamily\coverfont{Arial Black}}{\newfontfamily\coverfont{Latin Modern Sans}}}
 urlcolor: blue
 linkcolor: black
 ---
@@ -44,10 +48,10 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-<!-- --------------------------------------------------------------- -->
-<!-- COVER PAGE -->
-<!-- Background image + title + subtitle overlaid, author bottom-right -->
-<!-- --------------------------------------------------------------- -->
+% ---------------------------------------------------------------
+% COVER PAGE
+% Background image + title + subtitle overlaid, author bottom-right
+% ---------------------------------------------------------------
 \AddToShipoutPictureBG*{
   % --- Full-page background image ---
   \AtPageLowerLeft{
@@ -60,17 +64,19 @@ cover_path <- gsub("\\\\", "/", cover_path)
     }
   }
   % --- Title and subtitle, centered horizontally, upper third of the page ---
+  % Pure font-metric sizing (no \resizebox) : Impact is condensed,
+  % so a large size still fits the page width
   \AtPageCenter{
-    % Title : raisebox controls vertical position (distance above page center)
-    \raisebox{9.5cm}{%
+    % Title : 120pt — if it ever overflows the page width, try 110pt
+    \raisebox{8.8cm}{%
       \makebox(0,0){%
-        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
+        \color{white}{\coverfont\fontsize{120}{124}\selectfont 1~FORMULA}%
       }
     }
     % Subtitle, just below the title
-    \raisebox{7.2cm}{%
+    \raisebox{5.9cm}{%
       \makebox(0,0){%
-        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
+        \color{white}{\coverfont\fontsize{24}{28}\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%
       }
     }
   }
@@ -79,7 +85,7 @@ cover_path <- gsub("\\\\", "/", cover_path)
     \raisebox{1.5cm}[0pt][0pt]{%
       \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
       \llap{%
-        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
+        \color{white}{\coverfont\fontsize{14}{16}\selectfont JEAN-MARIE ROY}%
       }
     }
   }
