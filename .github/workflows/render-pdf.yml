@@ -15,25 +15,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Temporary : install MS core fonts (Impact) for the cover typography.
-      # Remove this step once a bundled/free font replaces Impact.
-      - name: Install Impact (MS core fonts)
-        run: |
-          sudo apt-get update
-          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | \
-            sudo debconf-set-selections
-          sudo apt-get install -y ttf-mscorefonts-installer fontconfig
-          fc-cache -f
-
       - name: Set up TinyTeX
         uses: r-lib/actions/setup-tinytex@v2
 
+      # TeX Gyre fonts ship with TeX Live (GUST, free licence) :
+      # no system font install, no Google/Microsoft dependency.
+      # fontspec is required by xelatex font loading (\newfontfamily).
       - name: Install LaTeX packages
         run: |
-          tlmgr install xetex
-          tlmgr install eso-pic
-          tlmgr install draftwatermark
-          tlmgr install etoolbox
+          tlmgr install xetex fontspec realscripts
+          tlmgr install tex-gyre
+          tlmgr install eso-pic draftwatermark etoolbox
+          # Commonly required by the pdf_document template and kableExtra :
+          tlmgr install booktabs caption longtable float multirow array colortbl geometry hyperref
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
@@ -54,21 +48,37 @@ jobs:
       - name: Run orchestrator
         run: Rscript src/00-Orchestrator.R
 
-      - name: Move PDF to report/
+      # Fail LOUD and EARLY if the render did not produce the PDF,
+      # instead of failing silently at the commit step later.
+      - name: Check PDF was produced
         run: |
-          mkdir -p report
-          mv report/Formula1.pdf report/Formula-2.pdf
+          if [ ! -f report/Formula1.pdf ]; then
+            echo "::error::Orchestrator finished but report/Formula1.pdf is missing"
+            find . -name "*.log" -exec echo "--- {} ---" \; -exec tail -n 30 {} \;
+            exit 1
+          fi
 
+      - name: Move PDF to report/
+        run: mv report/Formula1.pdf report/Formula-2.pdf
+
+      # -A on the whole report/ folder : stages the NEW file AND the
+      # deletion of the old Formula1.pdf (rename seen as one change).
+      # Guard : skip commit when nothing changed (avoids exit 1 on empty index).
       - name: Commit and push PDF
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add report/Formula-2.pdf
-          git commit -m "Update report/Formula-2.pdf [skip ci]"
-          git push
+          git add -A -- report/
+          if git diff --cached --quiet; then
+            echo "No PDF change to commit"
+          else
+            git commit -m "Update report/Formula-2.pdf [skip ci]"
+            git push
+          fi
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: Formula-2
           path: report/Formula-2.pdf
+          if-no-files-found: error
