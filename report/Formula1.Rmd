@@ -6,6 +6,7 @@ header-includes:
   - \usepackage{xcolor}
   - \usepackage{hyperref}
   - \usepackage{eso-pic}
+  - \usepackage{wallpaper}
   - \usepackage{draftwatermark}
   - \SetWatermarkText{DRAFT}
   - \SetWatermarkScale{1}
@@ -47,15 +48,14 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-\AddToShipoutPictureBG*{
-  \AtPageLowerLeft{%
-    \put(\LenToUnit{-4mm},\LenToUnit{-4mm}){%
-      \includegraphics[
-        width=\dimexpr\paperwidth+8mm\relax,
-        height=\dimexpr\paperheight+8mm\relax
-      ]{`r cover_path`}%
-    }%
-  }
+% Full-page background : wallpaper scales the image to 110% of the page
+% width, centers it, and simply crops whatever overflows the page.
+% A 2:3 portrait image at 1.1x page width always covers A4/Letter height.
+% Tune the factor between 1.05 and 1.2 to control the crop.
+\CenterWallPaper{1.1}{`r cover_path`}
+
+% Text overlay on the FOREGROUND layer so it always sits above the image
+\AddToShipoutPictureFG*{
   \AtPageCenter{
     \raisebox{8.8cm}{%
       \makebox(0,0){%
