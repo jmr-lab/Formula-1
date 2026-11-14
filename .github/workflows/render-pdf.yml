@@ -15,6 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Temporary : install MS core fonts (Impact) for the cover typography.
+      # Remove this step once a bundled/free font replaces Impact.
+      - name: Install Impact (MS core fonts)
+        run: |
+          sudo apt-get update
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | \
+            sudo debconf-set-selections
+          sudo apt-get install -y ttf-mscorefonts-installer fontconfig
+          fc-cache -f
+
       - name: Set up TinyTeX
         uses: r-lib/actions/setup-tinytex@v2
 
@@ -43,7 +53,7 @@ jobs:
 
       - name: Run orchestrator
         run: Rscript src/00-Orchestrator.R
-   
+
       - name: Move PDF to report/
         run: |
           mkdir -p report
