@@ -47,39 +47,27 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-% ---------------------------------------------------------------
-% COVER PAGE
-% Background image + title + subtitle overlaid, author bottom-right
-% ---------------------------------------------------------------
 \AddToShipoutPictureBG*{
-  % --- Full-page background image ---
-  \AtPageLowerLeft{
-    \raisebox{0pt}[0pt][0pt]{%
-      \hspace*{-1mm}%
+  \AtPageLowerLeft{%
+    \put(\LenToUnit{-4mm},\LenToUnit{-4mm}){%
       \includegraphics[
-        width=\dimexpr\paperwidth+2mm\relax,
-        height=\dimexpr\paperheight+2mm\relax
-      ]{`r cover_path`}
-    }
+        width=\dimexpr\paperwidth+8mm\relax,
+        height=\dimexpr\paperheight+8mm\relax
+      ]{`r cover_path`}%
+    }%
   }
-  % --- Title and subtitle, centered horizontally, upper third of the page ---
-  % Pure font-metric sizing (no \resizebox) : TeX Gyre Heros is condensed,
-  % so a large size still fits the page width
   \AtPageCenter{
-    % Title : 110pt — if it overflows the page width on your setup, try 100pt
     \raisebox{8.8cm}{%
       \makebox(0,0){%
         \color{white}{\coverfont\bfseries\fontsize{110}{114}\selectfont 1~FORMULA}%
       }
     }
-    % Subtitle, just below the title
     \raisebox{5.8cm}{%
       \makebox(0,0){%
         \color{white}{\coverfont\bfseries\fontsize{22}{26}\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%
       }
     }
   }
-  % --- Author, discreet, bottom right corner ---
   \AtPageLowerLeft{
     \raisebox{1.5cm}[0pt][0pt]{%
       \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
