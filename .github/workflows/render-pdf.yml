@@ -43,14 +43,11 @@ jobs:
 
       - name: Run orchestrator
         run: Rscript src/00-Orchestrator.R
-
-      - name: Debug - find PDF
-        run: find . -name "*.pdf" -type f
    
       - name: Move PDF to report/
         run: |
           mkdir -p report
-          mv Formula-1.pdf report/Formula-2.pdf
+          mv report/Formula-1.pdf report/Formula-2.pdf
 
       - name: Commit and push PDF
         run: |
