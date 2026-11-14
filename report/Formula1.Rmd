@@ -16,6 +16,10 @@ header-includes:
   - \usepackage{graphicx}
   - \usepackage{fontspec}
   - \IfFontExistsTF{texgyreheroscn-regular.otf}{\newfontfamily\coverfont{texgyreheroscn}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold]}{\IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}}{\newfontfamily\coverfont{Latin Modern Sans}}}
+  - \newlength{\coverwd}
+  - \newlength{\coverht}
+  - \AtBeginDocument{\setlength{\coverwd}{\dimexpr\paperwidth+4mm\relax}}
+  - \AtBeginDocument{\setlength{\coverht}{\dimexpr\paperheight+4mm\relax}}
 urlcolor: blue
 linkcolor: black
 ---
@@ -48,16 +52,15 @@ cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
 ```{r cover-latex, echo=FALSE, results='asis'}
-# The cover LaTeX is emitted from R (cat/asis) so that pandoc never
-# parses it as Markdown. Do NOT write these commands directly in the
-# Rmd body: pandoc can split the raw LaTeX block (this is what caused
-# the persistent white band and the printed comments in earlier builds).
+# The cover LaTeX is emitted from R so that pandoc never parses it as Markdown.
+# All dimensions are precomputed in the preamble (\coverwd, \coverht):
+# no \dimexpr, no starred commands at the usage site.
 cat(paste(
   "\\AddToShipoutPictureBG{",
   "  \\AtPageLowerLeft{%",
-  "    \\raisebox{0pt}[0pt][0pt]{%",
-  "      \\hspace*{-2mm}%",
-  "      \\includegraphics[width=\\dimexpr\\paperwidth+4mm\\relax]{" ,
+  "    \\hspace*{-2mm}%",
+  "    \\raisebox{-2mm}[0pt][0pt]{%",
+  "      \\includegraphics[width=\\coverwd,height=\\coverht]{" ,
   cover_path,
   "        }%",
   "    }%",
