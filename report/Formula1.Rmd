@@ -6,7 +6,6 @@ header-includes:
   - \usepackage{xcolor}
   - \usepackage{hyperref}
   - \usepackage{eso-pic}
-  - \usepackage{wallpaper}
   - \usepackage{draftwatermark}
   - \SetWatermarkText{DRAFT}
   - \SetWatermarkScale{1}
@@ -48,12 +47,17 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-% ThisCenterWallPaper : scales the image to 110% of the page, centers it,
-% crops the overflow — and applies to THIS page only (cover).
-% Tune the factor between 1.05 and 1.2 to control the crop.
-\ThisCenterWallPaper{1.1}{`r cover_path`}
+\AddToShipoutPictureBG*{
+  \AtPageLowerLeft{%
+    \put(\LenToUnit{-10mm},\LenToUnit{-10mm}){%
+      \includegraphics[
+        width=\dimexpr\paperwidth+20mm\relax,
+        height=\dimexpr\paperheight+20mm\relax
+      ]{`r cover_path`}%
+    }%
+  }
+}
 
-% Text overlay on the FOREGROUND layer, this page only (*)
 \AddToShipoutPictureFG*{
   \AtPageCenter{
     \raisebox{8.8cm}{%
