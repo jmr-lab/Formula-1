@@ -15,8 +15,8 @@ header-includes:
   - \AtBeginEnvironment{Shaded}{\small}
   - \usepackage{graphicx}
   - \usepackage{fontspec}
-  - % Impact : tall, condensed, heavy — shipped by default on BOTH Windows and macOS
-  - \IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}[BoldFont=Impact]}{\IfFontExistsTF{Haettenschweiler}{\newfontfamily\coverfont{Haettenschweiler}}{\IfFontExistsTF{Arial Black}{\newfontfamily\coverfont{Arial Black}}{\newfontfamily\coverfont{Latin Modern Sans}}}
+  - % TeX Gyre Heros Condensed (free, ships with TeX Live : tlmgr install tex-gyre)
+  - \IfFontExistsTF{texgyreheroscn-regular.otf}{\newfontfamily\coverfont{texgyreheroscn}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold]}{\IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}}{\newfontfamily\coverfont{Latin Modern Sans}}}
 urlcolor: blue
 linkcolor: black
 ---
@@ -64,19 +64,19 @@ cover_path <- gsub("\\\\", "/", cover_path)
     }
   }
   % --- Title and subtitle, centered horizontally, upper third of the page ---
-  % Pure font-metric sizing (no \resizebox) : Impact is condensed,
+  % Pure font-metric sizing (no \resizebox) : TeX Gyre Heros is condensed,
   % so a large size still fits the page width
   \AtPageCenter{
-    % Title : 120pt — if it ever overflows the page width, try 110pt
+    % Title : 110pt — if it overflows the page width on your setup, try 100pt
     \raisebox{8.8cm}{%
       \makebox(0,0){%
-        \color{white}{\coverfont\fontsize{120}{124}\selectfont 1~FORMULA}%
+        \color{white}{\coverfont\bfseries\fontsize{110}{114}\selectfont 1~FORMULA}%
       }
     }
     % Subtitle, just below the title
-    \raisebox{5.9cm}{%
+    \raisebox{5.8cm}{%
       \makebox(0,0){%
-        \color{white}{\coverfont\fontsize{24}{28}\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%
+        \color{white}{\coverfont\bfseries\fontsize{22}{26}\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%
       }
     }
   }
@@ -85,7 +85,7 @@ cover_path <- gsub("\\\\", "/", cover_path)
     \raisebox{1.5cm}[0pt][0pt]{%
       \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
       \llap{%
-        \color{white}{\coverfont\fontsize{14}{16}\selectfont JEAN-MARIE ROY}%
+        \color{white}{\coverfont\bfseries\fontsize{14}{16}\selectfont JEAN-MARIE ROY}%
       }
     }
   }
