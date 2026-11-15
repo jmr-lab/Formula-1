@@ -67,7 +67,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
       \hspace*{-1mm}%
       \includegraphics[
         width=\dimexpr\paperwidth+2mm\relax,
-        height=\dimexpr\paperheight+2mm\relax
+        height=\dimexpr\paperheight+2mm\relax, keepaspectratio=false
       ]{`r cover_path`}
     }
   }
