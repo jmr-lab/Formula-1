@@ -83,7 +83,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
     % Subtitle, repositioned lower to leave room for the enlarged title
     \raisebox{4.8cm}{%
       \makebox(0,0){%
-        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
+        \color{white}\sffamily\fontsize{34}{40}\selectfont One equation. 817 drivers. One answer.
       }
     }
   }
@@ -92,7 +92,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
     \raisebox{1.5cm}[0pt][0pt]{%
       \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
       \llap{%
-        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
+        \color{white}\sffamily\bfseries\fontsize{22}{24}\selectfont JEAN-MARIE ROY%
       }
     }
   }
