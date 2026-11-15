@@ -50,8 +50,8 @@ cover_path <- gsub("\\\\", "/", cover_path)
 # Absolute path of the fonts directory (forward slashes, OS-independent)
 font_dir <- gsub("\\\\", "/", here::here("fonts"))
 if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
-  stop("Police introuvable : ", file.path(font_dir, "LeagueGothic-Regular.ttf"),
-       "\nVerifiez que fonts/LeagueGothic-Regular.ttf est commite dans le depot.")
+  stop("Font not found : ", file.path(font_dir, "LeagueGothic-Regular.ttf"),
+       "\nCheck that fonts/LeagueGothic-Regular.ttf is committed in the repo.")
 }
 ```
 
@@ -81,14 +81,14 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
         \resizebox{0.9\paperwidth}{!}{1~FORMULA}%
       }
     }
-    % Subtitle, repositioned lower to leave room for the enlarged title
-    \raisebox{4.8cm}{%
+    % Subtitle, raised a bit higher to add breathing room above the equation
+    \raisebox{5.3cm}{%
       \makebox(0,0){%
         \color{white}\sffamily\fontsize{34}{40}\selectfont One equation. 817 drivers. One answer.
       }
     }
     % --- Backpropagation (adjoint / Neural ODE) equation, discreet decoration, two lines ---
-    \raisebox{3.2cm}{%
+    \raisebox{2.5cm}{%
       \makebox(0,0){%
         \color{white!50!black}%
         \resizebox{0.62\paperwidth}{!}{$
