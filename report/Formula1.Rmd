@@ -90,7 +90,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
     % --- Backpropagation equation, discreet, below the subtitle ---
     \raisebox{2.9cm}{%
       \makebox(0,0){%
-        \color{white!70!black}%
+        \color{white!50!black}%
         \resizebox{0.72\paperwidth}{!}{$
           \underbrace{\frac{\partial \mathcal{L}}{\partial a^{(L)}}}_{\text{output}}
           \cdot \frac{\partial a^{(L)}}{\partial z^{(L)}}
