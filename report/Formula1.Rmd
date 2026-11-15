@@ -3,6 +3,7 @@ output:
   pdf_document:
     latex_engine: xelatex
 header-includes:
+  - \usepackage{amsmath}
   - \usepackage{xcolor}
   - \usepackage{hyperref}
   - \usepackage{fontspec}
@@ -58,7 +59,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
 
 <!-- --------------------------------------------------------------- -->
 <!-- COVER PAGE -->
-<!-- Background image + title + subtitle overlaid, author bottom-right -->
+<!-- Background image + title + subtitle + equation overlaid, author bottom-right -->
 <!-- --------------------------------------------------------------- -->
 \AddToShipoutPictureBG*{
   % --- Full-page background image ---
@@ -84,6 +85,26 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
     \raisebox{4.8cm}{%
       \makebox(0,0){%
         \color{white}\sffamily\fontsize{34}{40}\selectfont One equation. 817 drivers. One answer.
+      }
+    }
+    % --- Backpropagation equation, discreet, below the subtitle ---
+    \raisebox{2.9cm}{%
+      \makebox(0,0){%
+        \color{white!70!black}%
+        \resizebox{0.72\paperwidth}{!}{$
+          \underbrace{\frac{\partial \mathcal{L}}{\partial a^{(L)}}}_{\text{output}}
+          \cdot \frac{\partial a^{(L)}}{\partial z^{(L)}}
+          \cdot \frac{\partial z^{(L)}}{\partial a^{(L-1)}}
+          \cdot \frac{\partial a^{(L-1)}}{\partial z^{(L-1)}}
+          \cdot \frac{\partial z^{(L-1)}}{\partial a^{(L-2)}}
+          \cdots
+          \frac{\partial a^{(3)}}{\partial z^{(3)}}
+          \cdot \frac{\partial z^{(3)}}{\partial a^{(2)}}
+          \cdot \frac{\partial a^{(2)}}{\partial z^{(2)}}
+          \cdot \frac{\partial z^{(2)}}{\partial a^{(1)}}
+          \cdot \underbrace{\frac{\partial a^{(1)}}{\partial z^{(1)}}}_{\text{input}}
+          \cdot \frac{\partial z^{(1)}}{\partial W^{(1)}}
+        $}%
       }
     }
   }
