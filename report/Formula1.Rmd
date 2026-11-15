@@ -76,7 +76,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
     % Title : raisebox controls vertical position (distance above page center)
     \raisebox{9.5cm}{%
       \makebox(0,0){%
-        \color{white}\coverfont\fontsize{110}{121}\selectfont 1~FORMULA
+        \color{white}\coverfont\fontsize{220}{242}\selectfont 1~FORMULA
       }
     }
     % Subtitle, just below the title
