@@ -18,10 +18,13 @@ header-includes:
   - \AtBeginEnvironment{Shaded}{\small}
   - |
     % ---------------------------------------------------------------
-    % COVER PAGE : full-page background image, applied to first page
+    % COVER PAGE : full-page background image + title + subtitle + author
+    % Everything inside ONE \AddToShipoutPictureBG* : \AtPageCenter and
+    % \AtPageLowerLeft are only valid within its argument.
     % Injected verbatim via header-includes -> identical on Windows and Linux
     % ---------------------------------------------------------------
     \AddToShipoutPictureBG*{%
+      % --- Full-page background image ---
       \AtPageLowerLeft{%
         \includegraphics[
           width=\paperwidth,
@@ -29,21 +32,19 @@ header-includes:
           keepaspectratio=false
         ]{images/report/cover-background.png}%
       }%
-    }
-  - |
-    % --- Title and subtitle, centered horizontally, upper third of the page ---
-    \AtPageCenter{%
-      \raisebox{9.5cm}{\makebox(0,0){%
-        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA}}%
-      \raisebox{7.2cm}{\makebox(0,0){%
-        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.}}%
-    }
-  - |
-    % --- Author, discreet, bottom right corner ---
-    \AtPageLowerLeft{%
-      \raisebox{1.5cm}[0pt][0pt]{%
-        \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
-        \llap{\color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY}}%
+      % --- Title and subtitle, centered horizontally, upper third of the page ---
+      \AtPageCenter{%
+        \raisebox{9.5cm}{\makebox(0,0){%
+          \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA}}%
+        \raisebox{7.2cm}{\makebox(0,0){%
+          \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.}}%
+      }%
+      % --- Author, discreet, bottom right corner ---
+      \AtPageLowerLeft{%
+        \raisebox{1.5cm}[0pt][0pt]{%
+          \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+          \llap{\color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY}}%
+      }%
     }
 urlcolor: blue
 linkcolor: black
