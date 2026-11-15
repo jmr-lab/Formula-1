@@ -5,6 +5,8 @@ output:
 header-includes:
   - \usepackage{xcolor}
   - \usepackage{hyperref}
+  - \usepackage{fontspec}
+  - \newfontfamily\coverfont[Path=./fonts/, Extension=.ttf]{LeagueGothic-Regular}
   - \usepackage{eso-pic}
   - \usepackage{draftwatermark}
   - \SetWatermarkText{DRAFT}
@@ -64,7 +66,7 @@ cover_path <- gsub("\\\\", "/", cover_path)
     % Title : raisebox controls vertical position (distance above page center)
     \raisebox{9.5cm}{%
       \makebox(0,0){%
-        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
+        \color{white}\coverfont\fontsize{72}{80}\selectfont 1~FORMULA
       }
     }
     % Subtitle, just below the title
@@ -165,7 +167,7 @@ Jean-Marie Roy\par
 
 \vspace{10pt}
 
-[3] Rafael Irizarry. “Introduction to Data Science.” https://rafalab.dfci.harvard.edu/dsbook/
+[3] Rafael Irizarry. "Introduction to Data Science." https://rafalab.dfci.harvard.edu/dsbook/
 
 \vspace{10pt}
 
