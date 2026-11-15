@@ -13,13 +13,6 @@ header-includes:
   - \SetWatermarkColor{gray!10}
   - \usepackage{etoolbox}
   - \AtBeginEnvironment{Shaded}{\small}
-  - \usepackage{graphicx}
-  - \usepackage{fontspec}
-  - \IfFontExistsTF{texgyreheroscn-regular.otf}{\newfontfamily\coverfont{texgyreheroscn}[Extension=.otf, UprightFont=*-regular, BoldFont=*-bold]}{\IfFontExistsTF{Impact}{\newfontfamily\coverfont{Impact}}{\newfontfamily\coverfont{Latin Modern Sans}}}
-  - \newlength{\coverwd}
-  - \newlength{\coverht}
-  - \AtBeginDocument{\setlength{\coverwd}{\dimexpr\paperwidth+4mm\relax}}
-  - \AtBeginDocument{\setlength{\coverht}{\dimexpr\paperheight+4mm\relax}}
 urlcolor: blue
 linkcolor: black
 ---
@@ -51,51 +44,50 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-```{r cover-latex, echo=FALSE, results='asis'}
-# The cover LaTeX is emitted from R so that pandoc never parses it as Markdown.
-# All dimensions are precomputed in the preamble (\coverwd, \coverht):
-# no \dimexpr, no starred commands at the usage site.
-cat(paste(
-  "\\AddToShipoutPictureBG{",
-  "  \\AtPageLowerLeft{%",
-  "    \\hspace*{-2mm}%",
-  "    \\raisebox{-2mm}[0pt][0pt]{%",
-  "      \\includegraphics[width=\\coverwd,height=\\coverht]{" ,
-  cover_path,
-  "        }%",
-  "    }%",
-  "  }",
-  "}",
-  "",
-  "\\AddToShipoutPictureFG{",
-  "  \\AtPageCenter{",
-  "    \\raisebox{8.8cm}{%",
-  "      \\makebox(0,0){%",
-  "        \\color{white}{\\coverfont\\bfseries\\fontsize{110}{114}\\selectfont 1~FORMULA}%",
-  "      }",
-  "    }",
-  "    \\raisebox{5.8cm}{%",
-  "      \\makebox(0,0){%",
-  "        \\color{white}{\\coverfont\\bfseries\\fontsize{22}{26}\\selectfont ONE EQUATION. 817 DRIVERS. ONE ANSWER.}%",
-  "      }",
-  "    }",
-  "  }",
-  "  \\AtPageLowerLeft{",
-  "    \\raisebox{1.5cm}[0pt][0pt]{%",
-  "      \\hspace*{\\dimexpr\\paperwidth-1.2cm\\relax}%",
-  "      \\llap{%",
-  "        \\color{white}{\\coverfont\\bfseries\\fontsize{14}{16}\\selectfont JEAN-MARIE ROY}%",
-  "      }",
-  "    }",
-  "  }",
-  "}",
-  sep = "\n"))
-```
+<!-- --------------------------------------------------------------- -->
+<!-- COVER PAGE -->
+<!-- Background image + title + subtitle overlaid, author bottom-right -->
+<!-- --------------------------------------------------------------- -->
+\AddToShipoutPictureBG*{
+  % --- Full-page background image ---
+  \AtPageLowerLeft{
+    \raisebox{0pt}[0pt][0pt]{%
+      \hspace*{-1mm}%
+      \includegraphics[
+        width=\dimexpr\paperwidth+2mm\relax,
+        height=\dimexpr\paperheight+2mm\relax
+      ]{`r cover_path`}
+    }
+  }
+  % --- Title and subtitle, centered horizontally, upper third of the page ---
+  \AtPageCenter{
+    % Title : raisebox controls vertical position (distance above page center)
+    \raisebox{9.5cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
+      }
+    }
+    % Subtitle, just below the title
+    \raisebox{7.2cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
+      }
+    }
+  }
+  % --- Author, discreet, bottom right corner ---
+  \AtPageLowerLeft{
+    \raisebox{1.5cm}[0pt][0pt]{%
+      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+      \llap{%
+        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
+      }
+    }
+  }
+}
 
 \null
 \thispagestyle{empty}
 \clearpage
-\ClearShipoutPicture
 
 \begin{center}
 \vspace*{0.18\textheight}
