@@ -25,7 +25,6 @@ linkcolor: black
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 ```{r cover-header, include=FALSE, cache=FALSE}
 # Write cover-header.tex : eso-pic block with the ABSOLUTE path of the
 # cover image, so it compiles identically on Windows and on Linux (CI).
@@ -41,7 +40,9 @@ cover_header <- c(
   r"(\AddToShipoutPictureBG*{%)",
   r"(  % --- Full-page background image ---)",
   r"(  \AtPageLowerLeft{%)",
-  r"(    \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio=false]{)" + cover_path + r"(}%)",
+  paste0(r"(    \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio=false]{)",
+         cover_path,
+         r"(}%)"),
   r"(  }%)",
   r"(  % --- Title and subtitle, centered horizontally, upper third of the page ---)",
   r"(  \AtPageCenter{%)",
