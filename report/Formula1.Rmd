@@ -44,8 +44,46 @@ cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
 ```
 
-<!-- --------------------------------------------------------------- --> <!-- COVER PAGE --> <!-- Background image + title + subtitle overlaid, author bottom-right --> <!-- --------------------------------------------------------------- -->
-\AddToShipoutPictureBG*{% % --- Full-page background image --- \AtPageUpperLeft{% \put(0,\paperheight){% \includegraphics[width=\paperwidth, height=\paperheight]{r cover_path}% }% }% % --- Title and subtitle, centered horizontally, upper third of the page --- \AtPageUpperLeft{% \put(0,\dimexpr\paperheight-7cm\relax){% \makebox[\paperwidth][c]{% \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA% }% }% }% \AtPageUpperLeft{% \put(0,\dimexpr\paperheight-10.5cm\relax){% \makebox[\paperwidth][c]{% \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.% }% }% }% % --- Author, bottom right corner --- \AtPageUpperLeft{% \put(\dimexpr\paperwidth-1.2cm\relax,-1.5cm\relax){% \makebox(0,0)[r]{% \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY% }% }% }% }
+<!-- --------------------------------------------------------------- -->
+<!-- COVER PAGE -->
+<!-- Background image + title + subtitle overlaid, author bottom-right -->
+<!-- --------------------------------------------------------------- -->
+\AddToShipoutPictureBG*{
+  % --- Full-page background image ---
+  \AtPageLowerLeft{
+    \raisebox{0pt}[0pt][0pt]{%
+      \hspace*{-1mm}%
+      \includegraphics[
+        width=\dimexpr\paperwidth+2mm\relax,
+        height=\dimexpr\paperheight+2mm\relax
+      ]{`r cover_path`}
+    }
+  }
+  % --- Title and subtitle, centered horizontally, upper third of the page ---
+  \AtPageCenter{
+    % Title : raisebox controls vertical position (distance above page center)
+    \raisebox{9.5cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
+      }
+    }
+    % Subtitle, just below the title
+    \raisebox{7.2cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
+      }
+    }
+  }
+  % --- Author, discreet, bottom right corner ---
+  \AtPageLowerLeft{
+    \raisebox{1.5cm}[0pt][0pt]{%
+      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+      \llap{%
+        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
+      }
+    }
+  }
+}
 
 \null
 \thispagestyle{empty}
