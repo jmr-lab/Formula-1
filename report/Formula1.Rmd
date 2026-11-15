@@ -87,23 +87,20 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
         \color{white}\sffamily\fontsize{34}{40}\selectfont One equation. 817 drivers. One answer.
       }
     }
-    % --- Backpropagation equation, discreet, below the subtitle ---
-    \raisebox{2.9cm}{%
+    % --- Backpropagation (adjoint / Neural ODE) equation, discreet decoration, two lines ---
+    \raisebox{3.2cm}{%
       \makebox(0,0){%
         \color{white!50!black}%
-        \resizebox{0.72\paperwidth}{!}{$
-          \underbrace{\frac{\partial \mathcal{L}}{\partial a^{(L)}}}_{\text{output}}
-          \cdot \frac{\partial a^{(L)}}{\partial z^{(L)}}
-          \cdot \frac{\partial z^{(L)}}{\partial a^{(L-1)}}
-          \cdot \frac{\partial a^{(L-1)}}{\partial z^{(L-1)}}
-          \cdot \frac{\partial z^{(L-1)}}{\partial a^{(L-2)}}
-          \cdots
-          \frac{\partial a^{(3)}}{\partial z^{(3)}}
-          \cdot \frac{\partial z^{(3)}}{\partial a^{(2)}}
-          \cdot \frac{\partial a^{(2)}}{\partial z^{(2)}}
-          \cdot \frac{\partial z^{(2)}}{\partial a^{(1)}}
-          \cdot \underbrace{\frac{\partial a^{(1)}}{\partial z^{(1)}}}_{\text{input}}
-          \cdot \frac{\partial z^{(1)}}{\partial W^{(1)}}
+        \resizebox{0.62\paperwidth}{!}{$
+          \begin{gathered}
+            \frac{\partial \mathcal{L}}{\partial \theta} = -\int_{t_1}^{t_0}
+              \lambda(t)^{\top} \frac{\partial f\big(a(t), t; \theta\big)}{\partial \theta}\, dt,
+            \qquad \frac{\partial \mathcal{L}}{\partial a_0} = -\int_{t_1}^{t_0}
+              \lambda(t)^{\top} \frac{\partial f\big(a(t), t; \theta\big)}{\partial a}\, dt \\[6pt]
+            -\frac{d\lambda(t)}{dt} =
+              \left[\frac{\partial f\big(a(t), t; \theta\big)}{\partial a}\right]^{\!\top} \lambda(t),
+            \qquad \lambda(t_1) = \nabla_{a(t_1)} \mathcal{L}
+          \end{gathered}
         $}%
       }
     }
