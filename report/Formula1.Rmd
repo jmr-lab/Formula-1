@@ -88,7 +88,7 @@ if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
       }
     }
     % --- Backpropagation (adjoint / Neural ODE) equation, discreet decoration, two lines ---
-    \raisebox{2.0cm}{%
+    \raisebox{2.1cm}{%
       \makebox(0,0){%
         \color{white!50!black}%
         \resizebox{0.62\paperwidth}{!}{$
