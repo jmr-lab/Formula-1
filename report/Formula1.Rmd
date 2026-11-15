@@ -6,7 +6,6 @@ header-includes:
   - \usepackage{xcolor}
   - \usepackage{hyperref}
   - \usepackage{fontspec}
-  - \newfontfamily\coverfont[Path=./fonts/, Extension=.ttf]{LeagueGothic-Regular}
   - \usepackage{eso-pic}
   - \usepackage{draftwatermark}
   - \SetWatermarkText{DRAFT}
@@ -44,14 +43,18 @@ knitr::opts_chunk$set(echo = TRUE)
 # Path for LaTeX must use forward slashes even on Windows
 cover_path <- here::here("images", "report", "cover-background.png")
 cover_path <- gsub("\\\\", "/", cover_path)
+```
 
-font_path <- here::here("fonts", "LeagueGothic-Regular.ttf")
-if (!file.exists(font_path)) {
-  stop("Police introuvable : ", font_path,
-       "\n- Le dossier fonts/ est-il commite ? (git ls-files fonts/)",
-       "\n- Le nom/casse du fichier correspond-il exactement ?")
+```{r font-path, include=FALSE}
+# Absolute path of the fonts directory (forward slashes, OS-independent)
+font_dir <- gsub("\\\\", "/", here::here("fonts"))
+if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
+  stop("Police introuvable : ", file.path(font_dir, "LeagueGothic-Regular.ttf"),
+       "\nVerifiez que fonts/LeagueGothic-Regular.ttf est commite dans le depot.")
 }
 ```
+
+\newfontfamily\coverfont[Path=`r font_dir`/, Extension=.ttf]{LeagueGothic-Regular}
 
 <!-- --------------------------------------------------------------- -->
 <!-- COVER PAGE -->
