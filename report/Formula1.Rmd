@@ -1,9 +1,12 @@
 ---
-output: 
+output:
   pdf_document:
     latex_engine: xelatex
+    keep_tex: true
+geometry: a4paper,margin=1in
 header-includes:
   - \usepackage{xcolor}
+  - \usepackage{graphicx}
   - \usepackage{hyperref}
   - \usepackage{eso-pic}
   - \usepackage{draftwatermark}
@@ -13,6 +16,35 @@ header-includes:
   - \SetWatermarkColor{gray!10}
   - \usepackage{etoolbox}
   - \AtBeginEnvironment{Shaded}{\small}
+  - |
+    % ---------------------------------------------------------------
+    % COVER PAGE : full-page background image, applied to first page
+    % Injected verbatim via header-includes -> identical on Windows and Linux
+    % ---------------------------------------------------------------
+    \AddToShipoutPictureBG*{%
+      \AtPageLowerLeft{%
+        \includegraphics[
+          width=\paperwidth,
+          height=\paperheight,
+          keepaspectratio=false
+        ]{images/report/cover-background.png}%
+      }%
+    }
+  - |
+    % --- Title and subtitle, centered horizontally, upper third of the page ---
+    \AtPageCenter{%
+      \raisebox{9.5cm}{\makebox(0,0){%
+        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA}}%
+      \raisebox{7.2cm}{\makebox(0,0){%
+        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.}}%
+    }
+  - |
+    % --- Author, discreet, bottom right corner ---
+    \AtPageLowerLeft{%
+      \raisebox{1.5cm}[0pt][0pt]{%
+        \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+        \llap{\color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY}}%
+    }
 urlcolor: blue
 linkcolor: black
 ---
@@ -37,53 +69,6 @@ knitr::opts_chunk$set(echo = TRUE)
 # source("Formula1.R")
 #
 ```
-
-```{r cover-path, include=FALSE}
-# Path for LaTeX must use forward slashes even on Windows
-cover_path <- here::here("images", "report", "cover-background.png")
-cover_path <- gsub("\\\\", "/", cover_path)
-```
-
-<!-- --------------------------------------------------------------- -->
-<!-- COVER PAGE -->
-<!-- Background image + title + subtitle overlaid, author bottom-right -->
-<!-- --------------------------------------------------------------- -->
-\AddToShipoutPictureBG*{
-  % --- Full-page background image ---
-  \AtPageLowerLeft{
-    \raisebox{0pt}[0pt][0pt]{%
-      \hspace*{-1mm}%
-      \includegraphics[
-        width=\dimexpr\paperwidth+2mm\relax,
-        height=\dimexpr\paperheight+2mm\relax
-      ]{`r cover_path`}
-    }
-  }
-  % --- Title and subtitle, centered horizontally, upper third of the page ---
-  \AtPageCenter{
-    % Title : raisebox controls vertical position (distance above page center)
-    \raisebox{9.5cm}{%
-      \makebox(0,0){%
-        \color{white}\sffamily\bfseries\fontsize{72}{80}\selectfont 1~FORMULA
-      }
-    }
-    % Subtitle, just below the title
-    \raisebox{7.2cm}{%
-      \makebox(0,0){%
-        \color{white}\sffamily\fontsize{17}{20}\selectfont One equation. 817 drivers. One answer.
-      }
-    }
-  }
-  % --- Author, discreet, bottom right corner ---
-  \AtPageLowerLeft{
-    \raisebox{1.5cm}[0pt][0pt]{%
-      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
-      \llap{%
-        \color{white}\sffamily\bfseries\fontsize{11}{12}\selectfont JEAN-MARIE ROY%
-      }
-    }
-  }
-}
 
 \null
 \thispagestyle{empty}
@@ -165,7 +150,7 @@ Jean-Marie Roy\par
 
 \vspace{10pt}
 
-[3] Rafael Irizarry. “Introduction to Data Science.” https://rafalab.dfci.harvard.edu/dsbook/
+[3] Rafael Irizarry. "Introduction to Data Science." https://rafalab.dfci.harvard.edu/dsbook/
 
 \vspace{10pt}
 
