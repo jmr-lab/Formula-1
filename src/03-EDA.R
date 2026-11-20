@@ -31,28 +31,9 @@ colnames(summary_table) <- gsub("_", " ", colnames(summary_table))
 # View the summary table
 summary_table
 
-f1_driver_summary
-
-# Create a complete list of drivers
-all_drivers <- f1_result_summary %>%
-  distinct(driverName)
-
-# Create the list of drivers and their title counts
-driver_titles <- f1_result_summary %>%
-  group_by(year) %>%
-  slice(which.max(cumulPoints)) %>%
-  ungroup() %>%
-  count(driverName) %>%
-  rename(titles = n)
-
-# Perform a left join to include all drivers
-driver_titles <- all_drivers %>%
-  left_join(driver_titles, by = "driverName") %>%
-  replace_na(list(titles = 0))
-driver_titles
-
 # Probability of winning another title
-summary_titles <- driver_titles %>%
+summary_titles <- f1_driver_summary %>%
+  select(driverName, titles) %>%
   group_by(titles) %>%
   summarize(number_of_drivers = n(), .groups = 'drop') %>%
   complete(titles = 1:max(titles), fill = list(number_of_drivers = 0)) %>%
@@ -78,18 +59,6 @@ plot_titles_oneplus <- summary_titles %>%
   theme_minimal() +
   theme(text = element_text(size = 9))
 
-# Create the list of drivers and their win counts
-driver_wins <- f1_result_summary %>%
-  filter(positionOrder == 1) %>%
-  count(driverName) %>%
-  rename(wins = n)
-
-# Perform a left join to include all drivers
-driver_wins <- all_drivers %>%
-  left_join(driver_wins, by = "driverName") %>%
-  replace_na(list(wins = 0))
-driver_wins
-
 # Create dataframes for title & win categories
 title_categories_oneplus <- paste0(seq(1, 7, by = 1), "+")
 title_categories <- c("0+", title_categories_oneplus)
@@ -97,7 +66,8 @@ win_categories_oneplus <- paste0(seq(1, 101, by = 10), "+")
 win_categories <- c("0+", win_categories_oneplus)
 
 # Group by win_category and count the number of drivers in each category
-win_counts <- driver_wins %>%
+win_counts <- f1_driver_summary %>%
+  select(driverName, wins) %>%
   rowwise() %>%
   mutate(win_category = list(win_categories[wins >= as.numeric(sub("\\+", "", win_categories))])) %>%
   unnest(win_category) %>%
@@ -149,27 +119,6 @@ world_champions <- f1_result_summary %>%
   mutate(previous_titles = row_number() - 1) %>%
   ungroup()
 
-# Get the first and last year a driver won a title
-#first_year <- world_champions %>%
-#  group_by(driverName) %>%
-#  summarize(first_year = min(year), .groups = 'drop')
-#first_year
-titles_period <- world_champions %>%
-  group_by(driverName) %>%
-  summarize(title_first = min(year), title_last = max(year), .groups = 'drop')
-titles_period
-
-# Counting titles and total career points per driver
-#titles_count <- world_champions %>%
-#  group_by(driverCountry, driverName) %>%
-#  summarize(titles = n(), .groups = 'drop') %>%
-#  arrange(desc(titles))
-titles_count <- world_champions %>%
-  group_by(driverName) %>%
-  summarize(titles = n(), .groups = 'drop') %>%
-  arrange(desc(titles)) %>%
-  left_join(titles_period, by = "driverName")
-
 # Calculating total career points regardless of titles
 career <- f1_result_summary %>%
   group_by(driverCountry, driverName) %>%
@@ -186,44 +135,20 @@ career <- f1_result_summary %>%
 career <- career %>%
   mutate(countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png"))
 
-# Joining titles and career points data frames
-f1_summary <- titles_count %>%
-  right_join(career, by = "driverName") %>%
-  arrange(desc(titles), desc(wins)) %>%
-  mutate(titles = replace_na(titles, 0))
-
-# Add win and title ratios
-f1_summary <- f1_summary %>%
-  mutate(ratio_titles = round(titles / seasons, 3),
-         ratio_wins = round(wins / races, 3))
-
-# Rearrange columns: move driverCountry to the first position and countryImage to the last
-f1_summary <- f1_summary %>%
-  select(driverCountry, everything(), countryImage)
-
-# Round the ratio_wins column to 3 decimal places
-#f1_summary <- f1_summary %>%
-#  mutate(ratio_titles = round(ratio_titles, 3),
-#         ratio_wins = round(ratio_wins, 3))
-
-# Categorize into decades
-#f1_summary <- f1_summary %>%
-#  mutate(period_start = paste0(floor(title_first / 10) * 10, "s"))
-f1_summary <- f1_summary %>%
-  mutate(period_start = case_when(
-    title_first >= 1950 & title_first <= 1968 ~ "1950-1968",
-    title_first >= 1969 & title_first <= 1993 ~ "1969-1993",
-    title_first >= 1994 & title_first <= 2025 ~ "1994-2025",
-    TRUE ~ NA_character_
-  ))
+# Filter driver summary view to keep only drivers who won at least one title
+f1_summary <- f1_driver_summary %>%
+  filter(titles > 0)
 
 # Display the final result with titles and total career points
 print(f1_summary)
 
 # Drivers who were able to become world champion at least once and won less than 11 GP :
-wc_low_wins <- driver_titles %>%
+wc_low_wins <- f1_driver_summary %>%
+  select(driverName, titles) %>%
   filter(titles > 0) %>%
-  inner_join(driver_wins %>% filter(wins < 11), by = "driverName") %>%
+  inner_join(f1_driver_summary %>%
+               select(driverName, wins) %>%
+               filter(wins < 11), by = "driverName") %>%
   left_join(world_champions, by = "driverName") %>%
   mutate(countryImage = paste0("images/flags/icons8-", gsub(" ", "-", tolower(driverCountry)), "-50.png")) %>%
   select(countryImage, driverName, titles, wins, year) %>%
@@ -238,10 +163,14 @@ ggplot(wc_low_wins, aes(x = year, y = wins, group = driverName)) +
   theme_minimal()
 
 # Drivers who were never able to become world champion but won at least 11 GP :
-wc_high_wins <- driver_titles %>%
+wc_high_wins <- f1_driver_summary %>%
+  select(driverName, titles) %>%
   filter(titles == 0) %>%
-  inner_join(driver_wins %>% filter(wins > 10), by = "driverName") %>%
-  left_join(f1_summary, by = "driverName") %>%
+  inner_join(f1_driver_summary %>%
+               select(driverName, wins) %>%
+               filter(wins > 10), by = "driverName") %>%
+  left_join(f1_driver_summary %>%
+              filter(wins > 0), by = "driverName") %>%
   select(countryImage, driverName, wins = wins.x, career_start, career_end, career_length)
 
 # Remove underscores from the column names
@@ -264,7 +193,8 @@ plot_prob_titles <- summary_titles %>%
   theme(text = element_text(size = 9))
 
 # Probability of winning another race
-summary_wins <- driver_wins %>%
+summary_wins <- f1_driver_summary %>%
+  select(driverName, wins) %>%
   group_by(wins) %>%
   summarize(number_of_drivers = n(), .groups = 'drop') %>%
   complete(wins = 1:max(wins), fill = list(number_of_drivers = 0)) %>%
