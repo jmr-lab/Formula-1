@@ -1,0 +1,95 @@
+```{r cover-path, include=FALSE}
+# Path for LaTeX must use forward slashes even on Windows
+cover_path <- here::here("images", "report", "cover-background.png")
+cover_path <- gsub("\\\\", "/", cover_path)
+```
+
+```{r font-path, include=FALSE}
+# Absolute path of the fonts directory (forward slashes, OS-independent)
+font_dir <- gsub("\\\\", "/", here::here("fonts"))
+if (!file.exists(file.path(font_dir, "LeagueGothic-Regular.ttf"))) {
+  stop("Font not found : ", file.path(font_dir, "LeagueGothic-Regular.ttf"),
+       "\nCheck that fonts/LeagueGothic-Regular.ttf is committed in the repo.")
+}
+```
+
+\newfontfamily\coverfont[Path=`r font_dir`/, Extension=.ttf]{LeagueGothic-Regular}
+
+<!-- --------------------------------------------------------------- -->
+<!-- COVER PAGE -->
+<!-- Background image + title + subtitle + equation overlaid, author bottom-right -->
+<!-- --------------------------------------------------------------- -->
+\AddToShipoutPictureBG*{
+  % --- Full-page background image ---
+  \AtPageLowerLeft{
+    \raisebox{0pt}[0pt][0pt]{%
+      \hspace*{-1mm}%
+      \includegraphics[
+        width=\dimexpr\paperwidth+2mm\relax,
+        height=\dimexpr\paperheight+2mm\relax, keepaspectratio=false
+      ]{`r cover_path`}
+    }
+  }
+  % --- Title and subtitle, centered horizontally, upper third of the page ---
+  \AtPageCenter{
+    % Title : resized to fill 90% of the page width
+    \raisebox{9.5cm}{%
+      \makebox(0,0){%
+        \color{white}\coverfont%
+        \resizebox{0.9\paperwidth}{!}{1~FORMULA}%
+      }
+    }
+    % Subtitle, raised a bit higher to add breathing room above the equation
+    \raisebox{5.3cm}{%
+      \makebox(0,0){%
+        \color{white}\sffamily\fontsize{34}{40}\selectfont One equation. 817 drivers. One answer.
+      }
+    }
+    % --- Backpropagation (adjoint / Neural ODE) equation, discreet decoration, two lines ---
+    \raisebox{2.1cm}{%
+      \makebox(0,0){%
+        \color{white!50!black}%
+        \resizebox{0.62\paperwidth}{!}{$
+          \begin{gathered}
+            \frac{\partial \mathcal{L}}{\partial \theta} = -\int_{t_1}^{t_0}
+              \lambda(t)^{\top} \frac{\partial f\big(a(t), t; \theta\big)}{\partial \theta}\, dt,
+            \qquad \frac{\partial \mathcal{L}}{\partial a_0} = -\int_{t_1}^{t_0}
+              \lambda(t)^{\top} \frac{\partial f\big(a(t), t; \theta\big)}{\partial a}\, dt \\[6pt]
+            -\frac{d\lambda(t)}{dt} =
+              \left[\frac{\partial f\big(a(t), t; \theta\big)}{\partial a}\right]^{\!\top} \lambda(t),
+            \qquad \lambda(t_1) = \nabla_{a(t_1)} \mathcal{L}
+          \end{gathered}
+        $}%
+      }
+    }
+  }
+  % --- Author, discreet, bottom right corner ---
+  \AtPageLowerLeft{
+    \raisebox{1.5cm}[0pt][0pt]{%
+      \hspace*{\dimexpr\paperwidth-1.2cm\relax}%
+      \llap{%
+        \color{white}\sffamily\bfseries\fontsize{22}{24}\selectfont JEAN-MARIE ROY%
+      }
+    }
+  }
+}
+
+\null
+\thispagestyle{empty}
+\clearpage
+
+\begin{center}
+\vspace*{0.18\textheight}
+
+{\Huge\bfseries 1 Formula\par}
+\vspace{1em}
+{\Large A Mathematical Analysis to Identify the Top Formula 1 Driver in History\par}
+\vspace{2em}
+Jean-Marie Roy\par
+`r Sys.Date()`
+
+\vspace*{\fill}
+
+\includegraphics[width=0.2\textwidth]{`r here::here("images/report/flag.png")`}
+\vspace*{1em}
+\end{center}

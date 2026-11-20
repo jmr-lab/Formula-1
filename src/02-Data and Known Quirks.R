@@ -391,3 +391,99 @@ unclassified_scorers <- results %>%
   transmute(year, circuit, driver = paste(forename, surname),
             team, position, points, detail, fastest_lap_rank) %>%
   arrange(year, circuit)
+
+# ---------------------------------------------------------------------------
+# Load the analytics schema (formula1.db): the dbt-built f1summary view plus
+# the season-scoped nationality correction tables promised in report §2.4.10.
+# ---------------------------------------------------------------------------
+
+con <- NULL
+
+tryCatch({
+  
+  # Connect to the dbt-transformed analytics database
+  con <- dbConnect(SQLite(), dbname = "data/formula1.db")
+  
+  # List all tables and views — informational only (does not distinguish
+  # tables from views; use sqlite_master via dbGetQuery for that)
+  tables <- dbListTables(con)
+  message(sprintf("Database contains %d tables/views:", length(tables)))
+  message(paste(tables, collapse = "\n"))
+  
+  # Load the nationality correction tables. These repair the "single
+  # nationality retrojected onto all history" defect documented in §2.4.10
+  # (e.g. Alfa Romeo recorded as Swiss even for its Italian-era entries,
+  # Bertrand Gachot's Belgian/French dual nationality).
+  # driver_nationality_corrections <- dbReadTable(con, "driver_nationality_corrections")
+  # team_nationality_corrections <- dbReadTable(con, "team_nationality_corrections")
+  
+  # Attach to the global environment so report chunks can access them
+  # regardless of where this script is sourced from
+  # assign("driver_nationality_corrections", driver_nationality_corrections, envir = .GlobalEnv)
+  # assign("team_nationality_corrections", team_nationality_corrections, envir = .GlobalEnv)
+  
+  # Load the f1_result_summary view: the main per-driver/per-constructor aggregate
+  # used throughout Chapter 4 (EDA)
+  f1_result_summary <- dbReadTable(con, "f1_result_summary")
+  
+  # Attach to the global environment (same rationale as above)
+  assign("f1_result_summary", f1_result_summary, envir = .GlobalEnv)
+  
+  # Report what was loaded
+  message(sprintf("Successfully loaded 'f1_result_summary' view with %d rows and %d columns",
+                  nrow(f1_result_summary), ncol(f1_result_summary)))
+  
+  # Load the f1_driver_summary view: one row per driver with career
+  # aggregates (wins, races, seasons, points, span) and title statistics
+  # (titles, title_first, title_last, ratios), replicating the former
+  # f1_summary construction from R (see Chapter 3 / EDA)
+  f1_driver_summary <- dbReadTable(con, "f1_driver_summary")
+  
+  # Attach to the global environment (same rationale as above)
+  assign("f1_driver_summary", f1_driver_summary, envir = .GlobalEnv)
+  
+  # Report what was loaded
+  message(sprintf("Successfully loaded 'f1_driver_summary' view with %d rows and %d columns",
+                  nrow(f1_driver_summary), ncol(f1_driver_summary)))
+  
+}, error = function(e) {
+  
+  # Report any failure (missing dbt output, stale database, ...)
+  message(sprintf("Error during database import: %s", conditionMessage(e)))
+  
+}, finally = {
+  
+  # Always close the connection if it was opened
+  if (!is.null(con)) {
+    tryCatch(
+      dbDisconnect(con),
+      warning = function(w) message("Warning while closing connection: ", conditionMessage(w))
+    )
+  }
+  con <- NULL
+  
+})
+
+# Keep only the objects needed to knit the R Markdown report.
+# All other objects in the global environment can be removed.
+
+keep <- c(
+  "multi_winner_races",
+  "multi_winner_details",
+  "fractional_points_survey",
+  "fine_fraction_rows",
+  "fastest_lap_shared_rows",
+  "first_fastest_lap_season",
+  "ineligible_scorers",
+  "ferrari_monaco_1956",
+  "unclassified_scorers",
+  "team",
+  "f1_result_summary",
+  "f1_driver_summary"
+)
+
+# Remove every global object not required for knitting the report.
+rm(list = setdiff(ls(envir = .GlobalEnv), keep), envir = .GlobalEnv)
+
+# Remove the temporary list so only report objects remain.
+#rm(keep)

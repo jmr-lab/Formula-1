@@ -1,0 +1,40 @@
+[1] Hergé. 1956. "The Calculus Affair" https://www.tintin.com/en/albums/the-calculus-affair
+
+\vspace{10pt}
+
+[1] Jean-Luc. 2019. "Tintin – The Calculus Affair – The liberties of English translation" https://tintinomania.com/tintin-affaire-tournesol-anglais-brabham
+
+\vspace{10pt}
+
+[2] Kaggle "Formula 1 World Championship (1950 - 2024)" https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020
+
+\vspace{10pt}
+
+[3] Tracing Insights "Race Data" https://github.com/TracingInsights/RaceData
+
+\vspace{10pt}
+
+[4] Dataset copied to GitHub. Available at: https://github.com/jmr-lab/Formula-1 (Accessed: 2026).
+
+\vspace{10pt}
+
+[5] Flags from icons8 : https://icons8.com/icons/set/flags--style-color
+
+\vspace{10pt}
+
+[3] Rafael Irizarry. “Introduction to Data Science.” https://rafalab.dfci.harvard.edu/dsbook/
+
+\vspace{10pt}
+
+[8] Cover image from SVG SILH
+https://svgsilh.com/c3c3c3/image/309862.html
+
+\vspace{10pt}
+
+[9] Icons from Font Awesome
+https://fontawesome.com/
+
+\vspace{10pt}
+
+[10] The text of this report was reviewed by DuckAI, an AI language model that also assisted in reviewing and correcting some of my code :
+https://duck.ai/

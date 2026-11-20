@@ -1,0 +1,811 @@
+This chapter explores the analytical dataset produced by the pipeline and
+documented in Chapter 2. It is deliberately structured as a sequence of
+questions rather than an inventory of the data: at each step, we take the most
+natural way of comparing drivers, test it, and find that it conceals an era
+effect. By the end of the chapter, four such effects will have been isolated,
+and the comparison method adopted in Chapter 4 will follow from them, rather
+than being asserted.
+
+Throughout this chapter, the historical conventions preserved in the
+analytical schema (Section 2.2) are treated as features of the record, not
+noise: shared drives, fractional points and the era boundaries of the
+fastest-lap data are part of what the numbers mean.
+
+\newpage
+
+## 3.1 Question 1: Does Accumulation Settle It?
+
+### 3.1.1 The Book of Records
+
+Ask the question "who was the greatest Formula 1 driver?", and the record book
+answers with three different names at once. Ranked by world titles, it is
+Hamilton and Schumacher, with 7 each. Ranked by career points, Verstappen and
+Vettel push Schumacher down, and Alonso, with only 2 titles, collects more
+points than Schumacher accumulated across his 7-title career. Ranked by
+efficiency, the ratios of titles to seasons and wins to races, Fangio stands
+above everyone, having converted 5 championships into just 8 years of racing.
+
+The formula 1 world championship started in 1950, and has been held since then with no interruption. As of `r current_year`, `r summary_table$"Number of Seasons"` seasons has been held, with `r format(summary_table$"Number of Races", big.mark = ",")` races where `r summary_table$"Number of Drivers"` drivers were involved. Only `r summary_table$"Number of Winners"` won a race, and `r summary_table$"Number of Champions"` won the world champion title :
+
+```{r, echo=FALSE}
+kbl(summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
+  column_spec(1:ncol(summary_table), width = "2cm")
+```
+
+Win and victory counts in this chapter are recorded per driver, exactly as
+the source records them. The shared-drive results of the early seasons
+(Sections 2.2.1-2.2.2) therefore credit every driver who took the wheel of a
+winning car, a convention preserved deliberately in the analytical schema and
+one that affects only a handful of races in the 1950s.
+
+Out of the `r summary_titles %>% filter(titles == 1) %>% pull(cumul_number_of_drivers)` world champions, `r summary_titles %>% filter(titles == 2) %>% pull(cumul_number_of_drivers)` of them won the title several times. The plots below show the number of drivers per title or win category :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Number of Titles or Wins per Driver", fig.width=6, fig.height=3}
+plot_grid(
+  plot_titles,
+  plot_wins,
+  ncol = 2, align = 'hv'
+)
+```
+
+\newpage
+
+If we remove the drivers who didn't win any title or Grand Prix, we can see the distinction in the plots below :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Number of Titles or Wins per Driver (who won at least one race or title)", fig.width=6, fig.height=3}
+plot_grid(
+  plot_titles_oneplus,
+  plot_wins_oneplus,
+  ncol = 2, align = 'hv'
+)
+```
+
+The plots above show that most drivers didn't win any title. For those who won at least one, half won only one title while the other won 2 or more titles.
+
+Very few drivers were able to become world champion while winning less than 11 Grand prix in their whole career, and with no surprise they were all competing in the early years, the most recent title being won by Keke Rosberg in 1982, Rosberg who won 5 Grand Prix in his whole career :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- wc_low_wins %>%
+  mutate(
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    driverName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      driverName
+    )
+  ) %>%
+  select(driverName, titles, wins, year) %>%
+  mutate(year = as.character(year))
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+
+```
+
+On the other side, we also have drivers who, while winning many races (more than 10), didn't win any title. The list below shows that, unlike for the low-wins world champions, some of them were competing in the early years of the F1. Notably, Carlos Reutemann and above all, Stirling Moss won 16 Grand Prix over a career of 11 years starting in 1951 and ending in 1961. As a comparison the champion Fangio won 24 races and 5 titles at the same period (1950-1958) :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- wc_high_wins %>%
+  mutate(
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    driverName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      driverName
+    )
+  ) %>%
+  select(driverName, wins, careerstart, careerend, careerlength) %>%
+  mutate(
+    careerstart = as.character(careerstart),
+    careerend = as.character(careerend)
+  )
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+The leading drivers, defined as those with the highest number of titles, differentiated by wins among equals, appear in the following table, which displays the 17 drivers who won at least 2 titles (as of 2025) :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- f1_summary %>%
+  filter(titles > 1) %>%
+  mutate(
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    driverName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      driverName
+    )
+  ) %>%
+  select(
+    -driverCountry, -countryImage, -image_path,
+    -title_first, -title_last,
+    -career_start, -career_end, -career_length,
+    -period_start,
+    winspc = ratio_wins,
+    titlespc = ratio_titles
+  )
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+For each driver, we observe the number of titles, total races won, total races competed, the number of seasons or years they participated, the total points earned (only those that count toward the championship), the ratio of titles to seasons, and the ratio of wins to races.
+
+The flag images shown beside each driver's name are derived from the driver's nationality in the analytical dataset, which is resolved through the season-scoped correction mechanism described in Section 2.2.8 rather than the raw source attribute.
+
+Although the number of titles and races won clearly shows that Michael Schumacher and Lewis Hamilton outshine other drivers, the same is not necessarily the case for points. When we rank drivers by points, both Verstappen and Vettel surpass Schumacher. Even Alonso who won 2 titles, compared with the 7 by Schumacher, has more points than the latter.
+
+To add another layer of complexity, if we look at the ratio of titles to seasons or the ratio of wins to races, Juan Manuel Fangio emerges as the top performer. Even Ascari, who appears at the bottom of the list, has the second best ratio win to races.
+
+The three rankings disagree because they measure three different things, and
+none of them measures ability alone. A title, a win and a point total are
+counts of *opportunities converted*, and the number of opportunities on offer
+has not been constant over the championship's history. Before any of these
+tallies can be compared across eras, the opportunity supply itself must be
+examined: how many races did a season of Fangio's era actually offer, and how
+many seasons could a driver of that era hope to contest?
+
+\newpage
+
+### 3.1.2 Naive Metrics Mislead
+
+Before turning to the record book itself, one cautionary exhibit. It is
+tempting to reason that because a driver who wins a title has roughly a
+coin-flip chance of winning another, titles behave like repeated trials of a
+fixed ability. The probability plot below shows this pattern, and it should be
+read as a demonstration of how easily aggregation flatters coincidence rather
+than as evidence of anything.
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Probability of Winning", fig.width=6, fig.height=3}
+plot_grid(
+  plot_prob_titles,
+  plot_prob_wins,
+  ncol = 2, align = 'hv'
+)
+```
+
+The apparent 50% continuation rate, that is to say the fact that each time a
+driver wins a title he has about 50% of chances to win another one, is a
+survivorship pattern, not a probability. It collapses to near certainty for
+drivers in dominant cars and near impossibility for everyone else, and the
+100% probability at 6 titles is not meaningful given the low number of
+drivers who won more than 5 titles (only 3 including Fangio). The lesson
+generalises to the whole chapter: an aggregate ratio can look like a fair
+metric while silently encoding era, car and luck. The remainder of the
+chapter dismantles these aggregates one layer at a time.
+
+\newpage
+
+## 3.2 Question 2: How Much Has Opportunity Inflated?
+
+### 3.2.1 The Expanding Calendar
+
+The most direct measure of opportunity is the calendar itself.
+
+The plot below illustrates the trend in the number of Formula 1 races held each year from 1950 to 2023. The x-axis represents the year, while the y-axis indicates the number of races. Each point reflects the actual number of races for that specific year, depicted in grey, and the variation among these points indicates fluctuations in race counts over the years, reflecting changes in the racing calendar and external factors affecting the sport.
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Races per Year", fig.width = 5, fig.height = 3}
+plot_races_per_year
+```
+
+A clear upward trend is evident, starting from just 7 races in 1950 and gradually increasing, with several plateaus extending into the late 20th century. A more pronounced rise occurs in the 21st century, culminating in approximately 23 races by 2023, suggesting the growing popularity and expansion of Formula 1.
+
+The loess smoothing curve, shown in royal blue, overlays the data points to provide a clearer representation of the overall trend in race numbers. This curve highlights the acceleration in race counts, particularly after 2000, indicating that Formula 1 has adapted to demand and increased the frequency of races. The shaded area around the smoothing line captures the confidence interval of the smoothed trend in a light blue hue, suggesting the level of uncertainty about the estimated values and demonstrating the variability in the data points over the years.
+
+In 1950 a champion had 7 chances to win; by the 2020s he has roughly 22. A
+modern driver therefore competes for opportunities at nearly four times the
+rate, in units of events per season, before any question of skill arises.
+
+\newpage
+
+### 3.2.2 The Stretching Career
+
+Opportunity accumulates across a career as well as within a season, and
+careers themselves have stretched.
+
+The plot below illustrates the duration and timeline of careers without indicating any breaks; for instance, Alain Prost did not compete in 1992, and Schumacher was absent from the tracks from 2007 to 2009.
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Careers", fig.width = 6, fig.height = 3}
+career_segments
+```
+
+Some drivers enjoyed longer careers than others. For instance, Alonso, Schumacher, and Hamilton had the longest career spans, while Ascari, Clark, and Stewart had the shortest. The problem with this graph is that it does not effectively depict the dominance of any particular driver. For instance, Alonso secured his two titles in 2005 and 2006, and has continued racing since without winning any additional titles.
+
+\newpage
+
+Now, if we replace the career duration with titles, where each segment represents the years between a driver's first and last title, we obtain the following graph :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Titles", fig.width = 6, fig.height = 3}
+title_segments
+```
+
+We divided this timeline into three phases: the first phase, the early stage, extends from the beginning until the late 1960s. The second phase begins with Jackie Stewart's first title in 1969 and continues until Michael Schumacher's first title in 1994. The final phase, or modern era, starts in 1994 and continues to the present.
+
+In the plot above, each phase is marked with a vertical dashed grey line.
+
+Now, when we display the career lengths based on the year of the first title, we can observe a gradual increase over the years :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Career Start vs Career Length", fig.width = 6, fig.height = 3}
+career_lengths
+```
+
+A clear upward trend emerges, suggesting that drivers who started their careers in more recent decades tend to have longer careers. This may be attributed to various factors, including advancements in safety, improvements in car technology, and changes in race formats that allow for prolonged competition. Notable drivers in the modern era, such as Hamilton, benefit from these advancements, resulting in extended careers compared to drivers from earlier periods.
+
+The drift is stark when the two inflations are combined. Fangio collected his
+5 titles over 8 seasons; a modern driver contesting 20 seasons is offered
+more than twice as many seasons in which to stack titles, each season several
+times longer than its 1950s counterpart. Neither calendar growth nor career
+longevity is evidence that modern drivers are superior; both are evidence
+that the units in which records are denominated have inflated. A title in
+1953 and a title in 2023 are not the same-sized prize.
+
+But opportunity is only one side of the ledger. Even if two eras offered equal
+opportunities, converting one still depends on surviving long enough to
+convert it, and survival has changed as much as opportunity has. That is the
+subject of the next section.
+
+\newpage
+
+## 3.3 Question 3: Is Efficiency the Fair Measure?
+
+### 3.3.1 Win Rates and Their Limits
+
+If totals inflate with opportunity, the obvious correction is to divide:
+percentage of races won, titles per season. On these ratios Fangio dominates
+the modern champions, and a naive reading stops here satisfied: the fairest
+metric crowns the same driver tradition considers the greatest.
+
+Now, let's compare the top drivers based on their wins and the number of races they have participated in :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Wins vs Races", fig.width = 6, fig.height = 4}
+par(mar = c(0, 0, 0, 0))
+wins_vs_races
+```
+
+There is a noticeable upward trend in the plot, suggesting that drivers who participate in more races tend to achieve a higher number of wins. This correlation implies that experience and track time significantly contribute to success in the sport. Drivers from the 1994 to 2023 era, such as Hamilton and Vettel, are positioned in the top right quadrant, indicating both a high number of races and wins. The varying colours used to group drivers by era emphasise the differences in victory rates and opportunities for success across time: earlier eras, represented in warmer colours, often had fewer wins despite high title counts, pointing to the unique challenges faced by those drivers.
+
+\newpage
+
+And now the number of titles and seasons per driver :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Titles vs Seasons", fig.width = 6, fig.height = 4}
+titles_vs_seasons
+```
+
+While the plot displays a trend where drivers with more seasons tend to win multiple titles, this is true for those who have achieved two or more titles. The colour coding of the data points emphasises differences in performance across historical eras: drivers from the 1950 to 1988 timeframe, such as Fangio and Clark, achieved multiple titles within fewer seasons, reflecting competitive environments with fewer races and different dynamics compared to today.
+
+\newpage
+
+The plot below shows for every world champion, the percentage of wins over the season :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Percentage Wins", fig.width = 5, fig.height = 3}
+plot_percentage_wins
+```
+
+We can see that from 1965 and Jim Clark's title, until 2004 and Michael Schumacher third or fourth title, that is a period of 40 years, no pilot achieved a win to race ratio over 65%. And if we filter out the earlier championships with less than 12 races (where a high percentage is easier to achieve than when there are more races), the only high percentage championships are the recent ones, that is after 2000.
+
+The two highest percentages are when Max Verstappen won the title in 2023 with 19 races won over 22, and Alberto Ascari with 6 wins over 7 races. Both achieved more than 85% win success.
+
+```{r, echo=FALSE}
+df <- performance_stats %>%
+  arrange(desc(percentage_wins)) %>%
+  mutate(
+    countryImage = paste0(
+      "images/flags/icons8-",
+      gsub(" ", "-", tolower(driverCountry)),
+      "-50.png"
+    ),
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    driverName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      driverName
+    ),
+    percentage_wins = round(percentage_wins, 1)
+  ) %>%
+  select(
+    year,
+    driverName,
+    nbraces = total_races,
+    wins,
+    winspc = percentage_wins
+  ) %>%
+  head(10) %>%
+  mutate(year = as.character(year))
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+\newpage
+
+On the other side, it is possible to win the championship by winning less races. The table below shows the drivers who won the championship with the lowest win to race ratio :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- performance_stats %>%
+  arrange(desc(percentage_wins)) %>%
+  mutate(
+    countryImage = paste0(
+      "images/flags/icons8-",
+      gsub(" ", "-", tolower(driverCountry)),
+      "-50.png"
+    ),
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    driverName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      driverName
+    ),
+    percentage_wins = round(percentage_wins, 1)
+  ) %>%
+  select(
+    year,
+    driverName,
+    nbraces = total_races,
+    wins,
+    winspc = percentage_wins
+  ) %>%
+  tail(10) %>%
+  mutate(year = as.character(year))
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+We can se that from 1974 until 1987, it was very common to win the world title with less than 20% races won. Notably, the Brasilian driver Nelson Piquet won his 3 world titles by winning less than 20% of the races each time.
+
+The record being held by Keke Rosberg who won the 1982 championship by winning only 1 race out of 15.
+
+Note tat in 2025 the win to races ratio was one of the lowest in the recent years : with only 29% wins, Lando Norris was able to win the title, even with less victories (7) than Verstappen (8). His teammate Piastri was able to win the same number of races.
+
+\newpage
+
+### 3.3.2 The Survival Bias: Abandonment
+
+Efficiency, however, carries an era subsidy of its own. A driver can only win
+a race he finishes, and finishing was never evenly distributed across the
+championship's history.
+
+<!-- ============================================================ -->
+<!-- PLACEHOLDER 1: ABANDONMENT RATIO                              -->
+<!--                                                               -->
+<!-- TODO: New graph. Share of abandoned entries per season over   -->
+<!-- time, from the `status`/`detail` and `laps_completed` columns -->
+<!-- of the analytical schema (see Sections 2.2.6-2.2.7 for the    -->
+<!-- classification conventions). Line or area with rolling mean.  -->
+<!--                                                               -->
+<!-- Optional stronger version: restrict to championship           -->
+<!-- contenders (drivers finishing top-3 in the final standings)   -->
+<!-- to isolate "survival of the quick" from "survival of the      -->
+<!-- field".                                                       -->
+<!--                                                               -->
+<!-- Caveats to footnote on the plot (documented in Section 2.2):  -->
+<!--  - classification and retirement are independent flags, so    -->
+<!--    define abandonment carefully (e.g. did not complete 90%    -->
+<!--    of the winner's distance);                                 -->
+<!--  - shared drives of the 1950s attach one car's result to      -->
+<!--    several drivers, slightly double-counting entries.         -->
+<!--                                                               -->
+<!-- ```{r, echo=FALSE, fig.align="center",                        -->
+<!--      fig.cap = "Abandonment Ratio per Season",                -->
+<!--      fig.width = 5, fig.height = 3}                           -->
+<!-- plot_abandonment_ratio                                        -->
+<!-- ```                                                           -->
+<!--                                                               -->
+<!-- TODO: complementary table, top and bottom seasons by          -->
+<!-- abandonment share, or the contenders-only series.             -->
+<!-- ============================================================ -->
+
+In the 1950s roughly half the field failed to finish a typical Grand Prix;
+mechanical attrition, not pace, eliminated most competitors before the flag.
+A driver's win percentage in that era therefore conflates two skills: beating
+everyone still running, and keeping his own car alive. By the modern era,
+attrition has fallen so far that mechanical survival barely differentiates
+drivers at all, and the win percentage measures almost pure pace relative to
+the field. The metric that seemed era-neutral is biased in the opposite
+direction from the totals of Section 3.2: it over-rewards early drivers whose
+rivals could not survive, and under-rewards modern drivers who must beat
+fields in which nothing retires.
+
+<!-- ============================================================ -->
+<!-- PLACEHOLDER 1b (optional): CONTENDERS-ONLY ABANDONMENT SERIES -->
+<!-- ============================================================ -->
+
+The same doubt applies to titles-per-season and to any ratio built on career
+span. Efficiency corrects the inflation of opportunity, but it does not
+neutralise the conditions of conversion. And there is a third confounder the
+efficiency ratios cannot touch at all, because it sits inside every result:
+the machine itself.
+
+\newpage
+
+## 3.4 Question 4: Does the Car Make the Champion?
+
+### 3.4.1 Constructor Dominance
+
+The table below shows the number of constructors involved in the championship over the years ;
+
+```{r, echo=FALSE}
+kbl(constructor_summary_table, format = "latex", booktabs = TRUE, escape = FALSE, linesep = "", format.args = list(big.mark = ",")) %>% 
+  kable_styling(font_size = 9, latex_options = c("hold_position")) %>%
+  column_spec(1:ncol(constructor_summary_table), width = "2cm")
+```
+
+As of 2025, `r constructor_summary_table %>% pull("Number of Constructors")` constructors participated in the world championships. `r constructor_summary_table %>% pull("Points")` of them won at least one point, `r constructor_summary_table %>% pull("Wins")` won a race and `r constructor_summary_table %>% pull("Titles")` won a title.
+
+And this is a list of the constructors who won the championship at least once :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+df <- constructorSummary %>%
+  mutate(
+    image_path = vapply(
+      countryImage,
+      function(path) normalizePath(
+        here::here(path),
+        winslash = "/",
+        mustWork = TRUE
+      ),
+      character(1)
+    ),
+    constructorName = paste0(
+      "\\includegraphics[width=0.25cm]{",
+      image_path,
+      "} ",
+      constructorName
+    )
+  ) %>%
+  select(constructorName, titles, wins, points, start, end, seasons) %>%
+  filter(titles > 0) %>%
+  mutate(
+    start = as.character(start),
+    end = as.character(end)
+  )
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+Ferrari stands out prominently with 22 titles and 249 wins, indicating a dominant presence in the sport since 1950. McLaren and Mercedes follow, with 11 and 9 titles respectively. Constructors like Williams and Red Bull have also made significant contributions, evidenced by their multiple wins and points. However, it's important to note that constructors such as Mercedes and Alfa Romeo did not participate consistently throughout the years. For instance, Mercedes withdrew from racing after the 24h of Le Mans disaster in 1954 and returned to the tracks only in 2010. Similarly, Alfa Romeo has had gaps in its participation, despite its historical significance, which reflects the varying levels of engagement among different teams over the decades. As discussed in Section 2.2.8, the constructor nationalities and display names used here follow the season-scoped corrections of the analytical schema, so the identity attached to a constructor reflects the era in which it competed.
+
+\newpage
+
+Now the constructors results over time. Comparison between constructors who won most points from first to second :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Constructor Results", fig.width=6, fig.height=3}
+plotConstructorResults
+```
+
+And the driver results as a comparison :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Driver Results", fig.width=6, fig.height=3}
+plotDriverResults
+```
+
+The trajectories make the ceiling visible: stretches of constructor
+dominance, such as the long Mercedes and Red Bull runs of recent years, put
+titles into the hands of whoever holds the seat, while drivers of eras with a
+level field, Fangio winning with four different manufacturers in eight
+seasons, had to out-drive rivals in comparable machines. Participating in
+the right era of the right constructor can inflate or deflate a driver's
+tally as surely as any change of rules.
+
+### 3.4.2 The Closest Thing to a Controlled Experiment: Teammates
+
+Constructor dominance is visible in aggregate, but the sharpest instrument
+available in the data is the intra-team comparison. Teammates share the car,
+the development direction, the strategy resources and the calendar; their
+head-to-head record is the closest Formula 1 comes to holding the machine
+constant and varying only the driver.
+
+<!-- ============================================================ -->
+<!-- PLACEHOLDER 2: TEAMMATE COMPARISONS                           -->
+<!--                                                               -->
+<!-- TODO: New tables/graphs. Head-to-head within-team comparison  -->
+<!-- for famous pairings (suggest: Prost vs Senna, Hamilton vs     -->
+<!-- Alonso 2007, Mansell vs Piquet, Verstappen vs his teammates). -->
+<!-- Metrics to show per pairing per shared season: share of team  -->
+<!-- points, and/or wins/qualifying head-to-head. Source:          -->
+<!-- f1summary grouped by constructorName + year.                  -->
+<!--                                                               -->
+<!-- ```{r, echo=FALSE}                                            -->
+<!-- knitr::kable(teammate_h2h, format = "latex", booktabs = TRUE, -->
+<!--              linesep = "") %>%                                -->
+<!--   kableExtra::kable_styling(font_size = 9,                    -->
+<!--                            latex_options = "hold_position")   -->
+<!-- ```                                                           -->
+<!--                                                               -->
+<!-- Design note: prefer points-share over raw wins (wins ignore   -->
+<!-- consistency), and quote a small selection of pairings rather  -->
+<!-- than an exhaustive list.                                      -->
+<!-- ============================================================ -->
+
+The teammate record is revealing, but it is not clean. Number-one status and
+development focus bias resources toward one seat; single-race luck is large
+when pairings last only a season; and arriving in a top seat at all is itself
+an achievement that any teammate-based method cannot credit. The comparison
+isolates more of the driver than any tally, yet still less than everything.
+
+Three confounders have now been isolated: opportunity supply (Section 3.2),
+survival conditions (Section 3.3) and the machine (Section 3.4). One layer
+remains, and it is the one written directly into the numbers themselves: the
+rules that decide how results become points.
+
+\newpage
+
+## 3.5 Question 5: Can the Rules Be Neutralised?
+
+### 3.5.1 The Moving Target of Scoring
+
+The evolution of points systems and rules in Formula 1 has undergone significant changes over the years, reflecting the sport's adaptability to enhance competition and viewer engagement. Understanding these modifications is crucial for properly interpreting statistics and achievements across different eras of racing.
+
+One of the most notable changes in the points system involves the method of calculating scores based on race results. In earlier years, drivers earned points for finishing in the top positions, but not all results were counted towards the championship. For instance, the introduction of the "**8 best results**" system allowed drivers to select their top performances to be counted toward their final tally. This change meant that a driver could have an off day in a few races but still remain competitive based on their standout performances. The revised approach promotes consistency and allows for some leeway, encouraging drivers to focus on achieving high results in selected races rather than simply accumulating points in every competition.
+
+In recent years, the integration of new formats such as **sprint races** has further influenced the dynamics of scoring. Sprint events, which typically take place on weekends with traditional Grand Prix races, offer additional points opportunities. This development adds an exciting layer to the race weekend, allowing drivers to earn points not just through their main races but also by performing well in shorter sprints. The introduction of these sprints has reshaped strategies, pushing teams to adapt their approaches to maximise potential points across various race formats.
+
+Another element that has gained attention is the inclusion of points awarded for the **fastest lap** during a race, further enriching the competitive landscape. By recognising drivers who secure the fastest lap, this rule incentivises aggressive racing strategies, compelling drivers to push their limits even when their overall position may not warrant it. This addition exemplifies how changes in rules can elevate the excitement and intensity of each race.
+
+As we compare drivers and their results over time, it is important to note that we will not consider sprint races or fastest laps in our study. Our analysis will focus solely on race results, and we will take into account all points awarded across each driver's career. This approach allows us to maintain a more consistent basis for comparison, ensuring that our findings reflect the fundamental aspects of performance in Formula 1. Two conventions of the analytical schema matter here: the fractional points of the early seasons (Sections 2.2.3-2.2.4) are summed exactly as recorded, since dividing them otherwise would misstate what the rules of the time awarded; and the fastest-lap bonus points embedded in historical totals are retained, while the separate *fastest-lap ranking* statistic, absent from the source before 1958 and restored in the analytical schema (Section 2.2.5), is not used as a scoring dimension in this study.
+
+The implications of these transformed points systems extend beyond mere statistics. They affect team and driver strategies, influencing how races are approached. Teams may prioritise specific races or adopt riskier tactics, knowing that achieving the fastest lap or excelling in a sprint can contribute critically to their overall standings. This fosters a vibrant competitive environment where drivers constantly seek opportunities to maximise their returns, complicating the notion of what it means to be successful in Formula 1.
+
+\newpage
+
+The plot below shows the number of points given according to the race final position :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Points per Year", fig.width = 5, fig.height = 3}
+plot_points_per_year
+```
+
+Until 1959, the scoring system for races awarded the winner 8 points, with an additional point granted for the fastest lap achieved during the race. However, in 1960, the point for the fastest lap was eliminated, and instead, the driver finishing in 6th position would receive one point. The following year, in 1961, the points awarded to the winner increased to 9, further evolving the scoring structure. By 1991, winners would receive 10 points, while other position points remained unchanged. The scoring system underwent a significant revision in 2003, when drivers other than the winner began to receive an additional 2 points. Additionally, drivers finishing in 7th and 8th positions would earn 2 points and 1 point, respectively. By 2010, the rules changed again, increasing the winner's points to 25 and extending points to the top 10 finishers.
+
+Although not depicted in this analysis, it's worth noting that in 2019, a point for the fastest lap was reintroduced. Furthermore, between 1950 and 1990, only certain race results contributed towards the championship standings, indicating fluctuations in how scoring impacted overall competitive success during that period.
+
+\newpage
+
+The plot below shows the percentage difference :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Percentage Difference", fig.width = 5, fig.height = 3}
+plot_percentage_diff
+```
+
+From 1950 until 1959, the winner received 33% more points than the second-place driver, who was awarded 50% more points than the driver finishing in third, while the third place earned 33% more points than the fourth. However, in 1960, the rules shifted so that the winner received 50% more points than the second-place driver, and this percentage increased to 66% in 1991. Starting in 2003, this difference in points began to decrease significantly, with a slight increase in 2010, resulting in the winner obtaining approximately 40% more points than the second-place finisher, who in turn received 20% more than the third, while the third place earned 25% more than the fourth.
+
+This plot illustrates how the importance of finishing position has diminished since 2003, suggesting that the risks associated with overtaking another driver may no longer justify the potential rewards. As drivers weigh the dangers of overtaking, the incentive structure of points allocation reflects a changing competitive landscape.
+
+\newpage
+
+### 3.5.2 When the Best Points-Total Lost the Title
+
+The retention rules of the early decades produce exhibits very much in the
+spirit of Section 2.2: drivers who scored more points and lost the
+championship anyway. The table below displays championships in which the
+driver who earned the highest total points did not win the title. This
+occurred because only a portion of these points were counted, allowing the
+second-place driver to secure the championship with a greater proportion of
+their retained points :
+
+```{r, echo=FALSE}
+# Format the country images for LaTeX
+image_latex <- function(path) {
+  vapply(path, function(p) {
+    if (is.na(p) || !nzchar(p)) return("")
+
+    full_path <- normalizePath(
+      here::here(p),
+      winslash = "/",
+      mustWork = TRUE
+    )
+
+    paste0("\\includegraphics[width=0.25cm]{", full_path, "} ")
+  }, character(1))
+}
+
+df <- differences %>%
+  mutate(
+    driverName_Champion = paste0(
+      image_latex(countryImage_Champion),
+      driverName_Champion
+    ),
+    driverName_Best = paste0(
+      image_latex(countryImage_Best),
+      driverName_Best
+    )
+  ) %>%
+  select(
+    year,
+    driverNameChampion = driverName_Champion,
+    pointsChampion = points_Champion,
+    driverNameBest = driverName_Best,
+    pointsBest = points_Best
+  ) %>%
+  mutate(year = as.character(year))
+
+knitr::kable(
+  df,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = "",
+  format.args = list(big.mark = ",")
+) %>%
+  kableExtra::kable_styling(
+    font_size = 9,
+    latex_options = "hold_position"
+  )
+```
+
+This nuance became particularly evident in dramatic cases such as those of John Surtees in 1964 and Ayrton Senna in 1988.
+
+In 1964, John Surtees clinched the World Championship with a total of 40 points, and importantly, all of these points were eligible for inclusion in the championship standings. Surtees faced stiff competition from his rival, Graham Hill, who ended the season with 41 points, just a single point ahead. However, not all of Hill's points were counted towards the championship, as only 39 points were eligible, thus causing him to lose the title to Surtees. This incident serves as a poignant reminder of the impact of point retention rules in determining the final standings, which can overshadow pure performance metrics.
+
+Fast forward to 1988, when the same theme of point retention played out yet again in a fierce rivalry between Ayrton Senna and Alain Prost. Senna finished the season with an impressive 94 points, out of which 90 points were counted towards his championship total. Conversely, Alain Prost amassed a remarkable 105 points but faced a significant setback as only 87 of these points were deemed eligible for the championship classification. This discrepancy ultimately placed Prost in second position, despite his overall higher point total.
+
+These cases are not curiosities of a distant era; they are demonstrations
+that a raw points total was never, even within a single season, a measure of
+anything stable. If the meaning of a season's points can change between two
+rivals in the same year, it can certainly change between two eras.
+
+\newpage
+
+The plot below shows the total number of points given per year :
+
+```{r, echo=FALSE, fig.align="center", fig.cap = "Total Points per Year", fig.width = 5, fig.height = 3}
+plot_total_points_per_year
+```
+
+\newpage
+
+### 3.5.3 Synthesis: The Four Confounders and the Three Normalisations
+
+The chapter can now assemble its findings. Four effects stand between a
+driver's statistics and his ability:
+
+* **Opportunity supply** (Section 3.2): the calendar grew from 7 races to
+  roughly 22, and careers stretched from fewer than ten seasons to twenty or
+  more, so totals, and to a lesser degree efficiency ratios, are denominated
+  in inflated units;
+* **Survival conditions** (Section 3.3): mechanical attrition fell from
+  eliminating roughly half the field to almost none, so win percentages
+  over-reward early drivers and under-reward modern ones;
+* **The machine** (Section 3.4): stretches of constructor dominance bind
+  results to seats, and teammate comparisons, the best available control, are
+  still imperfect;
+* **The rules** (Section 3.5): scoring systems, points-paying positions and
+  result-retention rules changed repeatedly, changing what a result was worth
+  even within a single season.
+
+No raw statistic survives all four, which is why the rankings of Section 3.1
+disagree. Chapter 4 addresses the conditions that are correctable by
+construction, along the three dimensions already established:
+
+* **Scoring**: each result should be awarded the same points regardless of
+  the season in which it was achieved, normalising away the evolution from
+  the 8-point systems of the 1950s to the 25-point system in force today;
+* **Calendar**: each season should be reduced to a common number of races,
+  so that a champion of a 7-round calendar is not penalised relative to a
+  champion of a 24-round one;
+* **Longevity**: each career should be measured over the same number of
+  seasons, since the inflation of career length across the decades
+  mechanically favours recent drivers in any cumulative statistic.
+
+Only under these three normalisations do titles, wins and points become
+comparable quantities, and only then can the question left open in
+Section 3.1, whether Fangio would have matched today's champions on equal
+terms, be answered with data rather than opinion. The factors that cannot be
+reconstructed from the data, chiefly equipment parity within an era and the
+retention mechanics of the early decades, are carried forward as documented
+limitations rather than corrected away, in keeping with the principle
+established in Section 2.2. Chapter 4 implements exactly these
+normalisations.
